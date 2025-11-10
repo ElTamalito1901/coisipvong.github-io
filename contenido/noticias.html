@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -768,4 +769,776 @@
         });
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias - ONG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header Section */
+        .noticias-header {
+            max-width: 1400px;
+            margin: 80px auto 60px;
+            padding: 0 70px;
+            text-align: center;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .noticias-header h1 {
+            font-size: 68px;
+            color: #081e54;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .noticias-header p {
+            font-size: 24px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        /* Filtros de Categorías */
+        .filtros-section {
+            max-width: 1600px;
+            margin: 60px auto 40px;
+            padding: 0 70px;
+            text-align: center;
+        }
+        
+        .filtros-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filtro-btn {
+            padding: 18px 40px;
+            font-size: 19px;
+            border: 2px solid #081e54;
+            background: white;
+            color: #081e54;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .filtro-btn:hover {
+            background: #081e54;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(8, 30, 84, 0.3);
+        }
+        
+        .filtro-btn.active {
+            background: #081e54;
+            color: white;
+        }
+        
+        /* Noticia Destacada */
+        .destacada-section {
+            max-width: 1600px;
+            margin: 60px auto;
+            padding: 0 70px;
+        }
+        
+        .noticia-destacada {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            transition: all 0.4s;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .noticia-destacada:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .destacada-imagen {
+            height: 550px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .destacada-badge {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .destacada-contenido {
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .destacada-categoria {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .destacada-fecha {
+            color: #999;
+            font-size: 17px;
+            margin-bottom: 25px;
+        }
+        
+        .destacada-contenido h2 {
+            font-size: 42px;
+            color: #081e54;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+        
+        .destacada-contenido p {
+            font-size: 20px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 35px;
+        }
+        
+        .destacada-btn {
+            background: linear-gradient(135deg, #081e54 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 20px 45px;
+            font-size: 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            align-self: flex-start;
+        }
+        
+        .destacada-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(8, 30, 84, 0.4);
+        }
+        
+        /* Grid de Noticias */
+        .noticias-grid {
+            max-width: 1600px;
+            margin: 80px auto;
+            padding: 0 70px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 50px;
+        }
+        
+        .noticia-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+            cursor: pointer;
+        }
+        
+        .noticia-card:nth-child(1) { animation-delay: 0.1s; }
+        .noticia-card:nth-child(2) { animation-delay: 0.2s; }
+        .noticia-card:nth-child(3) { animation-delay: 0.3s; }
+        .noticia-card:nth-child(4) { animation-delay: 0.4s; }
+        .noticia-card:nth-child(5) { animation-delay: 0.5s; }
+        .noticia-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        .noticia-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .noticia-imagen {
+            width: 100%;
+            height: 320px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .noticia-imagen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 100%);
+        }
+        
+        .noticia-categoria {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+        
+        .categoria-eventos {
+            background: rgba(102, 126, 234, 0.9);
+        }
+        
+        .categoria-logros {
+            background: rgba(34, 197, 94, 0.9);
+        }
+        
+        .categoria-testimonios {
+            background: rgba(251, 146, 60, 0.9);
+        }
+        
+        .categoria-proyectos {
+            background: rgba(236, 72, 153, 0.9);
+        }
+        
+        .noticia-contenido {
+            padding: 35px;
+        }
+        
+        .noticia-fecha {
+            color: #999;
+            font-size: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .noticia-contenido h3 {
+            font-size: 28px;
+            color: #081e54;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+        
+        .noticia-contenido p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+        
+        .noticia-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .noticia-autor {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .autor-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .autor-nombre {
+            font-size: 16px;
+            color: #081e54;
+            font-weight: 600;
+        }
+        
+        .leer-mas {
+            color: #667eea;
+            font-size: 17px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .leer-mas:hover {
+            color: #081e54;
+            gap: 12px;
+        }
+        
+        /* Newsletter */
+        .newsletter-section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 70px;
+            background: linear-gradient(135deg, #081e54 0%, #667eea 100%);
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .newsletter-section h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .newsletter-section p {
+            font-size: 22px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            gap: 15px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 20px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 30px;
+            outline: none;
+        }
+        
+        .newsletter-btn {
+            background: white;
+            color: #081e54;
+            border: none;
+            padding: 20px 45px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .newsletter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Paginación */
+        .paginacion {
+            max-width: 1600px;
+            margin: 60px auto 100px;
+            padding: 0 70px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .pag-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #081e54;
+            background: white;
+            color: #081e54;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pag-btn:hover,
+        .pag-btn.active {
+            background: #081e54;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .noticias-header {
+                padding: 0 20px;
+                margin: 50px auto 40px;
+            }
+            
+            .noticias-header h1 {
+                font-size: 36px;
+            }
+            
+            .noticias-header p {
+                font-size: 18px;
+            }
+            
+            .filtros-section {
+                padding: 0 20px;
+            }
+            
+            .filtro-btn {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+            
+            .destacada-section {
+                padding: 0 20px;
+            }
+            
+            .noticia-destacada {
+                grid-template-columns: 1fr;
+            }
+            
+            .destacada-imagen {
+                height: 350px;
+            }
+            
+            .destacada-contenido {
+                padding: 40px 30px;
+            }
+            
+            .destacada-contenido h2 {
+                font-size: 28px;
+            }
+            
+            .destacada-contenido p {
+                font-size: 18px;
+            }
+            
+            .noticias-grid {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+                gap: 30px;
+            }
+            
+            .noticia-imagen {
+                height: 250px;
+            }
+            
+            .noticia-contenido {
+                padding: 25px;
+            }
+            
+            .noticia-contenido h3 {
+                font-size: 22px;
+            }
+            
+            .noticia-contenido p {
+                font-size: 16px;
+            }
+            
+            .newsletter-section {
+                margin: 50px 20px;
+                padding: 50px 30px;
+            }
+            
+            .newsletter-section h2 {
+                font-size: 32px;
+            }
+            
+            .newsletter-section p {
+                font-size: 18px;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-input,
+            .newsletter-btn {
+                width: 100%;
+            }
+            
+            .paginacion {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <section class="noticias-header">
+        <h1>Noticias y Actualizaciones</h1>
+        <p>Mantente informado sobre nuestras actividades, logros y el impacto que estamos generando juntos en las comunidades más vulnerables.</p>
+    </section>
+    
+    <!-- Filtros -->
+    <section class="filtros-section">
+        <div class="filtros-container">
+            <button class="filtro-btn active" data-categoria="todas">Todas</button>
+            <button class="filtro-btn" data-categoria="eventos">Eventos</button>
+            <button class="filtro-btn" data-categoria="logros">Logros</button>
+            <button class="filtro-btn" data-categoria="testimonios">Testimonios</button>
+            <button class="filtro-btn" data-categoria="proyectos">Proyectos</button>
+        </div>
+    </section>
+    
+    <!-- Noticia Destacada -->
+    <section class="destacada-section">
+        <article class="noticia-destacada">
+            <div class="destacada-imagen" style="background: linear-gradient(135deg, rgba(8, 30, 84, 0.3), rgba(102, 126, 234, 0.3)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200');">
+                <span class="destacada-badge">Destacado</span>
+            </div>
+            <div class="destacada-contenido">
+                <div class="destacada-categoria">Eventos</div>
+                <div class="destacada-fecha">📅 5 de Noviembre, 2025</div>
+                <h2>Gran Feria de Integración Comunitaria 2025</h2>
+                <p>Más de 2,000 personas participaron en nuestra feria anual donde celebramos la diversidad cultural, ofrecimos servicios gratuitos de salud y educación, y fortalecimos los lazos de nuestra comunidad.</p>
+                <button class="destacada-btn">Leer Más</button>
+            </div>
+        </article>
+    </section>
+    
+    <!-- Grid de Noticias -->
+    <section class="noticias-grid">
+        <!-- Noticia 1 -->
+        <article class="noticia-card" data-categoria="logros">
+            <div class="noticia-imagen" style="background-image: url('https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800');">
+                <span class="noticia-categoria categoria-logros">Logros</span>
+            </div>
+            <div class="noticia-contenido">
+                <div class="noticia-fecha">📅 28 de Octubre, 2025</div>
+                <h3>500 Estudiantes Reciben Becas Educativas</h3>
+                <p>Celebramos el otorgamiento de becas integrales a estudiantes destacados de familias vulnerables, garantizando su acceso a educación de calidad.</p>
+                <div class="noticia-footer">
+                    <div class="noticia-autor">
+                        <div class="autor-avatar">📝</div>
+                        <span class="autor-nombre">Equipo Editorial</span>
+                    </div>
+                    <a href="#" class="leer-mas">Leer más →</a>
+                </div>
+            </div>
+        </article>
+        
+        <!-- Noticia 2 -->
+        <article class="noticia-card" data-categoria="proyectos">
+            <div class="noticia-imagen" style="background-image: url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800');">
+                <span class="noticia-categoria categoria-proyectos">Proyectos</span>
+            </div>
+            <div class="noticia-contenido">
+                <div class="noticia-fecha">📅 20 de Octubre, 2025</div>
+                <h3>Inauguración del Centro Comunitario en Villa María</h3>
+                <p>Un nuevo espacio de 800m² que albergará talleres educativos, actividades deportivas y servicios de apoyo para más de 1,500 familias.</p>
+                <div class="noticia-footer">
+                    <div class="noticia-autor">
+                        <div class="autor-avatar">👥</div>
+                        <span class="autor-nombre">Carlos Mendoza</span>
+                    </div>
+                    <a href="#" class="leer-mas">Leer más →</a>
+                </div>
+            </div>
+        </article>
+        
+        <!-- Noticia 3 -->
+        <article class="noticia-card" data-categoria="testimonios">
+            <div class="noticia-imagen" style="background-image: url('https://images.unsplash.com/photo-1529390079861-591de354faf5?w=800');">
+                <span class="noticia-categoria categoria-testimonios">Testimonios</span>
+            </div>
+            <div class="noticia-contenido">
+                <div class="noticia-fecha">📅 15 de Octubre, 2025</div>
+                <h3>Historia de Superación: De Inmigrante a Empresaria</h3>
+                <p>María Elena comparte cómo nuestro programa de emprendimiento le permitió iniciar su propio negocio y cambiar su vida completamente.</p>
+                <div class="noticia-footer">
+                    <div class="noticia-autor">
+                        <div class="autor-avatar">✍️</div>
+                        <span class="autor-nombre">Ana Torres</span>
+                    </div>
+                    <a href="#" class="leer-mas">Leer más →</a>
+                </div>
+            </div>
+        </article>
+        
+        <!-- Noticia 4 -->
+        <article class="noticia-card" data-categoria="eventos">
+            <div class="noticia-imagen" style="background-image: url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800');">
+                <span class="noticia-categoria categoria-eventos">Eventos</span>
+            </div>
+            <div class="noticia-contenido">
+                <div class="noticia-fecha">📅 8 de Octubre, 2025</div>
+                <h3>Maratón Solidaria: Corriendo por una Causa</h3>
+                <p>Más de 800 corredores se unieron para recaudar fondos destinados a nuestros programas de nutrición infantil en comunidades rurales.</p>
+                <div class="noticia-footer">
+                    <div class="noticia-autor">
+                        <div class="autor-avatar">🏃</div>
+                        <span class="autor-nombre">Luis Ramírez</span>
+                    </div>
+                    <a href="#" class="leer-mas">Leer más →</a>
+                </div>
+            </div>
+        </article>
+        
+        <!-- Noticia 5 -->
+        <article class="noticia-card" data-categoria="logros">
+            <div class="noticia-imagen" style="background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800');">
+                <span class="noticia-categoria categoria-logros">Logros</span>
+            </div>
+            <div class="noticia-contenido">
+                <div class="noticia-fecha">📅 1 de Octubre, 2025</div>
+                <h3>Certificación Internacional de Calidad</h3>
+                <p>Recibimos el reconocimiento ISO 9001 por nuestros estándares de excelencia en la gestión de proyectos sociales.</p>
+                <div class="noticia-footer">
+                    <div class="noticia-autor">
+                        <div class="autor-avatar">🏆</div>
+                        <span class="autor-nombre">María González</span>
+                    </div>
+                    <a href="#" class="leer-mas">Leer más →</a>
+                </div>
+            </div>
+        </article>
+        
+        <!-- Noticia 6 -->
+        <article class="noticia-card" data-categoria="proyectos">
+            <div class="noticia-imagen" style="background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800');">
+                <span class="noticia-categoria categoria-proyectos">Proyectos</span>
+            </div>
+            <div class="noticia-contenido">
+                <div class="noticia-fecha">📅 25 de Septiembre, 2025</div>
+                <h3>Lanzamiento del Programa Aulas Digitales</h3>
+                <p>Equipamos 20 escuelas con tecnología de punta para reducir la brecha digital y preparar a los estudiantes para el futuro.</p>
+                <div class="noticia-footer">
+                    <div class="noticia-autor">
+                        <div class="autor-avatar">💻</div>
+                        <span class="autor-nombre">Equipo de Tecnología</span>
+                    </div>
+                    <a href="#" class="leer-mas">Leer más →</a>
+                </div>
+            </div>
+        </article>
+    </section>
+    
+    <!-- Newsletter -->
+    <section class="newsletter-section">
+        <h2>Suscríbete a Nuestro Boletín</h2>
+        <p>Recibe las últimas noticias, historias inspiradoras y actualizaciones sobre nuestro impacto directamente en tu correo.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte!');">
+            <input type="email" class="newsletter-input" placeholder="Tu correo electrónico" required>
+            <button type="submit" class="newsletter-btn">Suscribirme</button>
+        </form>
+    </section>
+    
+    <!-- Paginación -->
+    <div class="paginacion">
+        <button class="pag-btn active">1</button>
+        <button class="pag-btn">2</button>
+        <button class="pag-btn">3</button>
+        <button class="pag-btn">4</button>
+        <button class="pag-btn">→</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sistema de filtros
+            const filtros = document.querySelectorAll('.filtro-btn');
+            const noticias = document.querySelectorAll('.noticia-card');
+            
+            filtros.forEach(filtro => {
+                filtro.addEventListener('click', function() {
+                    // Remover clase active de todos los filtros
+                    filtros.forEach(f => f.classList.remove('active'));
+                    // Agregar clase active al filtro clickeado
+                    this.classList.add('active');
+                    
+                    const categoriaSeleccionada = this.getAttribute('data-categoria');
+                    
+                    noticias.forEach(noticia => {
+                        const categoriaNoticia = noticia.getAttribute('data-categoria');
+                        
+                        if (categoriaSeleccionada === 'todas' || categoriaSeleccionada === categoriaNoticia) {
+                            noticia.style.display = 'block';
+                            // Reiniciar animación
+                            noticia.style.animation = 'none';
+                            setTimeout(() => {
+                                noticia.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                            }, 10);
+                        } else {
+                            noticia.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Paginación
+            const pagBtns = document.querySelectorAll('.pag-btn');
+            pagBtns.forEach((btn, index) => {
+                btn.addEventListener('click', function() {
+                    if (btn.textContent !== '→') {
+                        pagBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        // Ir a siguiente página
+                        const currentActive = document.querySelector('.pag-btn.active');
+                        const nextBtn = currentActive.nextElementSibling;
+                        if (nextBtn && nextBtn.textContent !== '→') {
+                            pagBtns.forEach(b => b.classList.remove('active'));
+                            nextBtn.classList.add('active');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+>>>>>>> 8a503fc3c5c472bd6bfcd46fd96ef40545351d08
 </html>
