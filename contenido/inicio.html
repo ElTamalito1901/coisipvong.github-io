@@ -1,419 +1,468 @@
-<section class="hero-section">
-    <div class="hero-image" id="heroCarousel" style="position: relative; overflow: hidden; padding: 0;">
-        <!-- Slides del carrusel -->
-        <div class="slide active" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.30), rgba(118, 75, 162, 0.30)), url('../imagen/imagen1.png')">
-            <span class="slide-text">La unión y la empatía no tienen fronteras</span>
-        </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - ONG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        <div class="slide" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.30), rgba(239, 68, 68, 0.30)), url('../imagen/imagen2.jpg')">
-            <span class="slide-text">Cada gesto de ayuda cambia una vida</span>
-        </div>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
         
-        <div class="slide" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.30), rgba(16, 185, 129, 0.30)), url('../imagen/imagen3.jpg')">
-            <span class="slide-text">Juntos somos la fuerza del cambio</span>
-        </div>
-        
-        <div class="slide" style="background: linear-gradient(135deg, rgba(251, 146, 60, 0.30), rgba(249, 115, 22, 0.30)), url('../imagen/imagen4.jpg')">
-            <span class="slide-text">Porque todos merecemos las mismas oportunidades</span>
-        </div>
-        
-        <div class="slide" style="background: linear-gradient(135deg, rgba(251, 146, 60, 0.30), rgba(249, 115, 22, 0.30)), url('../imagen/imagen5.png')">
-            <span class="slide-text">4</span>
-        </div>
-        
-
-        <!-- Indicadores de puntos -->
-        <div class="slider-dots">
-            <span class="dot active" data-slide="0"></span>
-            <span class="dot" data-slide="1"></span>
-            <span class="dot" data-slide="2"></span>
-            <span class="dot" data-slide="3"></span>
-            <span class="dot" data-slide="4"></span>
-        </div>
-        
-        <!-- Flechas de navegación -->
-        <button class="slider-arrow prev" id="prevBtn">❮</button>
-        <button class="slider-arrow next" id="nextBtn">❯</button>
-    </div>
-    
-    <div class="hero-content">
-        <h2>Construyendo un Futuro Mejor</h2>
-        <p>Somos una ONG comprometida con la inclusión y el bienestar de inmigrantes y peruanos en situación vulnerable, promoviendo oportunidades, educación y desarrollo social.</p>
-        <button class="btn-primary" onclick="window.open('https://chat.whatsapp.com/EVj3SAiGYOwLQzJDbGo3CU', '_blank')">
-    Únete a Nuestra Causa
-</button>
-
-    </div>
-</section>
-
-<div class="cards-section">
-    <div class="card">
-        <div class="icon">📚</div>
-        <h3>Educación</h3>
-        <p>Brindamos acceso a educación de calidad para niños y jóvenes en comunidades vulnerables, construyendo un futuro lleno de oportunidades.</p>
-    </div>
-    <div class="card">
-        <div class="icon">🏥</div>
-        <h3>Salud</h3>
-        <p>Promovemos la salud preventiva y el acceso a servicios médicos básicos en zonas de escasos recursos.</p>
-    </div>
-    <div class="card">
-        <div class="icon">🌱</div>
-        <h3>Desarrollo</h3>
-        <p>Impulsamos proyectos sostenibles que generan empleo y mejoran la calidad de vida de las familias.</p>
-    </div>
-</div>
-
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: transparent;
-        margin: 0;
-        padding: 0;
-    }
-    
-    /* Hero Section - SIN CUADRO BLANCO */
-    .hero-section {
-        background: transparent;
-        border-radius: 0;
-        box-shadow: none;
-        margin: 0 auto;
-        max-width: 100%;
-        padding: 0;
-        overflow: hidden;
-    }
-    
-    .hero-image {
-        width: 100%;
-        height: 700px;
-        border-radius: 0;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: 40px;
-    }
-    
-    /* Estilos para el carrusel */
-    .slide {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
-        background-size: cover !important;
-        background-position: center !important;
-        border-radius: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .slide.active {
-        opacity: 1;
-        visibility: visible;
-        z-index: 1;
-    }
-    
-    .slide-text {
-        color: white;
-        font-size: 68px; /* Aumentado más */
-        font-weight: bold;
-        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
-        z-index: 10;
-        padding: 30px;
-        text-align: center;
-    }
-    
-    /* Flechas de navegación */
-    .slider-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.3);
-        color: white;
-        border: none;
-        font-size: 30px;
-        padding: 15px 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: all 0.3s;
-        z-index: 100;
-        backdrop-filter: blur(5px);
-        user-select: none;
-    }
-    
-    .slider-arrow:hover {
-        background: rgba(255, 255, 255, 0.6);
-        transform: translateY(-50%) scale(1.1);
-    }
-    
-    .slider-arrow:active {
-        transform: translateY(-50%) scale(0.95);
-    }
-    
-    .slider-arrow.prev {
-        left: 20px;
-    }
-    
-    .slider-arrow.next {
-        right: 20px;
-    }
-    
-    /* Indicadores de puntos */
-    .slider-dots {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 10px;
-        z-index: 100;
-    }
-    
-    .dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    
-    .dot.active {
-        background: white;
-        width: 30px;
-        border-radius: 6px;
-    }
-    
-    .dot:hover {
-        background: rgba(255, 255, 255, 0.8);
-    }
-    
-    /* Hero Content */
-    .hero-content {
-        text-align: center;
-        padding: 40px; /* Aumentado más */
-    }
-    
-    .hero-content h2 {
-        font-size: 50px; /* Aumentado más */
-        color: #333;
-        margin-bottom: 30px;
-    }
-    
-    .hero-content p {
-        font-size: 24px; /* Aumentado más */
-        color: #666;
-        line-height: 1.8;
-        margin-bottom: 40px;
-        max-width: 1100px; /* Aumentado más */
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #081e54 0%, #081e54 100%);
-        color: white;
-        border: none;
-        padding: 22px 55px; /* Aumentado más */
-        font-size: 24px; /* Aumentado más */
-        border-radius: 35px;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-weight: 600;
-        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-    }
-    
-    /* Cards Section */
-    .cards-section {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 40px; /* Aumentado más */
-        max-width: 1600px; /* Aumentado más */
-        margin: 60px auto;
-        padding: 0 70px; /* Aumentado más */
-    }
-    
-    .card {
-        background: white;
-        padding: 50px; /* Aumentado más */
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s;
-    }
-    
-    .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-    }
-    
-    .card .icon {
-        font-size: 70px; /* Aumentado más */
-        margin-bottom: 25px;
-    }
-    
-    .card h3 {
-        font-size: 32px; /* Aumentado más */
-        color: #333;
-        margin-bottom: 18px;
-    }
-    
-    .card p {
-        font-size: 19px; /* Aumentado más */
-        color: #666;
-        line-height: 1.7;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
+        /* Hero Section - SIN CUADRO BLANCO */
         .hero-section {
-            padding: 30px 20px;
-            margin: 20px;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            margin: 0 auto;
+            max-width: 100%;
+            padding: 0;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInDown 1s ease-out forwards;
         }
         
         .hero-image {
-            height: 400px;
+            width: 100%;
+            height: 700px;
+            border-radius: 0;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        
+        /* Estilos para el carrusel */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            background-size: cover !important;
+            background-position: center !important;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 1;
         }
         
         .slide-text {
-            font-size: 28px;
+            color: white;
+            font-size: 68px;
+            font-weight: bold;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            padding: 30px;
+            text-align: center;
         }
         
-        .hero-content h2 {
-            font-size: 28px;
-        }
-        
-        .hero-content p {
-            font-size: 16px;
-        }
-        
-        .btn-primary {
-            padding: 14px 30px;
-            font-size: 16px;
-        }
-        
+        /* Flechas de navegación */
         .slider-arrow {
-            font-size: 20px;
-            padding: 10px 15px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            border: none;
+            font-size: 30px;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            user-select: none;
+        }
+        
+        .slider-arrow:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .slider-arrow:active {
+            transform: translateY(-50%) scale(0.95);
         }
         
         .slider-arrow.prev {
-            left: 10px;
+            left: 20px;
         }
         
         .slider-arrow.next {
-            right: 10px;
+            right: 20px;
         }
         
+        /* Indicadores de puntos */
+        .slider-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dot.active {
+            background: white;
+            width: 30px;
+            border-radius: 6px;
+        }
+        
+        .dot:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Hero Content */
+        .hero-content {
+            text-align: center;
+            padding: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+        
+        .hero-content h2 {
+            font-size: 50px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .hero-content p {
+            font-size: 24px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #081e54 0%, #081e54 100%);
+            color: white;
+            border: none;
+            padding: 22px 55px;
+            font-size: 24px;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Cards Section */
         .cards-section {
-            padding: 0 20px;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1600px;
+            margin: 60px auto;
+            padding: 0 70px;
         }
         
         .card {
-            padding: 30px;
-        }
-    }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Variables globales
-    let currentIndex = 0;
-    let autoSlideTimer;
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const totalSlides = slides.length;
-    
-    // Función para mostrar el slide específico
-    function showSlide(index) {
-        if (index >= totalSlides) {
-            currentIndex = 0;
-        } else if (index < 0) {
-            currentIndex = totalSlides - 1;
-        } else {
-            currentIndex = index;
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
         }
         
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
+        .card:nth-child(1) { animation-delay: 0.5s; }
+        .card:nth-child(2) { animation-delay: 0.7s; }
+        .card:nth-child(3) { animation-delay: 0.9s; }
         
-        slides[currentIndex].classList.add('active');
-        dots[currentIndex].classList.add('active');
-    }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 25px;
+            border-radius: 10px;
+        }
+        
+        .card h3 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 18px;
+        }
+        
+        .card p {
+            font-size: 19px;
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .hero-image {
+                height: 400px;
+            }
+            
+            .slide-text {
+                font-size: 28px;
+            }
+            
+            .hero-content h2 {
+                font-size: 28px;
+            }
+            
+            .hero-content p {
+                font-size: 16px;
+            }
+            
+            .btn-primary {
+                padding: 14px 30px;
+                font-size: 16px;
+            }
+            
+            .slider-arrow {
+                font-size: 20px;
+                padding: 10px 15px;
+            }
+            
+            .slider-arrow.prev {
+                left: 10px;
+            }
+            
+            .slider-arrow.next {
+                right: 10px;
+            }
+            
+            .cards-section {
+                padding: 0 20px;
+                gap: 20px;
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 30px;
+            }
+        }
+        
+        /* Animaciones de entrada */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero-section">
+        <div class="hero-image" id="heroCarousel" style="position: relative; overflow: hidden; padding: 0;">
+            <!-- Slides del carrusel -->
+            <div class="slide active" style="background: linear-gradient(135deg, rgba(201, 102, 234, 0.3), rgba(118, 75, 162, 0.523)), url('../imagen/Inicio/imagen1.png');">
+                <span class="slide-text">La unión y la empatía no tienen fronteras</span>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, rgba(72, 236, 72, 0.3), rgba(122, 239, 68, 0.3)), url('../imagen/Inicio/imagen2.jpg');">
+                <span class="slide-text">Cada gesto de ayuda cambia una vida</span>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, rgba(197, 132, 34, 0.3), rgba(185, 78, 16, 0.3)), url('../imagen/Inicio/imagen3.jpg');">
+                <span class="slide-text">Juntos somos la fuerza del cambio</span>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, rgba(201, 102, 234, 0.3), rgba(118, 75, 162, 0.523)), url('../imagen/Inicio/imagen4.jpg');">
+                <span class="slide-text">Porque todos merecemos las mismas oportunidades</span>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, rgba(72, 236, 72, 0.3), rgba(122, 239, 68, 0.3)), url('../imagen/Inicio/imagen5.png');">
+                <span class="slide-text">Unidos somos más fuertes</span>
+            </div>
+            
+            <div class="slide" style="background: linear-gradient(135deg, rgba(197, 132, 34, 0.3), rgba(185, 78, 16, 0.3)), url('../imagen/Inicio/imagen6.png');">
+                <span class="slide-text">Unidos hacemos la diferencia</span>
+            </div>
+            
+            <!-- Indicadores de puntos -->
+            <div class="slider-dots">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+                <span class="dot" data-slide="3"></span>
+                <span class="dot" data-slide="4"></span>
+                <span class="dot" data-slide="5"></span>
+            </div>
+            
+            <!-- Flechas de navegación -->
+            <button class="slider-arrow prev" id="prevBtn">❮</button>
+            <button class="slider-arrow next" id="nextBtn">❯</button>
+        </div>
+        
+        <div class="hero-content">
+            <h2>Juntos por un Mundo Mejor</h2>
+            <p>Somos una ONG comprometida con la inclusión y el bienestar de inmigrantes y peruanos en situación vulnerable, promoviendo oportunidades, educación y desarrollo social.</p>
+            <button class="btn-primary" onclick="window.open('https://chat.whatsapp.com/EVj3SAiGYOwLQzJDbGo3CU', '_blank')">
+                Únete a Nuestra Causa
+            </button>
+        </div>
+    </section>
     
-    // Cambiar slide con flechas
-    function changeSlide(direction) {
-        showSlide(currentIndex + direction);
-        resetAutoSlide();
-    }
+    <div class="cards-section">
+        <div class="card">
+            <img src="../imagen/Inicio/ConPorElArte.png" alt="Conectados Por El Arte">
+            <h3>Conectados Por El Arte</h3>
+            <p>Promovemos la expresión artística como puente de unión entre peruanos y venezolanos. A través de la danza, la música y otras formas de arte, fortalecemos la identidad, la autoestima y la integración cultural, creando espacios donde cada talento puede brillar y ser escuchado.</p>
+        </div>
+        <div class="card">
+            <img src="../imagen/Inicio/ConPorTecnologia.png " alt="Conectados Por La Tecnología">
+            <h3>Conectados Por La Tecnología</h3>
+            <p>Acercamos la tecnología a quienes más la necesitan, brindando herramientas digitales y capacitaciones que abren puertas al conocimiento, la innovación y nuevas oportunidades laborales. La inclusión digital es el puente hacia un futuro más justo.</p>
+        </div>
+        <div class="card">
+            <img src="../imagen/Inicio/ConEnAccion.png" alt="Conectados En Acción">
+            <h3>Conectados En Acción</h3>
+            <p>A través del dibujo, la pintura y la creatividad, impulsamos espacios donde las ideas cobran vida. Promovemos la participación activa y el trabajo en equipo para fortalecer la comunidad mediante el arte y la expresión visual.</p>
+        </div>
+    </div>
     
-    // Ir a un slide específico (dots)
-    function goToSlide(index) {
-        showSlide(index);
-        resetAutoSlide();
-    }
-    
-    // Avance automático
-    function autoSlide() {
-        currentIndex++;
-        showSlide(currentIndex);
-    }
-    
-    // Reiniciar el timer automático
-    function resetAutoSlide() {
-        clearInterval(autoSlideTimer);
-        autoSlideTimer = setInterval(autoSlide, 3000);
-    }
-    
-    // Flechas
-    document.getElementById('prevBtn').addEventListener('click', e => {
-        e.preventDefault();
-        changeSlide(-1);
-    });
-    
-    document.getElementById('nextBtn').addEventListener('click', e => {
-        e.preventDefault();
-        changeSlide(1);
-    });
-    
-    // Dots
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', e => {
-            e.preventDefault();
-            goToSlide(index);
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables globales
+            let currentIndex = 0;
+            let autoSlideTimer;
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            const totalSlides = slides.length;
+            
+            // Función para mostrar el slide específico
+            function showSlide(index) {
+                if (index >= totalSlides) {
+                    currentIndex = 0;
+                } else if (index < 0) {
+                    currentIndex = totalSlides - 1;
+                } else {
+                    currentIndex = index;
+                }
+                
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
+                
+                slides[currentIndex].classList.add('active');
+                dots[currentIndex].classList.add('active');
+            }
+            
+            // Cambiar slide con flechas
+            function changeSlide(direction) {
+                showSlide(currentIndex + direction);
+                resetAutoSlide();
+            }
+            
+            // Ir a un slide específico (dots)
+            function goToSlide(index) {
+                showSlide(index);
+                resetAutoSlide();
+            }
+            
+            // Avance automático
+            function autoSlide() {
+                currentIndex++;
+                showSlide(currentIndex);
+            }
+            
+            // Reiniciar el timer automático
+            function resetAutoSlide() {
+                clearInterval(autoSlideTimer);
+                autoSlideTimer = setInterval(autoSlide, 3000);
+            }
+            
+            // Flechas
+            document.getElementById('prevBtn').addEventListener('click', e => {
+                e.preventDefault();
+                changeSlide(-1);
+            });
+            
+            document.getElementById('nextBtn').addEventListener('click', e => {
+                e.preventDefault();
+                changeSlide(1);
+            });
+            
+            // Dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', e => {
+                    e.preventDefault();
+                    goToSlide(index);
+                });
+            });
+            
+            // Pausar al pasar el mouse
+            const heroCarousel = document.getElementById('heroCarousel');
+            heroCarousel.addEventListener('mouseenter', () => clearInterval(autoSlideTimer));
+            heroCarousel.addEventListener('mouseleave', resetAutoSlide);
+            
+            // Control con teclado
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowLeft') changeSlide(-1);
+                else if (e.key === 'ArrowRight') changeSlide(1);
+            });
+            
+            // Iniciar el carrusel automático
+            autoSlideTimer = setInterval(autoSlide, 3000);
+            
+            // Mostrar primer slide
+            showSlide(0);
         });
-    });
-    
-    // Pausar al pasar el mouse
-    const heroCarousel = document.getElementById('heroCarousel');
-    heroCarousel.addEventListener('mouseenter', () => clearInterval(autoSlideTimer));
-    heroCarousel.addEventListener('mouseleave', resetAutoSlide);
-    
-    // Control con teclado
-    document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft') changeSlide(-1);
-        else if (e.key === 'ArrowRight') changeSlide(1);
-    });
-    
-    // Iniciar el carrusel automático
-    autoSlideTimer = setInterval(autoSlide, 3000);
-    
-    // Mostrar primer slide
-    showSlide(0);
-});
-</script>
+    </script>
+</body>
+</html>
