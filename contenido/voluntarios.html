@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voluntarios - ONG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header Section sin imagen */
+        .voluntarios-header {
+            max-width: 1400px;
+            margin: 80px auto 60px;
+            padding: 0 70px;
+            text-align: center;
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        .voluntarios-header h1 {
+            font-size: 68px;
+            color: #081e54;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .voluntarios-header p {
+            font-size: 24px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        /* Por qué ser voluntario */
+        .porque-section {
+            max-width: 1600px;
+            margin: 80px auto;
+            padding: 0 70px;
+        }
+        
+        .porque-section h2 {
+            font-size: 52px;
+            color: #081e54;
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .porque-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .porque-card {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .porque-card:nth-child(1) { animation-delay: 0.2s; }
+        .porque-card:nth-child(2) { animation-delay: 0.3s; }
+        .porque-card:nth-child(3) { animation-delay: 0.4s; }
+        .porque-card:nth-child(4) { animation-delay: 0.5s; }
+        
+        .porque-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #081e54, #667eea);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+        
+        .porque-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .porque-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        
+        .porque-card .icon {
+            font-size: 70px;
+            margin-bottom: 25px;
+        }
+        
+        .porque-card h3 {
+            font-size: 32px;
+            color: #081e54;
+            margin-bottom: 18px;
+        }
+        
+        .porque-card p {
+            font-size: 19px;
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        /* Áreas de Voluntariado */
+        .areas-section {
+            background: linear-gradient(135deg, #081e54 0%, #1e3a8a 100%);
+            padding: 90px 70px;
+            margin: 80px 0;
+        }
+        
+        .areas-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .areas-container h2 {
+            font-size: 52px;
+            color: white;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .areas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+        }
+        
+        .area-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+        
+        .area-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .area-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .area-icon {
+            font-size: 55px;
+        }
+        
+        .area-card h3 {
+            font-size: 36px;
+            color: white;
+            margin: 0;
+        }
+        
+        .area-card p {
+            font-size: 19px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+        
+        .area-requisitos {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .area-requisitos h4 {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .area-requisitos ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .area-requisitos li {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .area-requisitos li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+        
+        /* Testimonios */
+        .testimonios-section {
+            max-width: 1600px;
+            margin: 80px auto;
+            padding: 0 70px;
+        }
+        
+        .testimonios-section h2 {
+            font-size: 52px;
+            color: #081e54;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .testimonios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+        }
+        
+        .testimonio-card {
+            background: white;
+            padding: 45px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            position: relative;
+        }
+        
+        .testimonio-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 120px;
+            color: rgba(102, 126, 234, 0.2);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .testimonio-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+        }
+        
+        .testimonio-texto {
+            font-size: 19px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonio-autor {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .autor-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .autor-info h4 {
+            font-size: 22px;
+            color: #081e54;
+            margin-bottom: 5px;
+        }
+        
+        .autor-info p {
+            font-size: 16px;
+            color: #999;
+        }
+        
+        /* Proceso de Inscripción */
+        .proceso-section {
+            max-width: 1400px;
+            margin: 80px auto;
+            padding: 0 70px;
+        }
+        
+        .proceso-section h2 {
+            font-size: 52px;
+            color: #081e54;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .proceso-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+        
+        .proceso-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            transform: translateX(-50%);
+        }
+        
+        .paso {
+            display: flex;
+            gap: 50px;
+            margin-bottom: 60px;
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .paso:nth-child(1) { animation-delay: 0.2s; }
+        .paso:nth-child(2) { animation-delay: 0.4s; }
+        .paso:nth-child(3) { animation-delay: 0.6s; }
+        .paso:nth-child(4) { animation-delay: 0.8s; }
+        
+        .paso-numero {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .paso-contenido {
+            flex: 1;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+        
+        .paso-contenido:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .paso-contenido h3 {
+            font-size: 28px;
+            color: #081e54;
+            margin-bottom: 15px;
+        }
+        
+        .paso-contenido p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        .paso:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        /* CTA Final */
+        .cta-final {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 80px 70px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 30px;
+            text-align: center;
+        }
+        
+        .cta-final h2 {
+            font-size: 48px;
+            color: #081e54;
+            margin-bottom: 25px;
+        }
+        
+        .cta-final p {
+            font-size: 22px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #081e54 0%, #667eea 100%);
+            color: white;
+            border: none;
+            padding: 22px 55px;
+            font-size: 24px;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #081e54;
+            border: 3px solid #081e54;
+            padding: 22px 55px;
+            font-size: 24px;
+            border-radius: 35px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-secondary:hover {
+            background: #081e54;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(8, 30, 84, 0.3);
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .voluntarios-header {
+                padding: 0 20px;
+                margin: 50px auto 40px;
+            }
+            
+            .voluntarios-header h1 {
+                font-size: 36px;
+            }
+            
+            .voluntarios-header p {
+                font-size: 18px;
+            }
+            
+            .porque-section,
+            .testimonios-section,
+            .proceso-section {
+                padding: 0 20px;
+            }
+            
+            .porque-section h2,
+            .areas-container h2,
+            .testimonios-section h2,
+            .proceso-section h2 {
+                font-size: 32px;
+            }
+            
+            .porque-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .porque-card {
+                padding: 35px;
+            }
+            
+            .areas-section {
+                padding: 50px 20px;
+            }
+            
+            .areas-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .area-card {
+                padding: 35px;
+            }
+            
+            .area-card h3 {
+                font-size: 28px;
+            }
+            
+            .testimonios-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .testimonio-card {
+                padding: 35px;
+            }
+            
+            .proceso-timeline::before {
+                left: 40px;
+            }
+            
+            .paso {
+                flex-direction: column !important;
+                padding-left: 100px;
+            }
+            
+            .paso-numero {
+                position: absolute;
+                left: 0;
+            }
+            
+            .cta-final {
+                padding: 50px 30px;
+                margin: 50px 20px;
+            }
+            
+            .cta-final h2 {
+                font-size: 32px;
+            }
+            
+            .cta-final p {
+                font-size: 18px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                padding: 18px 40px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header sin imagen -->
+    <section class="voluntarios-header">
+        <h1>Únete Como Voluntario</h1>
+        <p>Forma parte de un equipo apasionado que trabaja cada día para transformar vidas. Tu tiempo, talento y compromiso pueden marcar la diferencia en nuestra comunidad.</p>
+    </section>
+    
+    <!-- Por qué ser voluntario -->
+    <section class="porque-section">
+        <h2>¿Por Qué Ser Voluntario?</h2>
+        <div class="porque-grid">
+            <div class="porque-card">
+                <div class="icon">💝</div>
+                <h3>Impacto Real</h3>
+                <p>Tu trabajo genera cambios tangibles en la vida de personas que realmente lo necesitan. Cada acción cuenta.</p>
+            </div>
+            <div class="porque-card">
+                <div class="icon">🌟</div>
+                <h3>Crecimiento Personal</h3>
+                <p>Desarrolla nuevas habilidades, amplía tu perspectiva y crece como persona mientras ayudas a otros.</p>
+            </div>
+            <div class="porque-card">
+                <div class="icon">🤝</div>
+                <h3>Conexiones Humanas</h3>
+                <p>Conoce personas increíbles, crea vínculos significativos y forma parte de una comunidad solidaria.</p>
+            </div>
+            <div class="porque-card">
+                <div class="icon">📚</div>
+                <h3>Experiencia Valiosa</h3>
+                <p>Adquiere experiencia práctica en áreas sociales que enriquecerán tu currículum y tu vida profesional.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Áreas de Voluntariado -->
+    <section class="areas-section">
+        <div class="areas-container">
+            <h2>Áreas de Voluntariado</h2>
+            <div class="areas-grid">
+                <div class="area-card">
+                    <div class="area-header">
+                        <div class="area-icon">📚</div>
+                        <h3>Educación</h3>
+                    </div>
+                    <p>Apoya a niños y jóvenes en su proceso educativo mediante clases de refuerzo, talleres creativos y actividades de lectura.</p>
+                    <div class="area-requisitos">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            <li>Paciencia y empatía con menores</li>
+                            <li>Disponibilidad de 4-6 horas semanales</li>
+                            <li>Conocimientos básicos en materias escolares</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="area-card">
+                    <div class="area-header">
+                        <div class="area-icon">🏥</div>
+                        <h3>Salud Comunitaria</h3>
+                    </div>
+                    <p>Participa en brigadas médicas, campañas de prevención y programas de salud mental para comunidades vulnerables.</p>
+                    <div class="area-requisitos">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            <li>Estudiantes o profesionales de salud</li>
+                            <li>Compromiso con el servicio comunitario</li>
+                            <li>Disponibilidad para trabajo de campo</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="area-card">
+                    <div class="area-header">
+                        <div class="area-icon">💼</div>
+                        <h3>Emprendimiento</h3>
+                    </div>
+                    <p>Capacita a personas en oficios, emprendimiento y habilidades laborales para mejorar su empleabilidad.</p>
+                    <div class="area-requisitos">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            <li>Experiencia en negocios o oficios</li>
+                            <li>Habilidades de enseñanza</li>
+                            <li>Capacidad para motivar y guiar</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="area-card">
+                    <div class="area-header">
+                        <div class="area-icon">🎨</div>
+                        <h3>Arte y Cultura</h3>
+                    </div>
+                    <p>Organiza talleres artísticos, culturales y recreativos que fomenten la expresión y el desarrollo integral.</p>
+                    <div class="area-requisitos">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            <li>Talento en música, danza, pintura o teatro</li>
+                            <li>Creatividad y entusiasmo</li>
+                            <li>Ganas de compartir tu arte</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="area-card">
+                    <div class="area-header">
+                        <div class="area-icon">🌍</div>
+                        <h3>Apoyo a Inmigrantes</h3>
+                    </div>
+                    <p>Acompaña a familias inmigrantes en su proceso de integración, ofreciendo orientación y apoyo emocional.</p>
+                    <div class="area-requisitos">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            <li>Empatía intercultural</li>
+                            <li>Conocimiento de idiomas (deseable)</li>
+                            <li>Habilidades de escucha activa</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="area-card">
+                    <div class="area-header">
+                        <div class="area-icon">💻</div>
+                        <h3>Gestión y Comunicación</h3>
+                    </div>
+                    <p>Colabora en tareas administrativas, diseño gráfico, redes sociales y documentación de proyectos.</p>
+                    <div class="area-requisitos">
+                        <h4>Requisitos</h4>
+                        <ul>
+                            <li>Manejo de herramientas digitales</li>
+                            <li>Organización y proactividad</li>
+                            <li>Trabajo remoto flexible</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonios -->
+    <section class="testimonios-section">
+        <h2>Experiencias de Nuestros Voluntarios</h2>
+        <div class="testimonios-grid">
+            <div class="testimonio-card">
+                <p class="testimonio-texto">Ser voluntaria ha cambiado mi vida completamente. Ver la sonrisa de los niños cuando aprenden algo nuevo no tiene precio. Me siento parte de algo mucho más grande que yo misma.</p>
+                <div class="testimonio-autor">
+                    <div class="autor-avatar">👩</div>
+                    <div class="autor-info">
+                        <h4>Sofía Martínez</h4>
+                        <p>Voluntaria de Educación - 2 años</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonio-card">
+                <p class="testimonio-texto">Como médico, participar en las brigadas móviles me ha permitido llevar salud donde más se necesita. Es una experiencia gratificante que recomiendo a todos mis colegas.</p>
+                <div class="testimonio-autor">
+                    <div class="autor-avatar">👨</div>
+                    <div class="autor-info">
+                        <h4>Dr. Miguel Ríos</h4>
+                        <p>Voluntario de Salud - 3 años</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonio-card">
+                <p class="testimonio-texto">Ayudar a emprendedores a materializar sus sueños es increíble. He aprendido tanto de sus historias de superación como ellos de mis conocimientos. Es un intercambio maravilloso.</p>
+                <div class="testimonio-autor">
+                    <div class="autor-avatar">👩</div>
+                    <div class="autor-info">
+                        <h4>Carolina Vega</h4>
+                        <p>Voluntaria de Emprendimiento - 1 año</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Proceso de Inscripción -->
+    <section class="proceso-section">
+        <h2>Proceso de Inscripción</h2>
+        <div class="proceso-timeline">
+            <div class="paso">
+                <div class="paso-numero">1</div>
+                <div class="paso-contenido">
+                    <h3>Regístrate</h3>
+                    <p>Completa nuestro formulario en línea con tus datos personales, intereses y disponibilidad horaria. El proceso toma solo 5 minutos.</p>
+                </div>
+            </div>
+            
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-contenido">
+                    <h3>Entrevista Personal</h3>
+                    <p>Tendremos una conversación para conocerte mejor, entender tus motivaciones y encontrar el área de voluntariado que mejor se adapte a ti.</p>
+                </div>
+            </div>
+            
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-contenido">
+                    <h3>Capacitación</h3>
+                    <p>Participarás en una sesión de inducción donde te explicaremos nuestros valores, procedimientos y te prepararemos para tu rol específico.</p>
+                </div>
+            </div>
+            
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-contenido">
+                    <h3>¡Comienza tu Aventura!</h3>
+                    <p>Empieza a hacer la diferencia. Estaremos contigo en cada paso, brindándote apoyo y reconociendo tu valioso aporte a la comunidad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Final -->
+    <section class="cta-final">
+        <h2>¿Listo Para Ser Parte del Cambio?</h2>
+        <p>No esperes más. Tu tiempo y talento pueden transformar vidas. Únete a nuestra familia de voluntarios hoy mismo.</p>
+        <div class="cta-buttons">
+            <button class="btn-primary" onclick="window.open('https://chat.whatsapp.com/EVj3SAiGYOwLQzJDbGo3CU', '_blank')">Inscríbete Ahora</button>
+            <button class="btn-secondary" onclick="alert('Descargando información...')">Descargar Información</button>
+        </div>
+    </section>
+</body>
+</html>
