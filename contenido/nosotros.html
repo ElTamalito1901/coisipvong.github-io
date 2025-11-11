@@ -18,72 +18,64 @@
             padding: 0;
         }
         
-        /* Hero Section Nosotros */
-        .nosotros-hero {
-            width: 100%;
-            height: 600px;
-            background: linear-gradient(135deg, rgba(8, 30, 84, 0.85), rgba(102, 126, 234, 0.75)), url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1920');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .nosotros-hero-content {
+        /* Header Section sin imagen grande */
+        .nosotros-header {
+            max-width: 1400px;
+            margin: 80px auto 60px;
+            padding: 0 70px;
             text-align: center;
-            color: white;
-            z-index: 10;
-            padding: 40px;
-            max-width: 1200px;
+            opacity: 0;
+            animation: fadeInDown 1s ease-out forwards;
         }
         
-        .nosotros-hero h1 {
-            font-size: 72px;
-            font-weight: bold;
+        .nosotros-header h1 {
+            font-size: 68px;
+            color: #916eac;
             margin-bottom: 30px;
-            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
-            animation: fadeInDown 1s ease-out;
+            font-weight: bold;
         }
         
-        .nosotros-hero p {
-            font-size: 26px;
-            line-height: 1.6;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
-            animation: fadeInUp 1s ease-out 0.3s both;
+        .nosotros-header p {
+            font-size: 24px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 1100px;
+            margin: 0 auto;
         }
         
-        /* Historia Section */
+        /* Historia Section con imagen más pequeña */
         .historia-section {
             max-width: 1600px;
             margin: 80px auto;
             padding: 0 70px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 0.8fr 1.2fr;
             gap: 60px;
             align-items: center;
         }
         
         .historia-imagen {
             width: 100%;
-            height: 550px;
+            height: 420px;
             border-radius: 20px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)), url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800');
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)), url('../imagen/nosotros/barner.png');
             background-size: cover;
             background-position: center;
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
-            animation: slideInLeft 1s ease-out;
+            opacity: 0;
+            animation: slideInLeft 1s ease-out forwards;
+            animation-delay: 0.2s;
         }
         
         .historia-contenido {
-            animation: slideInRight 1s ease-out;
+            opacity: 0;
+            animation: slideInRight 1s ease-out forwards;
+            animation-delay: 0.3s;
         }
         
         .historia-contenido h2 {
             font-size: 48px;
-            color: #081e54;
+            color: #df602d;
             margin-bottom: 30px;
         }
         
@@ -96,7 +88,7 @@
         
         /* Misión y Visión */
         .mision-vision-section {
-            background: linear-gradient(135deg, #081e54 0%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #503f5e 0%, #916eac 100%);
             padding: 90px 70px;
             margin: 80px 0;
         }
@@ -116,12 +108,22 @@
             border-radius: 20px;
             border: 2px solid rgba(255, 255, 255, 0.2);
             transition: all 0.4s;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .mision-card {
+            animation-delay: 0.2s;
+        }
+        
+        .vision-card {
+            animation-delay: 0.4s;
         }
         
         .mision-card:hover, .vision-card:hover {
             transform: translateY(-10px);
             background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgb(141, 106, 170);
         }
         
         .mision-card h3, .vision-card h3 {
@@ -153,7 +155,7 @@
         
         .valores-section h2 {
             font-size: 52px;
-            color: #081e54;
+            color: #a7c844;
             margin-bottom: 60px;
         }
         
@@ -171,7 +173,16 @@
             transition: all 0.4s;
             position: relative;
             overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
+        
+        .valor-card:nth-child(1) { animation-delay: 0.1s; }
+        .valor-card:nth-child(2) { animation-delay: 0.2s; }
+        .valor-card:nth-child(3) { animation-delay: 0.3s; }
+        .valor-card:nth-child(4) { animation-delay: 0.4s; }
+        .valor-card:nth-child(5) { animation-delay: 0.5s; }
+        .valor-card:nth-child(6) { animation-delay: 0.6s; }
         
         .valor-card::before {
             content: '';
@@ -180,7 +191,7 @@
             left: 0;
             width: 100%;
             height: 5px;
-            background: linear-gradient(90deg, #081e54, #667eea);
+            background: linear-gradient(90deg, #a7c844, #546421);
             transform: scaleX(0);
             transition: transform 0.4s;
         }
@@ -226,7 +237,7 @@
         
         .equipo-container h2 {
             font-size: 52px;
-            color: #081e54;
+            color: #4e2d7b;
             margin-bottom: 30px;
         }
         
@@ -251,7 +262,14 @@
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
             transition: all 0.4s;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
+        
+        .miembro-card:nth-child(1) { animation-delay: 0.2s; }
+        .miembro-card:nth-child(2) { animation-delay: 0.3s; }
+        .miembro-card:nth-child(3) { animation-delay: 0.4s; }
+        .miembro-card:nth-child(4) { animation-delay: 0.5s; }
         
         .miembro-card:hover {
             transform: translateY(-10px);
@@ -262,7 +280,7 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #916eac, #764ba2);
             margin: 0 auto 25px;
             display: flex;
             align-items: center;
@@ -273,22 +291,38 @@
         
         .miembro-card h4 {
             font-size: 28px;
-            color: #081e54;
+            color: #916eac;
             margin-bottom: 10px;
         }
         
         .miembro-card .cargo {
             font-size: 18px;
-            color: #667eea;
+            color: #4e2d7b;
             margin-bottom: 20px;
             font-weight: 600;
         }
         
         .miembro-card p {
             font-size: 17px;
-            color: #666;
+            color: #000000;
             line-height: 1.6;
         }
+
+        .miembro-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+    .miembro-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    }
+
         
         /* Animaciones */
         @keyframes fadeInDown {
@@ -337,15 +371,16 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .nosotros-hero {
-                height: 400px;
+            .nosotros-header {
+                padding: 0 20px;
+                margin: 50px auto 40px;
             }
             
-            .nosotros-hero h1 {
+            .nosotros-header h1 {
                 font-size: 36px;
             }
             
-            .nosotros-hero p {
+            .nosotros-header p {
                 font-size: 18px;
             }
             
@@ -356,7 +391,7 @@
             }
             
             .historia-imagen {
-                height: 350px;
+                height: 300px;
             }
             
             .historia-contenido h2 {
@@ -423,22 +458,19 @@
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="nosotros-hero">
-        <div class="nosotros-hero-content">
-            <h1>Quiénes Somos</h1>
-            <p>Una organización dedicada a transformar vidas a través de la solidaridad, la inclusión y el compromiso con las comunidades más vulnerables.</p>
-        </div>
+    <!-- Header sin imagen grande -->
+    <section class="nosotros-header">
+        <h1>Quiénes Somos</h1>
+        <p>Una organización que une corazones para crear oportunidades, impulsando la solidaridad y el desarrollo de quienes más lo necesitan.</p>
     </section>
     
-    <!-- Historia Section -->
+    <!-- Historia Section con imagen más pequeña -->
     <section class="historia-section">
         <div class="historia-imagen"></div>
         <div class="historia-contenido">
             <h2>Nuestra Historia</h2>
-            <p>Nacimos en 2015 con la convicción de que todos merecen las mismas oportunidades sin importar su origen. Lo que comenzó como un pequeño grupo de voluntarios comprometidos, hoy se ha convertido en una red de apoyo que impacta miles de vidas.</p>
-            <p>A lo largo de estos años, hemos trabajado incansablemente para crear puentes de integración, promover la educación y garantizar el acceso a servicios básicos para inmigrantes y comunidades peruanas en situación vulnerable.</p>
-            <p>Cada proyecto que emprendemos lleva el sello de nuestra pasión por el cambio social y nuestra creencia firme de que juntos podemos construir un futuro más justo y equitativo para todos.</p>
+            <p>La Cooperación Orientada a la Integración Social del Inmigrante y Peruano Vulnerable (COISIPV) es una organización civil fundada en 2022, dedicada a brindar atención socio comunitaria a quienes más lo necesitan. Desde entonces, ha trabajado en diversos distritos de Lima Metropolitana —como Los Olivos, San Martín de Porres, San Juan de Lurigancho, Chorrillos y Comas— apoyando a personas refugiadas, migrantes y comunidades locales.</p>
+            <p>2023, COISIPV obtuvo su reconocimiento jurídico formal, fortaleciendo su compromiso con la inclusión, la igualdad y la integración social. A través de talleres educativos, artísticos, folklóricos y socio deportivos, así como asesorías y asistencia humanitaria gratuita, la organización promueve la solidaridad, el respeto y la diversidad, construyendo día a día puentes de integración y esperanza para un futuro más digno y unido.</p>
         </div>
     </section>
     
@@ -447,11 +479,11 @@
         <div class="mision-vision-container">
             <div class="mision-card">
                 <h3><span class="icon">🎯</span> Nuestra Misión</h3>
-                <p>Promover la inclusión social y el desarrollo integral de personas en situación vulnerable, brindando herramientas educativas, apoyo emocional y oportunidades que les permitan alcanzar su máximo potencial y construir un futuro digno.</p>
+                <p>Promover la inclusión social y la igualdad de oportunidades para personas refugiadas, migrantes y poblaciones vulnerables, mediante programas educativos, artísticos y sociales que fomenten la integración cultural y el respeto por los derechos humanos.</p>
             </div>
             <div class="vision-card">
                 <h3><span class="icon">👁️</span> Nuestra Visión</h3>
-                <p>Ser una organización líder reconocida por su impacto transformador en comunidades vulnerables, creando una sociedad más inclusiva, equitativa y solidaria donde cada persona tenga acceso a las oportunidades que merece.</p>
+                <p>Ser una organización referente en integración social, reconocida por su compromiso humano y su impacto positivo en la construcción de comunidades solidarias, diversas e inclusivas en todo el país.</p>
             </div>
         </div>
     </section>
@@ -500,29 +532,21 @@
             <p>Un grupo apasionado de profesionales y voluntarios comprometidos con hacer la diferencia en nuestra comunidad.</p>
             <div class="equipo-grid">
                 <div class="miembro-card">
-                    <div class="miembro-avatar">👨‍💼</div>
-                    <h4>Carlos Mendoza</h4>
-                    <p class="cargo">Director General</p>
-                    <p>Lidera nuestra organización con visión estratégica y más de 15 años de experiencia en desarrollo social.</p>
-                </div>
-                <div class="miembro-card">
-                    <div class="miembro-avatar">👩‍💼</div>
-                    <h4>María González</h4>
-                    <p class="cargo">Coordinadora de Proyectos</p>
-                    <p>Gestiona nuestras iniciativas educativas y programas de integración con dedicación excepcional.</p>
-                </div>
-                <div class="miembro-card">
-                    <div class="miembro-avatar">👨‍⚕️</div>
-                    <h4>Dr. Luis Ramírez</h4>
-                    <p class="cargo">Responsable de Salud</p>
-                    <p>Coordina nuestros programas de salud preventiva y brigadas médicas en comunidades vulnerables.</p>
-                </div>
-                <div class="miembro-card">
-                    <div class="miembro-avatar">👩‍🏫</div>
-                    <h4>Ana Torres</h4>
-                    <p class="cargo">Coordinadora Educativa</p>
-                    <p>Diseña e implementa programas educativos que transforman el futuro de niños y jóvenes.</p>
-                </div>
+        <div class="miembro-avatar">
+        <img src="../imagen/nosotros/perfil1.jpeg" alt="Liliana Pérez">
+        </div>
+        <h4>Liliana Pérez</h4>
+        <p class="cargo">Presidenta de la organización social de base COISIPV</p>
+        <p>Abogada</p>
+        </div>
+    <div class="miembro-card">
+    <div class="miembro-avatar">
+        <img src="../imagen/nosotros/perfil2.jpeg" alt="Dr. Luis Ramírez">
+        </div>
+        <h4>Dr. Luis Ramírez</h4>
+        <p class="cargo">Coordinadora de proyectos sociales y educativos para poblaciones migrantes y vulnerables</p>
+        <p>Profesora de educación secundaria Lengua Inglesa </p>
+        </div>
             </div>
         </div>
     </section>

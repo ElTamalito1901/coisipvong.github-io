@@ -82,7 +82,7 @@ body {
 }
 
 .menu-item.active {
-    background: linear-gradient(135deg, #081e54, #081e54);
+    background: linear-gradient(135deg, #916eac, #916eac);
     color: white;
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
