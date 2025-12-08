@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #916eac 0%, #916eac 100%);
             min-height: 100vh;
             padding: 40px 20px;
         }
@@ -122,11 +122,18 @@
 
         .image-preview {
             max-width: 100%;
-            max-height: 200px;
+            max-height: auto;
             margin-top: 15px;
             border-radius: 10px;
             display: none;
         }
+
+        .image-preview-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* ancho máximo de la imagen */
+    margin-top: 15px;
+}
 
         .image-preview.show {
             display: block;
@@ -161,7 +168,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #081e54 0%, #667eea 100%);
+            background: linear-gradient(135deg, #916eac 0%, #916eac 100%);
             color: white;
         }
 
@@ -382,7 +389,7 @@
                 <div class="info-box">
                     <h3>💡 Consejo</h3>
                     <p>Marca una noticia como "destacada" para que aparezca en la sección principal. Puedes subir
-                        imágenes desde tu PC o usar URLs externas.</p>
+                        imágenes desde tu PC.</p>
                 </div>
 
                 <form id="noticia-form">
@@ -421,7 +428,25 @@
                             <p>📸 Arrastra una imagen aquí o haz clic para seleccionar</p>
                         </div>
                         <input type="file" id="imagen-file" accept="image/*" style="display: none;">
-                        <img id="image-preview" class="image-preview" alt="Preview">
+                        <div class="image-preview-container" style="position: relative; display: inline-block; width: 100%;">
+                            <img id="image-preview" class="image-preview" alt="Preview" style="width: 100%; border-radius: 10px;">
+                            <button type="button" id="remove-image-btn" style="
+                                position: absolute;
+                                top: 10px;
+                                right: 10px;
+                                background: rgba(239, 68, 68, 0.8);
+                                border: none;
+                                color: white;
+                                font-size: 18px;
+                                border-radius: 50%;
+                                width: 30px;
+                                height: 30px;
+                                cursor: pointer;
+                                display: none;
+                            ">×</button>
+                        </div>
+
+                        
                     </div>
 
                     <div class="form-group">
@@ -506,15 +531,27 @@
         if (file) handleImageFile(file);
     });
 
-    function handleImageFile(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.src = e.target.result;
-            preview.classList.add('show');
-            imagenSeleccionada = { type: 'file', data: file };
-        };
-        reader.readAsDataURL(file);
-    }
+    const removeImageBtn = document.getElementById("remove-image-btn");
+
+        function handleImageFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                preview.classList.add('show');
+                imagenSeleccionada = { type: 'file', data: file };
+                removeImageBtn.style.display = 'block'; // mostrar botón al cargar imagen
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Al hacer click en el botón X
+        removeImageBtn.addEventListener('click', () => {
+            preview.src = '';
+            preview.classList.remove('show');
+            imagenSeleccionada = null;
+            removeImageBtn.style.display = 'none';
+            fileInput.value = ''; // resetear input file
+        });
 
     // Cargar noticias
     async function cargarNoticias() {
@@ -675,6 +712,8 @@
             preview.src = noticia.imagen;
             preview.classList.add('show');
             imagenSeleccionada = { type: 'url', data: noticia.imagen };
+
+            removeImageBtn.style.display = 'block';
         }
 
         document.getElementById("form-title").textContent = "Editar Noticia";
