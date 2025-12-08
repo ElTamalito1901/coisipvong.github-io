@@ -390,11 +390,10 @@
                 <span>Voluntarios</span>
             </button>
 
-            <!-- SI SE AGREGA EL PANEL DE ADMINISTRADOR, se podra agregar noticias 
             <button class="menu-item" onclick="loadPage('Noticias.html')" id="btn-noticias">
                 <span class="icon">📰</span>
                 <span>Noticias</span>
-            </button> -->
+            </button>
 
 
             <button class="menu-item" onclick="loadPage('Contacto.html')" id="btn-Contacto">
@@ -403,14 +402,13 @@
             </button>
         </div>
 
-        <!--  BOTON PARA INICIAR SESION E INGRESAR AL PANEL DE ADMINISTRADOR
         
         <div class="login-section">
-            <button class="login-btn" onclick="openLoginModal()">
+            <button class="login-btn" onclick="loadPage('login.html')">
                 <span class="icon">🔐</span>
                 <span>Iniciar Sesión</span>
             </button>
-        </div> -->  
+        </div>
     </div>
 
     <div class="content-frame" id="content-area">
@@ -425,7 +423,6 @@
         </iframe>
     </div>
 
-    <!-- LOGIN MODAL 
     <div class="login-modal" id="loginModal">
         <div class="login-box">
             <h2>🔐 Iniciar Sesión</h2>
@@ -450,7 +447,7 @@
                 <button type="button" class="login-cancel" onclick="closeLoginModal()">Cancelar</button>
             </form>
         </div>
-    </div> -->
+    </div>
 
     <script>
         const VALID_EMAIL = "coisipv.equipo@gmail.com";
@@ -558,6 +555,7 @@
                 loadPage('inicio.html');
             });
     </script>
+    <script type="module" src="/firebase.js"></script>
 </body>
 
 </html>

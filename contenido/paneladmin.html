@@ -401,171 +401,157 @@
         </div>
     </div>
 
-    <script>
-        let noticias = [];
-        let noticiaDestacada = null;
-        let editandoId = null;
+<script type="module">
+    import { db } from "/firebase.js";
+    import {
+        collection,
+        addDoc,
+        getDocs,
+        deleteDoc,
+        doc,
+        updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-        async function cargarNoticias() {
-            try {
-                const result = await window.storage.get('noticias-ong', false);
-                if (result && result.value) {
-                    const data = JSON.parse(result.value);
-                    noticias = data.noticias || [];
-                    noticiaDestacada = data.destacada || null;
-                }
-            } catch (error) {
-                console.log('No hay noticias guardadas');
-            }
-            renderizarNoticias();
+    let noticias = [];
+    let editandoId = null;
+
+    // 📌 1. Cargar noticias desde Firestore
+    async function cargarNoticias() {
+        const querySnapshot = await getDocs(collection(db, "noticias"));
+        noticias = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        renderizarNoticias();
+    }
+
+    // 📌 2. Guardar noticia (agregar o actualizar)
+    async function guardarNoticia(noticia) {
+        if (editandoId) {
+            await updateDoc(doc(db, "noticias", editandoId), noticia);
+        } else {
+            await addDoc(collection(db, "noticias"), noticia);
         }
+        return true;
+    }
 
-        async function guardarNoticias() {
-            const data = {
-                noticias: noticias,
-                destacada: noticiaDestacada
-            };
-
-            try {
-                await window.storage.set('noticias-ong', JSON.stringify(data), false);
-                return true;
-            } catch (error) {
-                console.error('Error al guardar:', error);
-                return false;
-            }
-        }
-
-        function renderizarNoticias() {
-            const lista = document.getElementById('noticias-list');
-            document.getElementById('total-noticias').textContent = noticias.length;
-
-            if (noticias.length === 0) {
-                lista.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">No hay noticias guardadas aún</p>';
-                return;
-            }
-
-            const html = noticias.map(noticia => `
-                <div class="noticia-item ${noticia.destacada ? 'destacada' : ''}">
-                    <h4>${noticia.titulo}</h4>
-                    <p>${noticia.descripcion.substring(0, 100)}${noticia.descripcion.length > 100 ? '...' : ''}</p>
-                    <div class="noticia-meta">
-                        <span class="badge badge-categoria">${noticia.categoria}</span>
-                        <span class="badge badge-fecha">${noticia.fecha}</span>
-                        ${noticia.destacada ? '<span class="badge badge-destacada">⭐ Destacada</span>' : ''}
-                    </div>
-                    <div class="noticia-actions">
-                        <button class="btn-small btn-edit" onclick="editarNoticia('${noticia.id}')">Editar</button>
-                        <button class="btn-small btn-delete" onclick="eliminarNoticia('${noticia.id}')">Eliminar</button>
-                    </div>
-                </div>
-            `).join('');
-
-            lista.innerHTML = html;
-        }
-
-        document.getElementById('noticia-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const noticia = {
-                id: editandoId || Date.now().toString(),
-                titulo: document.getElementById('titulo').value,
-                descripcion: document.getElementById('descripcion').value,
-                categoria: document.getElementById('categoria').value,
-                fecha: document.getElementById('fecha').value,
-                imagen: document.getElementById('imagen').value,
-                autor: document.getElementById('autor').value,
-                autorAvatar: document.getElementById('autorAvatar').value || '👤',
-                destacada: document.getElementById('destacada').checked
-            };
-
-            if (editandoId) {
-                const index = noticias.findIndex(n => n.id === editandoId);
-                noticias[index] = noticia;
-                editandoId = null;
-            } else {
-                noticias.unshift(noticia);
-            }
-
-            // Actualizar noticia destacada
-            if (noticia.destacada) {
-                // Quitar destacada de otras noticias
-                noticias.forEach(n => {
-                    if (n.id !== noticia.id) n.destacada = false;
-                });
-                noticiaDestacada = noticia;
-            } else if (noticiaDestacada && noticiaDestacada.id === noticia.id) {
-                noticiaDestacada = null;
-            }
-
-            const guardado = await guardarNoticias();
-
-            if (guardado) {
-                mostrarMensaje('✅ Noticia guardada exitosamente');
-                limpiarFormulario();
-                renderizarNoticias();
-            } else {
-                alert('Error al guardar la noticia');
-            }
-        });
-
-        function editarNoticia(id) {
-            const noticia = noticias.find(n => n.id === id);
-            if (!noticia) return;
-
-            editandoId = id;
-            document.getElementById('titulo').value = noticia.titulo;
-            document.getElementById('descripcion').value = noticia.descripcion;
-            document.getElementById('categoria').value = noticia.categoria;
-            document.getElementById('fecha').value = noticia.fecha;
-            document.getElementById('imagen').value = noticia.imagen;
-            document.getElementById('autor').value = noticia.autor;
-            document.getElementById('autorAvatar').value = noticia.autorAvatar;
-            document.getElementById('destacada').checked = noticia.destacada;
-
-            document.getElementById('form-title').textContent = 'Editar Noticia';
-            document.getElementById('submit-btn').textContent = 'Actualizar Noticia';
-            document.getElementById('cancel-btn').style.display = 'block';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function eliminarNoticia(id) {
-            if (!confirm('¿Estás seguro de eliminar esta noticia?')) return;
-
-            noticias = noticias.filter(n => n.id !== id);
-            if (noticiaDestacada && noticiaDestacada.id === id) {
-                noticiaDestacada = null;
-            }
-
-            const guardado = await guardarNoticias();
-            if (guardado) {
-                mostrarMensaje('🗑️ Noticia eliminada');
-                renderizarNoticias();
-            }
-        }
-
-        function limpiarFormulario() {
-            document.getElementById('noticia-form').reset();
-            editandoId = null;
-            document.getElementById('form-title').textContent = 'Agregar Nueva Noticia';
-            document.getElementById('submit-btn').textContent = 'Agregar Noticia';
-            document.getElementById('cancel-btn').style.display = 'none';
-        }
-
-        document.getElementById('cancel-btn').addEventListener('click', limpiarFormulario);
-
-        function mostrarMensaje(texto) {
-            const div = document.createElement('div');
-            div.className = 'success-message';
-            div.textContent = texto;
-            document.getElementById('success-message').innerHTML = '';
-            document.getElementById('success-message').appendChild(div);
-            setTimeout(() => div.remove(), 3000);
-        }
-
-        // Cargar noticias al iniciar
+    // 📌 3. Eliminar noticia
+    async function eliminarNoticia(id) {
+        await deleteDoc(doc(db, "noticias", id));
+        mostrarMensaje("🗑️ Noticia eliminada");
         cargarNoticias();
-    </script>
+    }
+
+    // 📌 4. Renderizar en pantalla
+    function renderizarNoticias() {
+        const lista = document.getElementById("noticias-list");
+        document.getElementById("total-noticias").textContent = noticias.length;
+
+        if (noticias.length === 0) {
+            lista.innerHTML = `
+                <p style="color: #999; text-align: center; padding: 40px;">
+                    No hay noticias guardadas aún
+                </p>`;
+            return;
+        }
+
+        lista.innerHTML = noticias.map(noticia => `
+            <div class="noticia-item ${noticia.destacada ? 'destacada' : ''}">
+                <h4>${noticia.titulo}</h4>
+                <p>${noticia.descripcion.substring(0, 100)}${noticia.descripcion.length > 100 ? '...' : ''}</p>
+
+                <div class="noticia-meta">
+                    <span class="badge badge-categoria">${noticia.categoria}</span>
+                    <span class="badge badge-fecha">${noticia.fecha}</span>
+                    ${noticia.destacada ? '<span class="badge badge-destacada">⭐ Destacada</span>' : ''}
+                </div>
+
+                <div class="noticia-actions">
+                    <button class="btn-small btn-edit" onclick="editarNoticia('${noticia.id}')">
+                        Editar
+                    </button>
+                    <button class="btn-small btn-delete" onclick="eliminarNoticia('${noticia.id}')">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    // 📌 5. Manejar formulario
+    document.getElementById("noticia-form").addEventListener("submit", async e => {
+        e.preventDefault();
+
+        const noticia = {
+            titulo: document.getElementById("titulo").value,
+            descripcion: document.getElementById("descripcion").value,
+            categoria: document.getElementById("categoria").value,
+            fecha: document.getElementById("fecha").value,
+            imagen: document.getElementById("imagen").value,
+            autor: document.getElementById("autor").value,
+            autorAvatar: document.getElementById("autorAvatar").value || "👤",
+            destacada: document.getElementById("destacada").checked
+        };
+
+        await guardarNoticia(noticia);
+
+        mostrarMensaje("✅ Noticia guardada correctamente");
+        limpiarFormulario();
+        cargarNoticias();
+    });
+
+    // 📌 6. Editar noticia
+    window.editarNoticia = function (id) {
+        const noticia = noticias.find(n => n.id === id);
+        if (!noticia) return;
+
+        editandoId = id;
+
+        document.getElementById("titulo").value = noticia.titulo;
+        document.getElementById("descripcion").value = noticia.descripcion;
+        document.getElementById("categoria").value = noticia.categoria;
+        document.getElementById("fecha").value = noticia.fecha;
+        document.getElementById("imagen").value = noticia.imagen;
+        document.getElementById("autor").value = noticia.autor;
+        document.getElementById("autorAvatar").value = noticia.autorAvatar;
+        document.getElementById("destacada").checked = noticia.destacada;
+
+        document.getElementById("form-title").textContent = "Editar Noticia";
+        document.getElementById("submit-btn").textContent = "Actualizar Noticia";
+        document.getElementById("cancel-btn").style.display = "block";
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // 📌 7. Eliminar noticia (exponer función)
+    window.eliminarNoticia = eliminarNoticia;
+
+    // 📌 8. Cancelar edición
+    document.getElementById("cancel-btn").addEventListener("click", limpiarFormulario);
+
+    function limpiarFormulario() {
+        document.getElementById("noticia-form").reset();
+        editandoId = null;
+        document.getElementById("form-title").textContent = "Agregar Nueva Noticia";
+        document.getElementById("submit-btn").textContent = "Agregar Noticia";
+        document.getElementById("cancel-btn").style.display = "none";
+    }
+
+    // 📌 9. Mostrar mensajes bonitos
+    function mostrarMensaje(texto) {
+        const div = document.createElement("div");
+        div.className = "success-message";
+        div.textContent = texto;
+        document.getElementById("success-message").innerHTML = "";
+        document.getElementById("success-message").appendChild(div);
+        setTimeout(() => div.remove(), 3000);
+    }
+
+    // 📌 10. Cargar al iniciar
+    cargarNoticias();
+</script>
+    <script type="module" src="/firebase.js"></script>
 </body>
 
 </html>
