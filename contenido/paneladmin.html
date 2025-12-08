@@ -97,7 +97,39 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
+        }
+
+        .image-upload-area {
+            border: 3px dashed #e0e0e0;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .image-upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .image-upload-area.dragover {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .image-preview.show {
+            display: block;
         }
 
         .checkbox-group {
@@ -215,6 +247,14 @@
             color: white;
         }
 
+        .noticia-thumbnail {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
         .noticia-actions {
             display: flex;
             gap: 10px;
@@ -248,6 +288,17 @@
 
         .success-message {
             background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .error-message {
+            background: #ef4444;
             color: white;
             padding: 15px 25px;
             border-radius: 12px;
@@ -321,7 +372,7 @@
             <p>Gestiona las noticias de tu ONG</p>
         </div>
 
-        <div id="success-message"></div>
+        <div id="message-container"></div>
 
         <div class="admin-grid">
             <!-- Panel de Agregar Noticia -->
@@ -330,8 +381,8 @@
 
                 <div class="info-box">
                     <h3>💡 Consejo</h3>
-                    <p>Marca una noticia como "destacada" para que aparezca en la sección principal con un diseño
-                        especial.</p>
+                    <p>Marca una noticia como "destacada" para que aparezca en la sección principal. Puedes subir
+                        imágenes desde tu PC o usar URLs externas.</p>
                 </div>
 
                 <form id="noticia-form">
@@ -343,31 +394,34 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Descripción *</label>
-                        <textarea id="descripcion" required placeholder="Describe brevemente la noticia..."></textarea>
+                        <label>Descripción Completa *</label>
+                        <textarea id="descripcion" required
+                            placeholder="Describe la noticia con todos los detalles importantes..."></textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Categoría *</label>
                         <select id="categoria" required>
                             <option value="">Seleccionar categoría</option>
-                            <option value="Eventos">Eventos</option>
-                            <option value="Logros">Logros</option>
-                            <option value="Testimonios">Testimonios</option>
-                            <option value="Proyectos">Proyectos</option>
+                            <option value="eventos">Eventos</option>
+                            <option value="logros">Logros</option>
+                            <option value="testimonios">Testimonios</option>
+                            <option value="proyectos">Proyectos</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Fecha *</label>
-                        <input type="text" id="fecha" required placeholder="Ej: 5 de Diciembre, 2025">
+                        <label>Fecha de Publicación *</label>
+                        <input type="date" id="fecha" required>
                     </div>
 
                     <div class="form-group">
-                        <label>URL de Imagen *</label>
-                        <input type="url" id="imagen" required placeholder="https://ejemplo.com/imagen.jpg">
-                        <small style="color: #666; display: block; margin-top: 5px;">Puedes usar imágenes de Unsplash o
-                            cualquier URL pública</small>
+                        <label>Imagen *</label>
+                        <div class="image-upload-area" id="image-upload-area">
+                            <p>📸 Arrastra una imagen aquí o haz clic para seleccionar</p>
+                        </div>
+                        <input type="file" id="imagen-file" accept="image/*" style="display: none;">
+                        <img id="image-preview" class="image-preview" alt="Preview">
                     </div>
 
                     <div class="form-group">
@@ -395,113 +449,214 @@
             <div class="panel">
                 <h2>📰 Noticias Guardadas (<span id="total-noticias">0</span>)</h2>
                 <div class="noticias-list" id="noticias-list">
-                    <p style="color: #999; text-align: center; padding: 40px;">No hay noticias guardadas aún</p>
+                    <p style="color: #999; text-align: center; padding: 40px;">Cargando noticias...</p>
                 </div>
             </div>
         </div>
     </div>
 
 <script type="module">
-    import { db } from "/firebase.js";
-    import {
-        collection,
-        addDoc,
-        getDocs,
-        deleteDoc,
-        doc,
-        updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import {
+            getFirestore, collection, addDoc, getDocs,
+            deleteDoc, doc, updateDoc, serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+    // Configuración de Firebase
+    const firebaseConfig = {
+            apiKey: "AIzaSyDCd1Cg19DJZIqtFZC2sKAsg3jKDnt9xg8",
+            authDomain: "coisipvong-a8898.firebaseapp.com",
+            projectId: "coisipvong-a8898",
+            storageBucket: "coisipvong-a8898.firebasestorage.app",
+            messagingSenderId: "892210384824",
+            appId: "1:892210384824:web:b97ea7ef30c290bf5c094d",
+            measurementId: "G-3WMPKT6E6M"
+        };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
 
     let noticias = [];
     let editandoId = null;
+    let imagenSeleccionada = null;
 
-    // 📌 1. Cargar noticias desde Firestore
+    // Configurar área de carga de imagen
+    const uploadArea = document.getElementById('image-upload-area');
+    const fileInput = document.getElementById('imagen-file');
+    const preview = document.getElementById('image-preview');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) handleImageFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleImageFile(file);
+    });
+
+    function handleImageFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.classList.add('show');
+            imagenSeleccionada = { type: 'file', data: file };
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Cargar noticias
     async function cargarNoticias() {
-        const querySnapshot = await getDocs(collection(db, "noticias"));
-        noticias = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
-        renderizarNoticias();
-    }
-
-    // 📌 2. Guardar noticia (agregar o actualizar)
-    async function guardarNoticia(noticia) {
-        if (editandoId) {
-            await updateDoc(doc(db, "noticias", editandoId), noticia);
-        } else {
-            await addDoc(collection(db, "noticias"), noticia);
+        try {
+            const querySnapshot = await getDocs(collection(db, "noticias"));
+            noticias = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            noticias.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            renderizarNoticias();
+        } catch (error) {
+            mostrarMensaje('Error al cargar noticias: ' + error.message, 'error');
         }
-        return true;
     }
 
-    // 📌 3. Eliminar noticia
+    // Subir imagen
+    async function subirImagen(file) {
+        const timestamp = Date.now();
+        const storageRef = ref(storage, `noticias/${timestamp}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        return await getDownloadURL(storageRef);
+    }
+
+    // Guardar noticia
+    async function guardarNoticia(noticia) {
+        try {
+            if (editandoId) {
+                await updateDoc(doc(db, "noticias", editandoId), {
+                    ...noticia,
+                    updatedAt: serverTimestamp()
+                });
+            } else {
+                await addDoc(collection(db, "noticias"), {
+                    ...noticia,
+                    createdAt: serverTimestamp()
+                });
+            }
+            return true;
+        } catch (error) {
+            throw new Error('Error al guardar: ' + error.message);
+        }
+    }
+
+    // Eliminar noticia
     async function eliminarNoticia(id) {
-        await deleteDoc(doc(db, "noticias", id));
-        mostrarMensaje("🗑️ Noticia eliminada");
-        cargarNoticias();
+        if (!confirm('¿Estás seguro de eliminar esta noticia?')) return;
+
+        try {
+            await deleteDoc(doc(db, "noticias", id));
+            mostrarMensaje("🗑️ Noticia eliminada correctamente", 'success');
+            cargarNoticias();
+        } catch (error) {
+            mostrarMensaje('Error al eliminar: ' + error.message, 'error');
+        }
     }
 
-    // 📌 4. Renderizar en pantalla
+    // Renderizar noticias
     function renderizarNoticias() {
         const lista = document.getElementById("noticias-list");
         document.getElementById("total-noticias").textContent = noticias.length;
 
         if (noticias.length === 0) {
-            lista.innerHTML = `
-                <p style="color: #999; text-align: center; padding: 40px;">
-                    No hay noticias guardadas aún
-                </p>`;
+            lista.innerHTML = `<p style="color: #999; text-align: center; padding: 40px;">No hay noticias guardadas aún</p>`;
             return;
         }
 
         lista.innerHTML = noticias.map(noticia => `
             <div class="noticia-item ${noticia.destacada ? 'destacada' : ''}">
+                ${noticia.imagen ? `<img src="${noticia.imagen}" class="noticia-thumbnail" alt="${noticia.titulo}">` : ''}
                 <h4>${noticia.titulo}</h4>
-                <p>${noticia.descripcion.substring(0, 100)}${noticia.descripcion.length > 100 ? '...' : ''}</p>
-
+                <p>${noticia.descripcion.substring(0, 150)}${noticia.descripcion.length > 150 ? '...' : ''}</p>
+                
                 <div class="noticia-meta">
                     <span class="badge badge-categoria">${noticia.categoria}</span>
-                    <span class="badge badge-fecha">${noticia.fecha}</span>
+                    <span class="badge badge-fecha">${formatearFecha(noticia.fecha)}</span>
                     ${noticia.destacada ? '<span class="badge badge-destacada">⭐ Destacada</span>' : ''}
                 </div>
 
                 <div class="noticia-actions">
-                    <button class="btn-small btn-edit" onclick="editarNoticia('${noticia.id}')">
-                        Editar
-                    </button>
-                    <button class="btn-small btn-delete" onclick="eliminarNoticia('${noticia.id}')">
-                        Eliminar
-                    </button>
+                    <button class="btn-small btn-edit" onclick="window.editarNoticia('${noticia.id}')">✏️ Editar</button>
+                    <button class="btn-small btn-delete" onclick="window.eliminarNoticia('${noticia.id}')">🗑️ Eliminar</button>
                 </div>
             </div>
         `).join("");
     }
 
-    // 📌 5. Manejar formulario
-    document.getElementById("noticia-form").addEventListener("submit", async e => {
+    function formatearFecha(fecha) {
+        const date = new Date(fecha);
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        return `${date.getDate()} de ${meses[date.getMonth()]}, ${date.getFullYear()}`;
+    }
+
+    // FORMULARIO
+    document.getElementById("noticia-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const noticia = {
-            titulo: document.getElementById("titulo").value,
-            descripcion: document.getElementById("descripcion").value,
-            categoria: document.getElementById("categoria").value,
-            fecha: document.getElementById("fecha").value,
-            imagen: document.getElementById("imagen").value,
-            autor: document.getElementById("autor").value,
-            autorAvatar: document.getElementById("autorAvatar").value || "👤",
-            destacada: document.getElementById("destacada").checked
-        };
+        if (!imagenSeleccionada) {
+            mostrarMensaje('Por favor selecciona una imagen', 'error');
+            return;
+        }
 
-        await guardarNoticia(noticia);
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Guardando...';
 
-        mostrarMensaje("✅ Noticia guardada correctamente");
-        limpiarFormulario();
-        cargarNoticias();
+        try {
+            let imagenURL = '';
+
+            if (imagenSeleccionada.type === 'file') {
+                imagenURL = await subirImagen(imagenSeleccionada.data);
+            } else {
+                imagenURL = imagenSeleccionada.data;
+            }
+
+            const noticia = {
+                titulo: document.getElementById("titulo").value,
+                descripcion: document.getElementById("descripcion").value,
+                categoria: document.getElementById("categoria").value,
+
+                // 🔥 CAMBIO IMPORTANTE — FECHA SIEMPRE VÁLIDA
+                fecha: new Date(document.getElementById("fecha").value).toISOString(),
+
+                imagen: imagenURL,
+                autor: document.getElementById("autor").value,
+                autorAvatar: document.getElementById("autorAvatar").value || "👤",
+                destacada: document.getElementById("destacada").checked
+            };
+
+            await guardarNoticia(noticia);
+            mostrarMensaje(editandoId ? "✅ Noticia actualizada" : "✅ Noticia creada correctamente", 'success');
+            limpiarFormulario();
+            cargarNoticias();
+        } catch (error) {
+            mostrarMensaje('Error: ' + error.message, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = editandoId ? 'Actualizar Noticia' : 'Agregar Noticia';
+        }
     });
 
-    // 📌 6. Editar noticia
+    // Editar
     window.editarNoticia = function (id) {
         const noticia = noticias.find(n => n.id === id);
         if (!noticia) return;
@@ -511,47 +666,52 @@
         document.getElementById("titulo").value = noticia.titulo;
         document.getElementById("descripcion").value = noticia.descripcion;
         document.getElementById("categoria").value = noticia.categoria;
-        document.getElementById("fecha").value = noticia.fecha;
-        document.getElementById("imagen").value = noticia.imagen;
+        document.getElementById("fecha").value = noticia.fecha.split("T")[0];
         document.getElementById("autor").value = noticia.autor;
         document.getElementById("autorAvatar").value = noticia.autorAvatar;
         document.getElementById("destacada").checked = noticia.destacada;
+
+        if (noticia.imagen) {
+            preview.src = noticia.imagen;
+            preview.classList.add('show');
+            imagenSeleccionada = { type: 'url', data: noticia.imagen };
+        }
 
         document.getElementById("form-title").textContent = "Editar Noticia";
         document.getElementById("submit-btn").textContent = "Actualizar Noticia";
         document.getElementById("cancel-btn").style.display = "block";
 
         window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    };
 
-    // 📌 7. Eliminar noticia (exponer función)
     window.eliminarNoticia = eliminarNoticia;
 
-    // 📌 8. Cancelar edición
     document.getElementById("cancel-btn").addEventListener("click", limpiarFormulario);
 
     function limpiarFormulario() {
         document.getElementById("noticia-form").reset();
+        preview.classList.remove('show');
+        preview.src = '';
+        imagenSeleccionada = null;
         editandoId = null;
         document.getElementById("form-title").textContent = "Agregar Nueva Noticia";
         document.getElementById("submit-btn").textContent = "Agregar Noticia";
         document.getElementById("cancel-btn").style.display = "none";
     }
 
-    // 📌 9. Mostrar mensajes bonitos
-    function mostrarMensaje(texto) {
+    function mostrarMensaje(texto, tipo = 'success') {
         const div = document.createElement("div");
-        div.className = "success-message";
+        div.className = tipo === 'success' ? 'success-message' : 'error-message';
         div.textContent = texto;
-        document.getElementById("success-message").innerHTML = "";
-        document.getElementById("success-message").appendChild(div);
-        setTimeout(() => div.remove(), 3000);
+        const container = document.getElementById("message-container");
+        container.innerHTML = "";
+        container.appendChild(div);
+        setTimeout(() => div.remove(), 4000);
     }
 
-    // 📌 10. Cargar al iniciar
     cargarNoticias();
 </script>
-    <script type="module" src="/firebase.js"></script>
+
 </body>
 
 </html>
