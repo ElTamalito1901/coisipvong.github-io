@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - ONG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Section */
+        .contacto-header {
+            max-width: 1400px;
+            margin: 80px auto 60px;
+            padding: 0 70px;
+            text-align: center;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .contacto-header h1 {
+            font-size: 68px;
+            color: #916eac;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .contacto-header p {
+            font-size: 24px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Información de Contacto */
+        .info-contacto-section {
+            max-width: 1600px;
+            margin: 80px auto;
+            padding: 0 70px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .info-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .info-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #a7c844, #546421);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .info-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .info-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-icon {
+            font-size: 70px;
+            margin-bottom: 25px;
+        }
+
+        .info-card h3 {
+            font-size: 32px;
+            color: #081e54;
+            margin-bottom: 20px;
+        }
+
+        .info-card p {
+            font-size: 19px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .info-card a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .info-card a:hover {
+            color: #081e54;
+        }
+
+        /* Mapa y Redes Sociales */
+        .mapa-redes-section {
+            max-width: 1600px;
+            margin: 80px auto;
+            padding: 0 70px;
+        }
+
+        .mapa-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            height: 500px;
+        }
+
+        .mapa-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .redes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .redes-container h3 {
+            font-size: 38px;
+            color: #df602d;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .redes-container>div:first-child {
+            text-align: center;
+        }
+
+        .redes-container>div:first-child p {
+            font-size: 19px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .redes-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .red-social {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .red-social:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .red-icon {
+            font-size: 45px;
+            flex-shrink: 0;
+        }
+
+        .red-info h4 {
+            font-size: 22px;
+            color: #081e54;
+            margin-bottom: 8px;
+        }
+
+        .red-info p {
+            font-size: 17px;
+            color: #666;
+        }
+
+        /* Horarios */
+        .horarios-section {
+            max-width: 1200px;
+            margin: 80px auto 100px;
+            padding: 70px;
+            background: linear-gradient(135deg, #503f5e 0%, #916eac 100%);
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .horarios-section h2 {
+            font-size: 48px;
+            margin-bottom: 40px;
+        }
+
+        .horarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .horario-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .horario-dia {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .horario-horas {
+            font-size: 20px;
+            opacity: 0.95;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .contacto-header {
+                padding: 0 20px;
+                margin: 50px auto 40px;
+            }
+
+            .contacto-header h1 {
+                font-size: 36px;
+            }
+
+            .contacto-header p {
+                font-size: 18px;
+            }
+
+            .info-contacto-section {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+                gap: 25px;
+            }
+
+            .info-card {
+                padding: 35px;
+            }
+
+            .mapa-redes-section {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+
+            .mapa-container {
+                height: 350px;
+            }
+
+            .horarios-section {
+                margin: 50px 20px 80px;
+                padding: 50px 30px;
+            }
+
+            .horarios-section h2 {
+                font-size: 32px;
+            }
+
+            .horarios-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        .info-icon img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .info-redesicon img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <section class="contacto-header">
+        <h1>Contáctanos</h1>
+        <p>Estamos aquí para escucharte. Ya sea que quieras colaborar, hacer consultas o conocer más sobre nuestro
+            trabajo, nos encantaría saber de ti.</p>
+    </section>
+
+    <!-- Información de Contacto -->
+    <section class="info-contacto-section">
+        <div class="info-card">
+            <div class="info-icon">
+                <img src="../imagen/contacto/gps.png" alt="icono">
+            </div>
+            <h3>Ubicación</h3>
+            <p>Los Olivos, Lima - Perú</p>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">
+                <img src="../imagen/contacto/correo.png" alt="icono">
+            </div>
+            <h3>Email</h3>
+            <p>coisipv.equipo@gmail.com</p>
+            <p><a href="mailto:coisipv.equipo@gmail.com">Enviar correo</a></p>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">
+                <img src="../imagen/contacto/wp.webp" alt="icono">
+            </div>
+            <h3>WhatsApp</h3>
+            <p>912 152 836</p>
+            <p>Lunes a Sábado: 8:00 AM - 5:00 PM</p>
+            <p><a href="https://wa.me/51912152836" target="_blank">Escribir mensaje</a></p>
+        </div>
+    </section>
+
+    <!-- Mapa y Redes Sociales -->
+    <section class="mapa-redes-section">
+        
+
+        <div class="redes-container">
+            <div>
+                <h3>Síguenos en Redes</h3>
+                <p style="font-size: 19px; color: #666; margin-bottom: 30px;">Mantente conectado con nuestras
+                    actividades y noticias</p>
+            </div>
+
+            <div class="redes-grid">
+                <div class="red-social" onclick="window.open('https://www.facebook.com/COISIPV', '_blank')">
+                    <div class="info-redesicon">
+                        <img src="../imagen/contacto/facebook.webp" alt="icono">
+                    </div>
+                    <div class="red-info">
+                        <h4>Facebook</h4>
+                        <p>@COISIPV</p>
+                    </div>
+                </div>
+
+                <div class="red-social" onclick="window.open('https://www.instagram.com/coisipv', '_blank')">
+                    <div class="info-redesicon">
+                        <img src="../imagen/contacto/instagram.png" alt="icono">
+                    </div>
+                    <div class="red-info">
+                        <h4>Instagram</h4>
+                        <p>@coisipv</p>
+                    </div>
+                </div>
+
+                <div class="red-social" onclick="window.open('https://www.tiktok.com/@coisipv.osb', '_blank')">
+                    <div class="info-redesicon">
+                        <img src="../imagen/contacto/tiktok.png" alt="icono">
+                    </div>
+                    <div class="red-info">
+                        <h4>Tik tok</h4>
+                        <p>@coisipv.osb</p>
+                    </div>
+                </div>
+
+                <div class="red-social" onclick="window.open('https://www.linkedin.com/company/coisipv/', '_blank')">
+                    <div class="info-redesicon">
+                        <img src="../imagen/contacto/linkedin.png" alt="icono">
+                    </div>
+                    <div class="red-info">
+                        <h4>LinkedIn</h4>
+                        <p>coisipv</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Horarios -->
+    <section class="horarios-section">
+        <h2>Horarios de Atención</h2>
+        <div class="horarios-grid">
+            <div class="horario-item">
+                <div class="horario-dia">Lunes a Sábado</div>
+                <div class="horario-horas">8:00 AM - 5:00 PM</div>
+            </div>
+            <div class="horario-item">
+                <div class="horario-dia">Domingos</div>
+                <div class="horario-horas">Cerrado</div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

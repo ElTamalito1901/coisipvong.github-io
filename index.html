@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COISIPV - Transformando vidas juntos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .logo {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 20px;
+        }
+
+        .logo img {
+            width: 90%;
+            height: 90%;
+        }
+
+        .logo-section h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .tagline {
+            font-size: 16px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .menu {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 22px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            color: #555;
+            text-align: left;
+            width: 100%;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, #916eac, #916eac);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .menu-item .icon {
+            font-size: 26px;
+        }
+
+        .login-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 22px;
+            background: linear-gradient(135deg, #081e54, #667eea);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            width: 100%;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(8, 30, 84, 0.2);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(8, 30, 84, 0.4);
+        }
+
+        .login-btn .icon {
+            font-size: 24px;
+        }
+
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 22px;
+            color: #666;
+        }
+
+        .content-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0;
+            display: block;
+        }
+
+        /* LOGIN MODAL */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-box h2 {
+            color: #081e54;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .login-box p {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #081e54;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #081e54, #667eea);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .login-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(8, 30, 84, 0.4);
+        }
+
+        .login-cancel {
+            width: 100%;
+            padding: 18px;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 20px;
+                height: auto;
+                max-height: 40vh;
+            }
+
+            .menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .menu-item {
+                flex: 1 1 calc(50% - 8px);
+                justify-content: center;
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .menu-item span:last-child {
+                display: none;
+            }
+
+            .login-section {
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+
+            .login-btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+
+            .main-content {
+                height: 60vh;
+            }
+
+            .login-box {
+                padding: 30px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <div class="logo">
+                <img src="imagen/logo.jpg" alt="Logo COISIPV">
+            </div>
+            <h1>COISIPV</h1>
+            <p class="tagline">Cooperación Orientada a la Integración Social del Inmigrante y Peruano Vulnerable</p>
+        </div>
+
+        <div class="menu">
+            <button class="menu-item active" onclick="loadPage('inicio.html')" id="btn-inicio">
+                <span class="icon">🏠</span>
+                <span>Inicio</span>
+            </button>
+            <button class="menu-item" onclick="loadPage('nosotros.html')" id="btn-nosotros">
+                <span class="icon">👥</span>
+                <span>Nosotros</span>
+            </button>
+            <button class="menu-item" onclick="loadPage('Proyectos.html')" id="btn-Proyectos">
+                <span class="icon">📋</span>
+                <span>Iniciativas</span>
+            </button>
+            <button class="menu-item" onclick="loadPage('Voluntarios.html')" id="btn-Voluntarios">
+                <span class="icon">🤝</span>
+                <span>Voluntarios</span>
+            </button>
+
+            <!-- SI SE AGREGA EL PANEL DE ADMINISTRADOR, se podra agregar noticias 
+            <button class="menu-item" onclick="loadPage('Noticias.html')" id="btn-noticias">
+                <span class="icon">📰</span>
+                <span>Noticias</span>
+            </button> -->
+
+
+            <button class="menu-item" onclick="loadPage('Contacto.html')" id="btn-Contacto">
+                <span class="icon">📧</span>
+                <span>Contacto</span>
+            </button>
+        </div>
+
+        <!--  BOTON PARA INICIAR SESION E INGRESAR AL PANEL DE ADMINISTRADOR
+        
+        <div class="login-section">
+            <button class="login-btn" onclick="openLoginModal()">
+                <span class="icon">🔐</span>
+                <span>Iniciar Sesión</span>
+            </button>
+        </div> -->  
+    </div>
+
+    <div class="main-content">
+        <div class="content-frame" id="content-area">
+            <div class="loading">Cargando contenido...</div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL 
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <h2>🔐 Iniciar Sesión</h2>
+            <p>Panel de Administración COISIPV</p>
+
+            <div class="error-message" id="errorMessage">
+                Usuario o contraseña incorrectos
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="emailInput" required placeholder="usuario@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="passwordInput" required placeholder="Ingresa tu contraseña">
+                </div>
+
+                <button type="submit" class="login-submit">Iniciar Sesión</button>
+                <button type="button" class="login-cancel" onclick="closeLoginModal()">Cancelar</button>
+            </form>
+        </div>
+    </div> -->
+
+    <script>
+        const VALID_EMAIL = "coisipv.equipo@gmail.com";
+        const VALID_PASSWORD = "coisipvadmin";
+
+        function loadPage(pageName) {
+            const contentArea = document.getElementById('content-area');
+
+            contentArea.innerHTML = `
+            <div class="loading">Cargando ${pageName.replace('.html', '')}...</div>
+        `;
+
+            document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
+
+            const buttonId = 'btn-' + pageName.replace('.html', '');
+            const activeButton = document.getElementById(buttonId);
+            if (activeButton) activeButton.classList.add('active');
+
+            setTimeout(() => {
+                contentArea.innerHTML = `
+                <iframe 
+                    src="contenido/${pageName}" 
+                    style="
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                        border-radius: 0;
+                        background: transparent;
+                        display: block;
+                    "
+                    onload="this.style.opacity=1">
+                </iframe>
+            `;
+            }, 300);
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('emailInput').focus();
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('loginForm').reset();
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+
+            if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+                closeLoginModal();
+
+                // Cargar panel de administración
+                const contentArea = document.getElementById('content-area');
+                contentArea.innerHTML = `
+                <div class="loading">Accediendo al panel de administración...</div>
+            `;
+
+                // Remover active de todos los botones del menú
+                document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
+
+                setTimeout(() => {
+                    contentArea.innerHTML = `
+                    <iframe 
+                        src="contenido/paneladmin.html" 
+                        style="
+                            width: 100%;
+                            height: 100%;
+                            border: none;
+                            border-radius: 0;
+                            background: transparent;
+                            display: block;
+                        "
+                        onload="this.style.opacity=1">
+                    </iframe>
+                `;
+                }, 500);
+            } else {
+                document.getElementById('errorMessage').classList.add('show');
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // Cerrar modal al hacer click fuera
+        document.getElementById('loginModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        // Cerrar modal con tecla ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeLoginModal();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPage('inicio.html');
+        });
+    </script>
+</body>
+
+</html>
