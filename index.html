@@ -413,10 +413,16 @@
         </div> -->  
     </div>
 
-    <div class="main-content">
-        <div class="content-frame" id="content-area">
-            <div class="loading">Cargando contenido...</div>
-        </div>
+    <div class="content-frame" id="content-area">
+        <iframe src="contenido/inicio.html" style="
+                width: 100%;
+                height: 100%;
+                border: none;
+                border-radius: 0;
+                background: transparent;
+                display: block;
+            ">
+        </iframe>
     </div>
 
     <!-- LOGIN MODAL 
@@ -549,8 +555,8 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            loadPage('inicio.html');
-        });
+                loadPage('inicio.html');
+            });
     </script>
 </body>
 
