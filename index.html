@@ -100,38 +100,26 @@
             font-size: 26px;
         }
 
-        .login-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
+        .login-btn-small {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 20px;
+        padding: 7px 14px;
+        background: #916eac;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 13px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(145,110,172,0.3);
         }
 
-        .login-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 18px 22px;
-            background: linear-gradient(135deg, #916eac, #916eac);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 18px;
-            color: white;
-            text-align: center;
-            width: 100%;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(8, 30, 84, 0.2);
-        }
-
-        .login-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(8, 30, 84, 0.4);
-        }
-
-        .login-btn .icon {
-            font-size: 24px;
+        .login-btn-small:hover {
+        background: #7d5a97;
+        transform: translateY(-1px);
         }
 
         .main-content {
@@ -371,6 +359,10 @@
             </div>
             <h1>COISIPV</h1>
             <p class="tagline">Cooperación Orientada a la Integración Social del Inmigrante y Peruano Vulnerable</p>
+            <button class="login-btn-small" onclick="window.open('contenido/login.html', '_blank')">
+            <span class="icon">🔐</span>
+            <span>Iniciar Sesión</span>
+</button>
         </div>
 
         <div class="menu">
@@ -403,13 +395,6 @@
             </button>
         </div>
 
-        
-        <div class="login-section">
-            <button class="login-btn" onclick="loadPage('login.html')">
-                <span class="icon">🔐</span>
-                <span>Iniciar Sesión</span>
-            </button>
-        </div>
     </div>
 
     <div class="content-frame" id="content-area">
