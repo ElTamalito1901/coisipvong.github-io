@@ -163,7 +163,7 @@
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = "paneladmin.html"; // <-- cambia si tu archivo se llama distinto
+            window.location.href = "admin/paneladmin.html"; // <-- cambia si tu archivo se llama distinto
         } catch (error) {
             alert("Correo o contraseña incorrectos");
         }
