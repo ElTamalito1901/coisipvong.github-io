@@ -15,27 +15,7 @@
         <p>Completa el formulario y nuestro equipo se pondrá en contacto contigo para brindarte el apoyo que necesitas. Tu información es confidencial.</p>
     </section>
 
-    <!-- Progress -->
-    <div class="progress-wrapper">
-        <div class="steps-track">
-            <div class="step-dot active" id="dot-1">
-                <div class="dot-circle">1</div>
-                <div class="dot-label">Datos personales</div>
-            </div>
-            <div class="step-dot" id="dot-2">
-                <div class="dot-circle">2</div>
-                <div class="dot-label">Tipo de ayuda</div>
-            </div>
-            <div class="step-dot" id="dot-3">
-                <div class="dot-circle">3</div>
-                <div class="dot-label">Situación</div>
-            </div>
-            <div class="step-dot" id="dot-4">
-                <div class="dot-circle">4</div>
-                <div class="dot-label">Descripción</div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Form -->
     <div class="form-card">
@@ -206,125 +186,225 @@
         const FORM_KEY = 'fam_form_def';
 
 function renderForm(data) {
-
     const container = document.getElementById('dynamic-form');
-
     if (!data) {
         container.innerHTML = "<p>No hay formulario disponible.</p>";
         return;
     }
 
-    let html = `
-        <div class="step-panel active">
-            <h2 class="panel-title">${data.title}</h2>
-            <p class="panel-subtitle">${data.desc}</p>
-    `;
+    const questions = data.questions;
+    let currentQ = 0;
+    const answers = {}; // ← AQUÍ se guardan las respuestas
 
-    data.questions.forEach((pregunta, index) => {
+    function getVisibleIndex(index) {
+        let count = 0;
+        for (let i = 0; i < index; i++) {
+            if (questions[i].type !== 'section') count++;
+        }
+        return count;
+    }
 
-        // SECCIONES
-        if (pregunta.type === "section") {
+    function totalNonSection() {
+        return questions.filter(q => q.type !== 'section').length;
+    }
 
-            html += `
-                <div style="
-                    margin:30px 0 15px;
-                    padding-bottom:10px;
-                    border-bottom:2px solid #ddd;
-                ">
-                    <h3>${pregunta.title}</h3>
-                </div>
-            `;
+    // ── Guarda la respuesta del índice actual ANTES de cambiar de pregunta ──
+    function saveCurrentAnswer(index) {
+        const pregunta = questions[index];
+        if (!pregunta || pregunta.type === 'section') return;
 
+        if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
+            const el = document.getElementById(`resp-${index}`);
+            if (el) answers[index] = el.value;
+        } else if (pregunta.type === 'checkbox') {
+            const checked = [...document.querySelectorAll(`input[name="resp-${index}"]:checked`)];
+            answers[index] = checked.map(c => c.value);
+        } else if (pregunta.type === 'radio') {
+            const checked = document.querySelector(`input[name="resp-${index}"]:checked`);
+            answers[index] = checked ? checked.value : '';
+        }
+    }
+
+    // ── Restaura la respuesta guardada al volver a una pregunta ──
+    function restoreAnswer(index) {
+        const pregunta = questions[index];
+        if (!pregunta || pregunta.type === 'section') return;
+        const saved = answers[index];
+        if (saved === undefined) return;
+
+        if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
+            const el = document.getElementById(`resp-${index}`);
+            if (el) el.value = saved;
+        } else if (pregunta.type === 'checkbox') {
+            document.querySelectorAll(`input[name="resp-${index}"]`).forEach(cb => {
+                cb.checked = saved.includes(cb.value);
+            });
+        } else if (pregunta.type === 'radio') {
+            document.querySelectorAll(`input[name="resp-${index}"]`).forEach(rb => {
+                rb.checked = rb.value === saved;
+            });
+        }
+    }
+
+    function renderQuestion(index) {
+        const pregunta = questions[index];
+        const total = totalNonSection();
+        const visibleNum = getVisibleIndex(index) + 1;
+        const isLast = index === questions.length - 1 ||
+            questions.slice(index + 1).every(q => q.type === 'section');
+
+        let fieldHTML = '';
+
+        if (pregunta.type === 'section') {
+            currentQ++;
+            renderQuestion(currentQ);
             return;
         }
 
-        html += `
-            <div class="field-group" style="margin-bottom:20px;">
+        if (pregunta.type === 'text') {
+            fieldHTML = `<input type="text" id="resp-${index}" placeholder="Escribe tu respuesta">`;
+        } else if (pregunta.type === 'textarea') {
+            fieldHTML = `<textarea id="resp-${index}" placeholder="Escribe tu respuesta"></textarea>`;
+        } else if (pregunta.type === 'date') {
+            fieldHTML = `<input type="date" id="resp-${index}">`;
+        } else if (pregunta.type === 'checkbox') {
+            fieldHTML = pregunta.options.map(op => `
+                <label style="display:flex; align-items:center; gap:10px; margin-top:12px; cursor:pointer;">
+                    <input type="checkbox" name="resp-${index}" value="${op}">
+                    ${op}
+                </label>`).join('');
+        } else if (pregunta.type === 'radio') {
+            fieldHTML = pregunta.options.map(op => `
+                <label style="display:flex; align-items:center; gap:10px; margin-top:12px; cursor:pointer;">
+                    <input type="radio" name="resp-${index}" value="${op}">
+                    ${op}
+                </label>`).join('');
+        } else if (pregunta.type === 'select') {
+            fieldHTML = `<select id="resp-${index}">` +
+                pregunta.options.map(op => `<option>${op}</option>`).join('') +
+                `</select>`;
+        }
 
-                <label class="field-label">
-                    ${index + 1}. ${pregunta.title}
-                    ${pregunta.required ? '<span style="color:red">*</span>' : ''}
-                </label>
+        container.innerHTML = `
+            <div class="step-panel active" style="animation: slideIn 0.35s ease both;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
+                    <h2 class="panel-title" style="margin-bottom:0;">${data.title}</h2>
+                    <span style="font-size:13px; font-weight:600; color:var(--gray-mid); white-space:nowrap;">
+                        Pregunta ${visibleNum} de ${total}
+                    </span>
+                </div>
+                <div style="height:5px; background:#eef0f6; border-radius:10px; margin-bottom:36px; overflow:hidden;">
+                    <div style="
+                        height:100%;
+                        width:${(visibleNum / total) * 100}%;
+                        background: linear-gradient(90deg, var(--orange), var(--purple));
+                        border-radius:10px;
+                        transition: width 0.4s ease;
+                    "></div>
+                </div>
+                <div class="field-group" id="field-group-${index}">
+                    <label class="field-label">
+                        ${pregunta.title}
+                        ${pregunta.required ? '<span style="color:var(--orange)">*</span>' : ''}
+                    </label>
+                    ${pregunta.description
+                        ? `<p style="font-size:14px;color:var(--gray);margin-bottom:10px;">${pregunta.description}</p>`
+                        : ''}
+                    ${fieldHTML}
+                    <p id="error-${index}" style="color:#e53e3e;font-size:13px;margin-top:6px;display:none;">
+                        Este campo es obligatorio.
+                    </p>
+                </div>
+                <div class="btn-row" style="margin-top:36px;">
+                    ${index > 0
+                        ? `<button class="btn-back" onclick="dynBack(${index})">← Anterior</button>`
+                        : '<span></span>'}
+                    ${isLast
+                        ? `<button class="btn-submit" onclick="dynSubmit(${index})">Enviar encuesta ✓</button>`
+                        : `<button class="btn-next" onclick="dynNext(${index})">Siguiente →</button>`}
+                </div>
+            </div>
         `;
 
-        // TEXTO
-        if (pregunta.type === "text") {
+        // Restaurar respuesta guardada si ya había respondido esta pregunta
+        restoreAnswer(index);
+    }
 
-            html += `
-                <input type="text" placeholder="Escribe tu respuesta">
-            `;
+    window.dynNext = function(index) {
+        const pregunta = questions[index];
+        if (pregunta.required) {
+            let filled = false;
+            if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
+                const el = document.getElementById(`resp-${index}`);
+                filled = el && el.value.trim() !== '';
+            } else if (['checkbox', 'radio'].includes(pregunta.type)) {
+                filled = document.querySelectorAll(`input[name="resp-${index}"]:checked`).length > 0;
+            }
+            if (!filled) {
+                document.getElementById(`error-${index}`).style.display = 'block';
+                return;
+            }
         }
 
-        // TEXTAREA
-        if (pregunta.type === "textarea") {
+        saveCurrentAnswer(index); // ← Guarda antes de cambiar
 
-            html += `
-                <textarea placeholder="Escribe tu respuesta"></textarea>
-            `;
+        currentQ++;
+        while (currentQ < questions.length && questions[currentQ].type === 'section') currentQ++;
+        if (currentQ < questions.length) renderQuestion(currentQ);
+    };
+
+    window.dynBack = function(index) {
+        saveCurrentAnswer(index); // ← Guarda antes de retroceder
+
+        currentQ--;
+        while (currentQ > 0 && questions[currentQ].type === 'section') currentQ--;
+        if (currentQ >= 0) renderQuestion(currentQ);
+    };
+
+    window.dynSubmit = function(index) {
+        const pregunta = questions[index];
+        if (pregunta.required) {
+            let filled = false;
+            if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
+                const el = document.getElementById(`resp-${index}`);
+                filled = el && el.value.trim() !== '';
+            } else if (['checkbox', 'radio'].includes(pregunta.type)) {
+                filled = document.querySelectorAll(`input[name="resp-${index}"]:checked`).length > 0;
+            }
+            if (!filled) {
+                document.getElementById(`error-${index}`).style.display = 'block';
+                return;
+            }
         }
 
-        // FECHA
-        if (pregunta.type === "date") {
+        saveCurrentAnswer(index); // ← Guarda la última respuesta
 
-            html += `
-                <input type="date">
-            `;
-        }
+        // Aquí puedes usar `answers` para enviarlo al admin
+        console.log('Respuestas finales:', answers);
 
-        // CHECKBOX
-        if (pregunta.type === "checkbox") {
+        // Guardar en Firebase
+        guardarEncuestaFirestore(answers)
+        .then((ok) => {
 
-            pregunta.options.forEach(op => {
+            if (ok) {
 
-                html += `
-                    <label style="display:block; margin-top:10px;">
-                        <input type="checkbox">
-                        ${op}
-                    </label>
+                container.innerHTML = `
+                    <div class="success-panel active">
+                        <div class="success-icon">✓</div>
+                        <h2>¡Encuesta enviada!</h2>
+                        <p>Gracias por completar el formulario.</p>
+                    </div>
                 `;
-            });
-        }
 
-        // RADIO
-        if (pregunta.type === "radio") {
+            } else {
 
-            pregunta.options.forEach(op => {
+                alert("Error al guardar la encuesta.");
+            }
 
-                html += `
-                    <label style="display:block; margin-top:10px;">
-                        <input type="radio" name="pregunta-${index}">
-                        ${op}
-                    </label>
-                `;
-            });
-        }
+        });
+    };
 
-        // SELECT
-        if (pregunta.type === "select") {
-
-            html += `<select>`;
-
-            pregunta.options.forEach(op => {
-
-                html += `
-                    <option>${op}</option>
-                `;
-            });
-
-            html += `</select>`;
-        }
-
-        html += `</div>`;
-    });
-
-    html += `
-        <button class="btn-submit">
-            Enviar encuesta
-        </button>
-    </div>
-    `;
-
-    container.innerHTML = html;
+    renderQuestion(currentQ);
 }
 
         const formDef = JSON.parse(
@@ -333,6 +413,7 @@ function renderForm(data) {
 
         renderForm(formDef);
     </script>
+    <script type="module" src="../js/contacto.js"></script>
     <!-- Header -->
     <section class="contacto-header">
         <h1>Contáctanos</h1>
