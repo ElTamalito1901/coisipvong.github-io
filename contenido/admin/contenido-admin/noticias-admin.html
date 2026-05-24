@@ -252,7 +252,7 @@
                 ${noticia.imagen ? `<img src="${noticia.imagen}" class="noticia-thumbnail" alt="${noticia.titulo}">` : ''}
                 <div class="noticia-item-body">
                     <h4>${noticia.titulo}</h4>
-                    <p>${noticia.descripcion.substring(0, 150)}${noticia.descripcion.length > 150 ? '...' : ''}</p>
+                    <p>${noticia.descripcion}</p>
                     <div class="noticia-meta">
                         <span class="badge badge-categoria">${noticia.categoria}</span>
                         <span class="badge badge-fecha">${formatearFecha(noticia.fecha)}</span>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noticias - ONG</title>
-<link rel="stylesheet" href="../css/noticias.css">
+    <link rel="stylesheet" href="../css/noticias.css">
 </head>
 
 <body>
@@ -31,6 +31,24 @@
 
     <section class="noticias-grid" id="noticias-grid"></section>
 
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-container" id="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+            <button class="modal-cerrar" id="modal-cerrar" aria-label="Cerrar noticia">&times;</button>
+            <div class="modal-imagen-wrapper">
+                <img src="" alt="" id="modal-imagen" class="modal-imagen">
+                <span class="modal-categoria-badge" id="modal-categoria-badge"></span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta">
+                    <span class="modal-fecha" id="modal-fecha"></span>
+                    <span class="modal-autor" id="modal-autor"></span>
+                </div>
+                <h2 class="modal-titulo" id="modal-titulo"></h2>
+                <p class="modal-descripcion" id="modal-descripcion"></p>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js';
@@ -51,6 +69,41 @@
 
         let todasLasNoticias = [];
 
+        /* ── MODAL ── */
+        const overlay = document.getElementById('modal-overlay');
+        const btnCerrar = document.getElementById('modal-cerrar');
+
+        function abrirModal(noticia) {
+            document.getElementById('modal-imagen').src = noticia.imagen || '';
+            document.getElementById('modal-imagen').alt = noticia.titulo;
+            document.getElementById('modal-categoria-badge').textContent = noticia.categoria;
+            document.getElementById('modal-categoria-badge').className =
+                'modal-categoria-badge categoria-' + noticia.categoria;
+            document.getElementById('modal-fecha').textContent = '📅 ' + formatearFecha(noticia.fecha);
+            document.getElementById('modal-autor').textContent = (noticia.autorAvatar || '👤') + ' ' + noticia.autor;
+            document.getElementById('modal-titulo').textContent = noticia.titulo;
+            document.getElementById('modal-descripcion').textContent = noticia.descripcion;
+
+            overlay.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModal() {
+            overlay.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        btnCerrar.addEventListener('click', cerrarModal);
+
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) cerrarModal();
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') cerrarModal();
+        });
+
+        /* ── FIREBASE ── */
         async function cargarNoticias() {
             try {
                 const q = query(collection(db, "noticias"), orderBy("fecha", "desc"));
@@ -100,7 +153,7 @@
             if (destacada) {
                 destacadaSection.style.display = 'block';
                 destacadaSection.innerHTML = `
-                    <article class="noticia-destacada">
+                    <article class="noticia-destacada" data-id="${destacada.id}" style="cursor:pointer;">
                         <div class="destacada-imagen">
                             <img src="${destacada.imagen}" alt="${destacada.titulo}">
                             <span class="destacada-badge">Destacado</span>
@@ -109,10 +162,15 @@
                             <div class="destacada-categoria">${destacada.categoria}</div>
                             <div class="destacada-fecha">📅 ${formatearFecha(destacada.fecha)}</div>
                             <h2>${destacada.titulo}</h2>
-                            <p>${destacada.descripcion.substring(0, 200)}...</p>
+                            <p>${destacada.descripcion}</p>
+                            <span class="ver-mas-btn">Leer más →</span>
                         </div>
                     </article>
                 `;
+
+                destacadaSection.querySelector('.noticia-destacada').addEventListener('click', () => {
+                    abrirModal(destacada);
+                });
 
                 noticiasFiltradas = noticiasFiltradas.filter(n => !n.destacada);
             } else {
@@ -139,7 +197,7 @@
             };
 
             grid.innerHTML = noticiasFiltradas.map(noticia => `
-                <article class="noticia-card" data-categoria="${noticia.categoria}">
+                <article class="noticia-card" data-id="${noticia.id}" data-categoria="${noticia.categoria}">
                     <div class="noticia-imagen">
                         <img src="${noticia.imagen}" alt="${noticia.titulo}">
                         <span class="noticia-categoria ${categoriaClases[noticia.categoria]}">${noticia.categoria}</span>
@@ -153,17 +211,26 @@
                                 <div class="autor-avatar">${noticia.autorAvatar || '👤'}</div>
                                 <span class="autor-nombre">${noticia.autor}</span>
                             </div>
+                            <span class="leer-mas">Leer más →</span>
                         </div>
                     </div>
                 </article>
             `).join('');
+
+            /* Agregar evento click a cada card */
+            grid.querySelectorAll('.noticia-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.getAttribute('data-id');
+                    const noticia = todasLasNoticias.find(n => n.id === id);
+                    if (noticia) abrirModal(noticia);
+                });
+            });
         }
 
         document.querySelectorAll('.filtro-btn').forEach(filtro => {
             filtro.addEventListener('click', function () {
                 document.querySelectorAll('.filtro-btn').forEach(f => f.classList.remove('active'));
                 this.classList.add('active');
-
                 const categoria = this.getAttribute('data-categoria');
                 renderizarNoticias(categoria);
             });
