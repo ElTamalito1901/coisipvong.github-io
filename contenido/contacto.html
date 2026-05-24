@@ -5,415 +5,420 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacto - ONG</title>
-<link rel="stylesheet" href="../css/contacto.css">
+    <link rel="stylesheet" href="../css/contacto.css">
 </head>
 
 <body>
 
-        <section class="form-header">
+    <section class="form-header">
         <h1>Solicita Ayuda</h1>
         <p>Completa el formulario y nuestro equipo se pondrá en contacto contigo para brindarte el apoyo que necesitas. Tu información es confidencial.</p>
     </section>
 
-
-
     <!-- Form -->
     <div class="form-card">
-    <div class="form-panel">
+        <div class="form-panel">
 
-        <div id="dynamic-form"></div>
+            <!-- ── PROGRESS STEPS (se genera dinámicamente) ── -->
+            <div class="steps-nav" id="steps-nav"></div>
 
+            <!-- ── STEPS (se generan dinámicamente) ── -->
+            <div id="dynamic-steps-container"></div>
+
+            <!-- ── SUCCESS ── -->
+            <div class="success-panel" id="success-panel">
+                <div class="success-icon">✓</div>
+                <h2>¡Solicitud enviada!</h2>
+                <p>Gracias por contactarnos. Nuestro equipo revisará tu caso y se pondrá en contacto contigo a la brevedad posible.</p>
+                <div class="success-detail">📧 Revisa tu correo electrónico</div>
+            </div>
+
+        </div>
     </div>
-</div>
 
     <script>
-        let currentStep = 1;
-        const totalSteps = 4;
+    // ─────────────────────────────────────────────────────────────
+    //  CONSTANTES
+    // ─────────────────────────────────────────────────────────────
+    const FORM_KEY = 'fam_form_def';
+    const RESP_KEY = 'fam_responses';
 
-        function goToStep(step) {
-            if (step > currentStep && !validateStep(currentStep)) return;
-
-            const current = document.getElementById(`step-${currentStep}`);
-            const next    = document.getElementById(`step-${step}`);
-
-            current.classList.remove('active');
-            next.classList.add('active');
-
-            // Update dots
-            for (let i = 1; i <= totalSteps; i++) {
-                const dot = document.getElementById(`dot-${i}`);
-                dot.classList.remove('active', 'completed');
-                if (i < step) dot.classList.add('completed');
-                if (i === step) dot.classList.add('active');
-            }
-
-            currentStep = step;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function validateStep(step) {
-            let valid = true;
-
-            if (step === 1) {
-                const fields = [
-                    { id: 'nombre',       fg: 'fg-nombre' },
-                    { id: 'edad',         fg: 'fg-edad' },
-                    { id: 'nacionalidad', fg: 'fg-nacionalidad' },
-                    { id: 'telefono',     fg: 'fg-telefono' },
-                    { id: 'email',        fg: 'fg-email' },
-                    { id: 'distrito',     fg: 'fg-distrito' },
-                    { id: 'provincia',    fg: 'fg-provincia' },
-                ];
-
-                fields.forEach(f => {
-                    const el  = document.getElementById(f.id);
-                    const fg  = document.getElementById(f.fg);
-                    const val = el.value.trim();
-                    const ok  = f.id === 'email' ? /\S+@\S+\.\S+/.test(val) : val !== '';
-                    fg.classList.toggle('field-error', !ok);
-                    if (!ok) valid = false;
-                });
-            }
-
-            if (step === 2) {
-                const checked = document.querySelectorAll('#ayuda-grid input[type="checkbox"]:checked');
-                const err = document.getElementById('ayuda-error');
-                if (checked.length === 0) {
-                    err.style.display = 'block';
-                    valid = false;
-                } else {
-                    err.style.display = 'none';
-                }
-            }
-
-            if (step === 3) {
-                const sit = document.querySelector('input[name="situacion"]:checked');
-                const urg = document.querySelector('input[name="urgencia"]:checked');
-                document.getElementById('situacion-error').style.display = sit ? 'none' : 'block';
-                document.getElementById('urgencia-error').style.display  = urg ? 'none' : 'block';
-                if (!sit || !urg) valid = false;
-            }
-
-            return valid;
-        }
-
-        function submitForm() {
-            const desc = document.getElementById('descripcion');
-            const fg   = desc.closest('.field-group');
-            if (!desc.value.trim()) {
-                fg.classList.add('field-error');
-                return;
-            } else {
-                fg.classList.remove('field-error');
-            }
-
-            const consent = document.getElementById('consentimiento');
-            const err     = document.getElementById('consent-error');
-            if (!consent.checked) {
-                err.style.display = 'block';
-                return;
-            } else {
-                err.style.display = 'none';
-            }
-
-            // Hide all steps, show success
-            document.getElementById(`step-4`).classList.remove('active');
-            document.getElementById('success-panel').classList.add('active');
-
-            // Mark all dots completed
-            for (let i = 1; i <= totalSteps; i++) {
-                const dot = document.getElementById(`dot-${i}`);
-                dot.classList.remove('active');
-                dot.classList.add('completed');
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // ── Toggle checkbox ──
-        function toggleCheck(el, isOtro = false) {
-            el.classList.toggle('selected');
-            const cb = el.querySelector('input[type="checkbox"]');
-            cb.checked = el.classList.contains('selected');
-
-            if (isOtro) {
-                const otroField = document.getElementById('ayuda-otro');
-                otroField.classList.toggle('show', cb.checked);
-            }
-        }
-
-        // ── Radio select ──
-        function selectRadio(el, groupId, isOtro = false) {
-            document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('selected'));
-            el.classList.add('selected');
-            el.querySelector('input[type="radio"]').checked = true;
-
-            if (groupId === 'situacion-group') {
-                const otroField = document.getElementById('situacion-otro');
-                otroField.classList.toggle('show', isOtro);
-            }
-
-            document.getElementById(`${groupId.replace('-group', '')}-error`).style.display = 'none';
-        }
-
-        // ── Urgency select ──
-        function selectUrgency(el, cls) {
-            document.querySelectorAll('.urgency-item').forEach(u => {
-                u.classList.remove('selected-urgent', 'selected-moderate', 'selected-low');
-            });
-            el.classList.add(cls);
-            el.querySelector('input[type="radio"]').checked = true;
-            document.getElementById('urgencia-error').style.display = 'none';
-        }
-
-        // ── Consent ──
-        function toggleConsent() {
-            const cb  = document.getElementById('consentimiento');
-            const box = document.getElementById('consent-box');
-            cb.checked = !cb.checked;
-            box.classList.toggle('selected', cb.checked);
-            document.getElementById('consent-error').style.display = 'none';
-        }
-
-        // ── Live validation clear ──
-        document.querySelectorAll('input, select, textarea').forEach(el => {
-            el.addEventListener('input', () => {
-                const fg = el.closest('.field-group');
-                if (fg) fg.classList.remove('field-error');
-            });
-        });
-
-        const FORM_KEY = 'fam_form_def';
-
-function renderForm(data) {
-    const container = document.getElementById('dynamic-form');
-    if (!data) {
-        container.innerHTML = "<p>No hay formulario disponible.</p>";
-        return;
+    // Carga el formulario desde localStorage (igual que el admin)
+    function loadFormDef() {
+        const s = localStorage.getItem(FORM_KEY);
+        if (s) { try { return JSON.parse(s); } catch(e) {} }
+        return null;
     }
 
-    const questions = data.questions;
-    let currentQ = 0;
-    const answers = {}; // ← AQUÍ se guardan las respuestas
+    // ─────────────────────────────────────────────────────────────
+    //  ESTADO DEL WIZARD
+    // ─────────────────────────────────────────────────────────────
+    let currentStep = 1;
+    let formDef = null;
+    // groups = array de { sectionTitle, questions[] }
+    let groups = [];
 
-    function getVisibleIndex(index) {
-        let count = 0;
-        for (let i = 0; i < index; i++) {
-            if (questions[i].type !== 'section') count++;
-        }
-        return count;
-    }
-
-    function totalNonSection() {
-        return questions.filter(q => q.type !== 'section').length;
-    }
-
-    // ── Guarda la respuesta del índice actual ANTES de cambiar de pregunta ──
-    function saveCurrentAnswer(index) {
-        const pregunta = questions[index];
-        if (!pregunta || pregunta.type === 'section') return;
-
-        if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
-            const el = document.getElementById(`resp-${index}`);
-            if (el) answers[index] = el.value;
-        } else if (pregunta.type === 'checkbox') {
-            const checked = [...document.querySelectorAll(`input[name="resp-${index}"]:checked`)];
-            answers[index] = checked.map(c => c.value);
-        } else if (pregunta.type === 'radio') {
-            const checked = document.querySelector(`input[name="resp-${index}"]:checked`);
-            answers[index] = checked ? checked.value : '';
-        }
-    }
-
-    // ── Restaura la respuesta guardada al volver a una pregunta ──
-    function restoreAnswer(index) {
-        const pregunta = questions[index];
-        if (!pregunta || pregunta.type === 'section') return;
-        const saved = answers[index];
-        if (saved === undefined) return;
-
-        if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
-            const el = document.getElementById(`resp-${index}`);
-            if (el) el.value = saved;
-        } else if (pregunta.type === 'checkbox') {
-            document.querySelectorAll(`input[name="resp-${index}"]`).forEach(cb => {
-                cb.checked = saved.includes(cb.value);
-            });
-        } else if (pregunta.type === 'radio') {
-            document.querySelectorAll(`input[name="resp-${index}"]`).forEach(rb => {
-                rb.checked = rb.value === saved;
-            });
-        }
-    }
-
-    function renderQuestion(index) {
-        const pregunta = questions[index];
-        const total = totalNonSection();
-        const visibleNum = getVisibleIndex(index) + 1;
-        const isLast = index === questions.length - 1 ||
-            questions.slice(index + 1).every(q => q.type === 'section');
-
-        let fieldHTML = '';
-
-        if (pregunta.type === 'section') {
-            currentQ++;
-            renderQuestion(currentQ);
+    // ─────────────────────────────────────────────────────────────
+    //  INICIALIZACIÓN
+    // ─────────────────────────────────────────────────────────────
+    function init() {
+        formDef = loadFormDef();
+        if (!formDef) {
+            document.getElementById('dynamic-steps-container').innerHTML =
+                '<p style="color:#999;text-align:center;padding:40px">No hay formulario configurado todavía. El administrador debe guardar el formulario primero.</p>';
+            document.getElementById('steps-nav').style.display = 'none';
             return;
         }
 
-        if (pregunta.type === 'text') {
-            fieldHTML = `<input type="text" id="resp-${index}" placeholder="Escribe tu respuesta">`;
-        } else if (pregunta.type === 'textarea') {
-            fieldHTML = `<textarea id="resp-${index}" placeholder="Escribe tu respuesta"></textarea>`;
-        } else if (pregunta.type === 'date') {
-            fieldHTML = `<input type="date" id="resp-${index}">`;
-        } else if (pregunta.type === 'checkbox') {
-            fieldHTML = pregunta.options.map(op => `
-                <label style="display:flex; align-items:center; gap:10px; margin-top:12px; cursor:pointer;">
-                    <input type="checkbox" name="resp-${index}" value="${op}">
-                    ${op}
-                </label>`).join('');
-        } else if (pregunta.type === 'radio') {
-            fieldHTML = pregunta.options.map(op => `
-                <label style="display:flex; align-items:center; gap:10px; margin-top:12px; cursor:pointer;">
-                    <input type="radio" name="resp-${index}" value="${op}">
-                    ${op}
-                </label>`).join('');
-        } else if (pregunta.type === 'select') {
-            fieldHTML = `<select id="resp-${index}">` +
-                pregunta.options.map(op => `<option>${op}</option>`).join('') +
-                `</select>`;
-        }
+        // Actualizar título / descripción si existiesen contenedores
+        // (el form-header es estático en esta página)
 
-        container.innerHTML = `
-            <div class="step-panel active" style="animation: slideIn 0.35s ease both;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
-                    <h2 class="panel-title" style="margin-bottom:0;">${data.title}</h2>
-                    <span style="font-size:13px; font-weight:600; color:var(--gray-mid); white-space:nowrap;">
-                        Pregunta ${visibleNum} de ${total}
-                    </span>
-                </div>
-                <div style="height:5px; background:#eef0f6; border-radius:10px; margin-bottom:36px; overflow:hidden;">
-                    <div style="
-                        height:100%;
-                        width:${(visibleNum / total) * 100}%;
-                        background: linear-gradient(90deg, var(--orange), var(--purple));
-                        border-radius:10px;
-                        transition: width 0.4s ease;
-                    "></div>
-                </div>
-                <div class="field-group" id="field-group-${index}">
-                    <label class="field-label">
-                        ${pregunta.title}
-                        ${pregunta.required ? '<span style="color:var(--orange)">*</span>' : ''}
-                    </label>
-                    ${pregunta.description
-                        ? `<p style="font-size:14px;color:var(--gray);margin-bottom:10px;">${pregunta.description}</p>`
-                        : ''}
-                    ${fieldHTML}
-                    <p id="error-${index}" style="color:#e53e3e;font-size:13px;margin-top:6px;display:none;">
-                        Este campo es obligatorio.
-                    </p>
-                </div>
-                <div class="btn-row" style="margin-top:36px;">
-                    ${index > 0
-                        ? `<button class="btn-back" onclick="dynBack(${index})">← Anterior</button>`
-                        : '<span></span>'}
-                    ${isLast
-                        ? `<button class="btn-submit" onclick="dynSubmit(${index})">Enviar encuesta ✓</button>`
-                        : `<button class="btn-next" onclick="dynNext(${index})">Siguiente →</button>`}
-                </div>
-            </div>
-        `;
-
-        // Restaurar respuesta guardada si ya había respondido esta pregunta
-        restoreAnswer(index);
+        // Agrupar preguntas por secciones
+        groups = buildGroups(formDef.questions);
+        renderStepsNav();
+        renderAllSteps();
+        showStep(1);
     }
 
-    window.dynNext = function(index) {
-        const pregunta = questions[index];
-        if (pregunta.required) {
-            let filled = false;
-            if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
-                const el = document.getElementById(`resp-${index}`);
-                filled = el && el.value.trim() !== '';
-            } else if (['checkbox', 'radio'].includes(pregunta.type)) {
-                filled = document.querySelectorAll(`input[name="resp-${index}"]:checked`).length > 0;
-            }
-            if (!filled) {
-                document.getElementById(`error-${index}`).style.display = 'block';
-                return;
-            }
-        }
+    // Divide las preguntas en grupos según los separadores de sección
+    function buildGroups(questions) {
+        const result = [];
+        let current = { sectionTitle: null, questions: [] };
 
-        saveCurrentAnswer(index); // ← Guarda antes de cambiar
-
-        currentQ++;
-        while (currentQ < questions.length && questions[currentQ].type === 'section') currentQ++;
-        if (currentQ < questions.length) renderQuestion(currentQ);
-    };
-
-    window.dynBack = function(index) {
-        saveCurrentAnswer(index); // ← Guarda antes de retroceder
-
-        currentQ--;
-        while (currentQ > 0 && questions[currentQ].type === 'section') currentQ--;
-        if (currentQ >= 0) renderQuestion(currentQ);
-    };
-
-    window.dynSubmit = function(index) {
-        const pregunta = questions[index];
-        if (pregunta.required) {
-            let filled = false;
-            if (['text', 'textarea', 'date', 'select'].includes(pregunta.type)) {
-                const el = document.getElementById(`resp-${index}`);
-                filled = el && el.value.trim() !== '';
-            } else if (['checkbox', 'radio'].includes(pregunta.type)) {
-                filled = document.querySelectorAll(`input[name="resp-${index}"]:checked`).length > 0;
-            }
-            if (!filled) {
-                document.getElementById(`error-${index}`).style.display = 'block';
-                return;
-            }
-        }
-
-        saveCurrentAnswer(index); // ← Guarda la última respuesta
-
-        // Aquí puedes usar `answers` para enviarlo al admin
-        console.log('Respuestas finales:', answers);
-
-        // Guardar en Firebase
-        guardarEncuestaFirestore(answers)
-        .then((ok) => {
-
-            if (ok) {
-
-                container.innerHTML = `
-                    <div class="success-panel active">
-                        <div class="success-icon">✓</div>
-                        <h2>¡Encuesta enviada!</h2>
-                        <p>Gracias por completar el formulario.</p>
-                    </div>
-                `;
-
+        questions.forEach(q => {
+            if (q.type === 'section') {
+                // Guardar grupo anterior si tiene preguntas
+                if (current.questions.length > 0 || result.length === 0) {
+                    result.push(current);
+                }
+                // Iniciar nuevo grupo con este título de sección
+                current = { sectionTitle: q.title, questions: [] };
             } else {
+                current.questions.push(q);
+            }
+        });
 
-                alert("Error al guardar la encuesta.");
+        // Empujar último grupo
+        if (current.questions.length > 0 || current.sectionTitle) {
+            result.push(current);
+        }
+
+        // Eliminar posible primer grupo vacío sin título
+        if (result.length > 0 && !result[0].sectionTitle && result[0].questions.length === 0) {
+            result.shift();
+        }
+
+        return result;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  RENDER NAV
+    // ─────────────────────────────────────────────────────────────
+    function renderStepsNav() {
+        const nav = document.getElementById('steps-nav');
+        nav.innerHTML = '';
+        groups.forEach((g, i) => {
+            const stepNum = i + 1;
+            const label = g.sectionTitle || ('Sección ' + stepNum);
+            // Recortar label para la barra si es muy largo
+            const shortLabel = label.replace(/^[IVXLCDM]+\.\s*/i, '').replace(/^[0-9]+\.\s*/, '').substring(0, 22);
+
+            const item = document.createElement('div');
+            item.className = 'step-item';
+            item.id = 'nav-' + stepNum;
+            item.innerHTML = `
+                <div class="step-circle">
+                    <span class="step-num">${stepNum}</span>
+                    <span class="step-check">✓</span>
+                </div>
+                <span class="step-label">${esc(shortLabel)}</span>
+            `;
+            nav.appendChild(item);
+
+            if (i < groups.length - 1) {
+                const conn = document.createElement('div');
+                conn.className = 'step-connector';
+                conn.id = 'conn-' + stepNum;
+                nav.appendChild(conn);
+            }
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  RENDER STEPS
+    // ─────────────────────────────────────────────────────────────
+    function renderAllSteps() {
+        const container = document.getElementById('dynamic-steps-container');
+        container.innerHTML = '';
+
+        groups.forEach((g, i) => {
+            const stepNum = i + 1;
+            const panel = document.createElement('div');
+            panel.className = 'step-panel';
+            panel.id = 'step-' + stepNum;
+
+            const totalSteps = groups.length;
+            const sectionLabel = g.sectionTitle ? `<div class="section-title-banner">${esc(g.sectionTitle)}</div>` : '';
+
+            let questionsHtml = g.questions.map(q => renderQuestion(q)).join('');
+
+            // Botones de navegación
+            const isFirst = stepNum === 1;
+            const isLast  = stepNum === totalSteps;
+            const backBtn = isFirst ? '<span></span>' : `<button class="btn-back" onclick="goToStep(${stepNum - 1})">← Anterior</button>`;
+            const nextBtn = isLast
+                ? `<button class="btn-submit" onclick="submitForm()">Enviar solicitud ✓</button>`
+                : `<button class="btn-next" onclick="goToStep(${stepNum + 1})">Siguiente →</button>`;
+
+            panel.innerHTML = `
+                <div class="panel-section-label">Sección ${stepNum} de ${totalSteps}</div>
+                ${sectionLabel}
+                ${questionsHtml}
+                <div class="btn-row">
+                    ${backBtn}
+                    ${nextBtn}
+                </div>
+            `;
+
+            container.appendChild(panel);
+        });
+    }
+
+    // Renderiza una pregunta individual como HTML
+    function renderQuestion(q) {
+        const req = q.required ? '<span class="req">*</span>' : '';
+        const desc = q.desc ? `<p class="field-desc">${esc(q.desc)}</p>` : '';
+
+        switch (q.type) {
+            case 'text':
+                return `
+                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+                    <label class="field-label">${esc(q.title)} ${req}</label>
+                    ${desc}
+                    <input type="text" id="inp-${q.id}" placeholder="">
+                    <p class="error-msg">Este campo es obligatorio.</p>
+                </div>`;
+
+            case 'textarea':
+                return `
+                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+                    <label class="field-label">${esc(q.title)} ${req}</label>
+                    ${desc}
+                    <textarea id="inp-${q.id}" placeholder="Escribe aquí..."></textarea>
+                    <p class="error-msg">Este campo es obligatorio.</p>
+                </div>`;
+
+            case 'date':
+                return `
+                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+                    <label class="field-label">${esc(q.title)} ${req}</label>
+                    ${desc}
+                    <input type="date" id="inp-${q.id}">
+                    <p class="error-msg">Este campo es obligatorio.</p>
+                </div>`;
+
+            case 'radio':
+                const radioOpts = (q.options || []).map((opt, oi) => `
+                    <div class="radio-item" onclick="selectDynRadio(this, 'rg-${q.id}')">
+                        <input type="radio" name="rg-${q.id}" value="${esc(opt)}">
+                        <div class="custom-radio"><div class="radio-dot"></div></div>
+                        <div class="radio-text"><strong>${esc(opt)}</strong></div>
+                    </div>`).join('');
+                return `
+                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+                    <label class="field-label">${esc(q.title)} ${req}</label>
+                    ${desc}
+                    <div class="radio-group" id="rg-${q.id}">${radioOpts}</div>
+                    <p class="error-msg">Selecciona una opción.</p>
+                </div>`;
+
+            case 'checkbox':
+                const cbOpts = (q.options || []).map((opt, oi) => `
+                    <div class="checkbox-item" onclick="toggleDynCheck(this)">
+                        <input type="checkbox" value="${esc(opt)}">
+                        <div class="custom-check"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                        <span class="check-text">${esc(opt)}</span>
+                    </div>`).join('');
+                return `
+                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+                    <label class="field-label">${esc(q.title)} ${req}</label>
+                    ${desc}
+                    <div class="checkbox-grid">${cbOpts}</div>
+                    <p class="error-msg">Selecciona al menos una opción.</p>
+                </div>`;
+
+            case 'select':
+                const selOpts = (q.options || []).map(opt =>
+                    `<option value="${esc(opt)}">${esc(opt)}</option>`).join('');
+                return `
+                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+                    <label class="field-label">${esc(q.title)} ${req}</label>
+                    ${desc}
+                    <select id="inp-${q.id}">
+                        <option value="">Selecciona una opción</option>
+                        ${selOpts}
+                    </select>
+                    <p class="error-msg">Selecciona una opción.</p>
+                </div>`;
+
+            default:
+                return '';
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  NAVEGACIÓN
+    // ─────────────────────────────────────────────────────────────
+    function goToStep(step) {
+        if (step > currentStep && !validateStep(currentStep)) return;
+
+        document.getElementById('step-' + currentStep).classList.remove('active');
+        currentStep = step;
+        document.getElementById('step-' + currentStep).classList.add('active');
+        updateNav(step);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showStep(step) {
+        document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+        const el = document.getElementById('step-' + step);
+        if (el) el.classList.add('active');
+        updateNav(step);
+        currentStep = step;
+    }
+
+    function updateNav(step) {
+        groups.forEach((_, i) => {
+            const sn = i + 1;
+            const navItem = document.getElementById('nav-' + sn);
+            if (!navItem) return;
+            navItem.classList.remove('active', 'completed');
+            if (sn < step) navItem.classList.add('completed');
+            if (sn === step) navItem.classList.add('active');
+            const conn = document.getElementById('conn-' + sn);
+            if (conn) conn.classList.toggle('filled', sn < step);
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  VALIDACIÓN
+    // ─────────────────────────────────────────────────────────────
+    function validateStep(stepNum) {
+        const group = groups[stepNum - 1];
+        if (!group) return true;
+        let valid = true;
+
+        group.questions.forEach(q => {
+            if (!q.required) return;
+            const fg = document.getElementById('fg-' + q.id);
+            if (!fg) return;
+
+            let ok = false;
+
+            if (q.type === 'text' || q.type === 'textarea' || q.type === 'date') {
+                const el = document.getElementById('inp-' + q.id);
+                ok = el && el.value.trim() !== '';
+            } else if (q.type === 'select') {
+                const el = document.getElementById('inp-' + q.id);
+                ok = el && el.value !== '';
+            } else if (q.type === 'radio') {
+                ok = !!document.querySelector(`input[name="rg-${q.id}"]:checked`);
+            } else if (q.type === 'checkbox') {
+                ok = fg.querySelectorAll('input[type="checkbox"]:checked').length > 0;
             }
 
+            fg.classList.toggle('field-error', !ok);
+            if (!ok) valid = false;
         });
-    };
 
-    renderQuestion(currentQ);
-}
+        return valid;
+    }
 
-        const formDef = JSON.parse(
-        localStorage.getItem(FORM_KEY)
-        );
+    // ─────────────────────────────────────────────────────────────
+    //  SUBMIT
+    // ─────────────────────────────────────────────────────────────
+    function submitForm() {
+        if (!validateStep(currentStep)) return;
 
-        renderForm(formDef);
+        // Recolectar respuestas
+        const answers = [];
+        groups.forEach(g => {
+            if (g.sectionTitle) {
+                answers.push({ type: 'section', label: g.sectionTitle });
+            }
+            g.questions.forEach(q => {
+                let value = '';
+                if (q.type === 'text' || q.type === 'textarea' || q.type === 'date' || q.type === 'select') {
+                    const el = document.getElementById('inp-' + q.id);
+                    value = el ? el.value.trim() : '';
+                } else if (q.type === 'radio') {
+                    const checked = document.querySelector(`input[name="rg-${q.id}"]:checked`);
+                    value = checked ? checked.value : '';
+                } else if (q.type === 'checkbox') {
+                    const fg = document.getElementById('fg-' + q.id);
+                    value = fg ? Array.from(fg.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value) : [];
+                }
+                answers.push({ type: q.type, label: q.title, value });
+            });
+        });
+
+        // Guardar en localStorage (igual que el sistema del admin)
+        const existing = JSON.parse(localStorage.getItem(RESP_KEY) || '[]');
+        const newResp = {
+            _id: Date.now(),
+            _sentAt: new Date().toISOString(),
+            answers
+        };
+        existing.push(newResp);
+        localStorage.setItem(RESP_KEY, JSON.stringify(existing));
+
+        // Mostrar éxito
+        document.getElementById('step-' + currentStep).classList.remove('active');
+        document.getElementById('success-panel').classList.add('active');
+        document.getElementById('steps-nav').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  INTERACCIONES
+    // ─────────────────────────────────────────────────────────────
+    function toggleDynCheck(el) {
+        el.classList.toggle('selected');
+        const cb = el.querySelector('input[type="checkbox"]');
+        cb.checked = el.classList.contains('selected');
+        // Limpiar error del contenedor
+        const fg = el.closest('.field-group');
+        if (fg) fg.classList.remove('field-error');
+    }
+
+    function selectDynRadio(el, groupId) {
+        document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('selected'));
+        el.classList.add('selected');
+        el.querySelector('input[type="radio"]').checked = true;
+        // Limpiar error
+        const fg = el.closest('.field-group');
+        if (fg) fg.classList.remove('field-error');
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  UTILS
+    // ─────────────────────────────────────────────────────────────
+    function esc(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Limpiar errores al escribir
+    document.addEventListener('input', e => {
+        const fg = e.target.closest('.field-group');
+        if (fg) fg.classList.remove('field-error');
+    });
+
+    // ── ARRANQUE ──
+    init();
     </script>
+
     <script type="module" src="../js/contacto.js"></script>
+
     <!-- Header -->
     <section class="contacto-header">
         <h1>Contáctanos</h1>
@@ -430,7 +435,6 @@ function renderForm(data) {
             <h3>Ubicación</h3>
             <p>Los Olivos, Lima - Perú</p>
         </div>
-
         <div class="info-card">
             <div class="info-icon">
                 <img src="../imagen/contacto/correo.png" alt="icono">
@@ -439,7 +443,6 @@ function renderForm(data) {
             <p>coisipv.equipo@gmail.com</p>
             <p><a href="mailto:coisipv.equipo@gmail.com">Enviar correo</a></p>
         </div>
-
         <div class="info-card">
             <div class="info-icon">
                 <img src="../imagen/contacto/wp.webp" alt="icono">
@@ -453,59 +456,31 @@ function renderForm(data) {
 
     <!-- Mapa y Redes Sociales -->
     <section class="mapa-redes-section">
-        
-
         <div class="redes-container">
             <div>
                 <h3>Síguenos en Redes</h3>
-                <p style="font-size: 19px; color: #666; margin-bottom: 30px;">Mantente conectado con nuestras
-                    actividades y noticias</p>
+                <p style="font-size: 19px; color: #666; margin-bottom: 30px;">Mantente conectado con nuestras actividades y noticias</p>
             </div>
-
             <div class="redes-grid">
                 <div class="red-social" onclick="window.open('https://www.facebook.com/COISIPV', '_blank')">
-                    <div class="info-redesicon">
-                        <img src="../imagen/contacto/facebook.webp" alt="icono">
-                    </div>
-                    <div class="red-info">
-                        <h4>Facebook</h4>
-                        <p>@COISIPV</p>
-                    </div>
+                    <div class="info-redesicon"><img src="../imagen/contacto/facebook.webp" alt="icono"></div>
+                    <div class="red-info"><h4>Facebook</h4><p>@COISIPV</p></div>
                 </div>
-
                 <div class="red-social" onclick="window.open('https://www.instagram.com/coisipv', '_blank')">
-                    <div class="info-redesicon">
-                        <img src="../imagen/contacto/instagram.png" alt="icono">
-                    </div>
-                    <div class="red-info">
-                        <h4>Instagram</h4>
-                        <p>@coisipv</p>
-                    </div>
+                    <div class="info-redesicon"><img src="../imagen/contacto/instagram.png" alt="icono"></div>
+                    <div class="red-info"><h4>Instagram</h4><p>@coisipv</p></div>
                 </div>
-
                 <div class="red-social" onclick="window.open('https://www.tiktok.com/@coisipv.osb', '_blank')">
-                    <div class="info-redesicon">
-                        <img src="../imagen/contacto/tiktok.png" alt="icono">
-                    </div>
-                    <div class="red-info">
-                        <h4>Tik tok</h4>
-                        <p>@coisipv.osb</p>
-                    </div>
+                    <div class="info-redesicon"><img src="../imagen/contacto/tiktok.png" alt="icono"></div>
+                    <div class="red-info"><h4>TikTok</h4><p>@coisipv.osb</p></div>
                 </div>
-
                 <div class="red-social" onclick="window.open('https://www.linkedin.com/company/coisipv/', '_blank')">
-                    <div class="info-redesicon">
-                        <img src="../imagen/contacto/linkedin.png" alt="icono">
-                    </div>
-                    <div class="red-info">
-                        <h4>LinkedIn</h4>
-                        <p>coisipv</p>
-                    </div>
+                    <div class="info-redesicon"><img src="../imagen/contacto/linkedin.png" alt="icono"></div>
+                    <div class="red-info"><h4>LinkedIn</h4><p>coisipv</p></div>
                 </div>
             </div>
         </div>
     </section>
-
 
     <!-- Horarios -->
     <section class="horarios-section">
@@ -521,6 +496,6 @@ function renderForm(data) {
             </div>
         </div>
     </section>
-</body>
 
+</body>
 </html>
