@@ -20,7 +20,9 @@
         <div class="form-panel">
 
             <!-- ── PROGRESS STEPS (se genera dinámicamente) ── -->
-            <div class="steps-nav" id="steps-nav"></div>
+            <div class="steps-nav" id="steps-nav">
+                <div class="steps-nav-inner" id="steps-nav-inner"></div>
+            </div>
 
             <!-- ── STEPS (se generan dinámicamente) ── -->
             <div id="dynamic-steps-container"></div>
@@ -36,74 +38,68 @@
         </div>
     </div>
 
-    <script>
-    // ─────────────────────────────────────────────────────────────
-    //  CONSTANTES
-    // ─────────────────────────────────────────────────────────────
-    const FORM_KEY = 'fam_form_def';
-    const RESP_KEY = 'fam_responses';
+    <script type="module">
 
-    // Carga el formulario desde localStorage (igual que el admin)
-    function loadFormDef() {
-        const s = localStorage.getItem(FORM_KEY);
-        if (s) { try { return JSON.parse(s); } catch(e) {} }
-        return null;
-    }
+    import { db, doc, getDoc, collection, addDoc } from "../../../firebase.js";
 
     // ─────────────────────────────────────────────────────────────
     //  ESTADO DEL WIZARD
     // ─────────────────────────────────────────────────────────────
     let currentStep = 1;
     let formDef = null;
-    // groups = array de { sectionTitle, questions[] }
     let groups = [];
 
+    const WINDOW_SIZE = 4; // cuántos steps se ven a la vez
+
     // ─────────────────────────────────────────────────────────────
-    //  INICIALIZACIÓN
+    //  INICIALIZACIÓN — lee desde Firestore
     // ─────────────────────────────────────────────────────────────
-    function init() {
-        formDef = loadFormDef();
-        if (!formDef) {
+    async function init() {
+        try {
+            const snap = await getDoc(doc(db, "formularios", "principal"));
+            if (!snap.exists()) {
+                document.getElementById('dynamic-steps-container').innerHTML =
+                    '<p style="color:#999;text-align:center;padding:40px">No hay formulario configurado todavía. El administrador debe guardar el formulario primero.</p>';
+                document.getElementById('steps-nav').style.display = 'none';
+                return;
+            }
+            formDef = snap.data();
+        } catch(e) {
+            console.error("Error cargando formulario:", e);
             document.getElementById('dynamic-steps-container').innerHTML =
-                '<p style="color:#999;text-align:center;padding:40px">No hay formulario configurado todavía. El administrador debe guardar el formulario primero.</p>';
+                '<p style="color:#999;text-align:center;padding:40px">Error al cargar el formulario. Intenta recargar la página.</p>';
             document.getElementById('steps-nav').style.display = 'none';
             return;
         }
 
-        // Actualizar título / descripción si existiesen contenedores
-        // (el form-header es estático en esta página)
-
-        // Agrupar preguntas por secciones
         groups = buildGroups(formDef.questions);
         renderStepsNav();
         renderAllSteps();
         showStep(1);
     }
 
-    // Divide las preguntas en grupos según los separadores de sección
+    // ─────────────────────────────────────────────────────────────
+    //  AGRUPAR POR SECCIONES
+    // ─────────────────────────────────────────────────────────────
     function buildGroups(questions) {
         const result = [];
         let current = { sectionTitle: null, questions: [] };
 
         questions.forEach(q => {
             if (q.type === 'section') {
-                // Guardar grupo anterior si tiene preguntas
                 if (current.questions.length > 0 || result.length === 0) {
                     result.push(current);
                 }
-                // Iniciar nuevo grupo con este título de sección
                 current = { sectionTitle: q.title, questions: [] };
             } else {
                 current.questions.push(q);
             }
         });
 
-        // Empujar último grupo
         if (current.questions.length > 0 || current.sectionTitle) {
             result.push(current);
         }
 
-        // Eliminar posible primer grupo vacío sin título
         if (result.length > 0 && !result[0].sectionTitle && result[0].questions.length === 0) {
             result.shift();
         }
@@ -112,16 +108,24 @@
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  RENDER NAV
+    //  RENDER NAV — con inner wrapper para deslizamiento
     // ─────────────────────────────────────────────────────────────
     function renderStepsNav() {
-        const nav = document.getElementById('steps-nav');
-        nav.innerHTML = '';
+        const inner = document.getElementById('steps-nav-inner');
+        inner.innerHTML = '';
+
+        // Si hay 4 o menos steps, no se necesita deslizamiento:
+        // ocultamos el contenedor outer overflow si no aplica
+        if (groups.length <= WINDOW_SIZE) {
+            document.getElementById('steps-nav').style.overflow = 'visible';
+        }
+
         groups.forEach((g, i) => {
             const stepNum = i + 1;
             const label = g.sectionTitle || ('Sección ' + stepNum);
-            // Recortar label para la barra si es muy largo
-            const shortLabel = label.replace(/^[IVXLCDM]+\.\s*/i, '').replace(/^[0-9]+\.\s*/, '').substring(0, 22);
+            // Tomamos las primeras 2 palabras para el label corto
+            const words = label.replace(/^[IVXLCDM]+\.\s*/i, '').replace(/^[0-9]+\.\s*/, '').split(' ');
+            const shortLabel = words.slice(0, 2).join(' ');
 
             const item = document.createElement('div');
             item.className = 'step-item';
@@ -133,13 +137,13 @@
                 </div>
                 <span class="step-label">${esc(shortLabel)}</span>
             `;
-            nav.appendChild(item);
+            inner.appendChild(item);
 
             if (i < groups.length - 1) {
                 const conn = document.createElement('div');
                 conn.className = 'step-connector';
                 conn.id = 'conn-' + stepNum;
-                nav.appendChild(conn);
+                inner.appendChild(conn);
             }
         });
     }
@@ -159,10 +163,8 @@
 
             const totalSteps = groups.length;
             const sectionLabel = g.sectionTitle ? `<div class="section-title-banner">${esc(g.sectionTitle)}</div>` : '';
-
             let questionsHtml = g.questions.map(q => renderQuestion(q)).join('');
 
-            // Botones de navegación
             const isFirst = stepNum === 1;
             const isLast  = stepNum === totalSteps;
             const backBtn = isFirst ? '<span></span>' : `<button class="btn-back" onclick="goToStep(${stepNum - 1})">← Anterior</button>`;
@@ -184,7 +186,6 @@
         });
     }
 
-    // Renderiza una pregunta individual como HTML
     function renderQuestion(q) {
         const req = q.required ? '<span class="req">*</span>' : '';
         const desc = q.desc ? `<p class="field-desc">${esc(q.desc)}</p>` : '';
@@ -218,7 +219,7 @@
                 </div>`;
 
             case 'radio':
-                const radioOpts = (q.options || []).map((opt, oi) => `
+                const radioOpts = (q.options || []).map((opt) => `
                     <div class="radio-item" onclick="selectDynRadio(this, 'rg-${q.id}')">
                         <input type="radio" name="rg-${q.id}" value="${esc(opt)}">
                         <div class="custom-radio"><div class="radio-dot"></div></div>
@@ -233,7 +234,7 @@
                 </div>`;
 
             case 'checkbox':
-                const cbOpts = (q.options || []).map((opt, oi) => `
+                const cbOpts = (q.options || []).map((opt) => `
                     <div class="checkbox-item" onclick="toggleDynCheck(this)">
                         <input type="checkbox" value="${esc(opt)}">
                         <div class="custom-check"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -271,7 +272,6 @@
     // ─────────────────────────────────────────────────────────────
     function goToStep(step) {
         if (step > currentStep && !validateStep(currentStep)) return;
-
         document.getElementById('step-' + currentStep).classList.remove('active');
         currentStep = step;
         document.getElementById('step-' + currentStep).classList.add('active');
@@ -287,6 +287,9 @@
         currentStep = step;
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  UPDATE NAV — actualiza estados Y desliza la ventana de 4
+    // ─────────────────────────────────────────────────────────────
     function updateNav(step) {
         groups.forEach((_, i) => {
             const sn = i + 1;
@@ -298,6 +301,36 @@
             const conn = document.getElementById('conn-' + sn);
             if (conn) conn.classList.toggle('filled', sn < step);
         });
+
+        // ── Deslizamiento de ventana: mueve el inner wrapper ──
+        if (groups.length <= WINDOW_SIZE) return; // no hay nada que deslizar
+
+        const inner = document.getElementById('steps-nav-inner');
+        const navEl  = document.getElementById('steps-nav');
+        const navWidth = navEl.offsetWidth;
+
+        // Calculamos el offset: queremos que el step activo siempre quede
+        // dentro de la ventana visible (posiciones 1..4 relativas a la ventana)
+        // Índice 0-based del step activo
+        const idx = step - 1;
+
+        // El "inicio de ventana" se ajusta para que el step activo esté visible:
+        // - si idx < WINDOW_SIZE/2  → window start = 0
+        // - si idx > total - WINDOW_SIZE/2 → window start = total - WINDOW_SIZE
+        // - en otro caso → window start = idx - floor(WINDOW_SIZE/2)
+        const half  = Math.floor(WINDOW_SIZE / 2);
+        let winStart = idx - half;
+        winStart = Math.max(0, winStart);
+        winStart = Math.min(groups.length - WINDOW_SIZE, winStart);
+
+        // Cada "slot" de step+conector ocupa 1/(total) del ancho total del inner.
+        // Número de "slots" = groups.length items + (groups.length-1) conectores
+        // Pero es más sencillo: desplazamos en porcentaje relativo al ancho de la ventana.
+        // Porcentaje por item visible = 100% / WINDOW_SIZE
+        // Cada step real ocupa 1/groups.length del inner
+        // Desplazamos winStart * (100% / groups.length)
+        const pct = winStart * (100 / groups.length);
+        inner.style.transform = `translateX(-${pct}%)`;
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -312,7 +345,6 @@
             if (!q.required) return;
             const fg = document.getElementById('fg-' + q.id);
             if (!fg) return;
-
             let ok = false;
 
             if (q.type === 'text' || q.type === 'textarea' || q.type === 'date') {
@@ -335,20 +367,22 @@
     }
 
     // ─────────────────────────────────────────────────────────────
-    //  SUBMIT
+    //  SUBMIT — guarda en Firestore
     // ─────────────────────────────────────────────────────────────
-    function submitForm() {
+    async function submitForm() {
         if (!validateStep(currentStep)) return;
 
-        // Recolectar respuestas
         const answers = [];
+
         groups.forEach(g => {
             if (g.sectionTitle) {
                 answers.push({ type: 'section', label: g.sectionTitle });
             }
+
             g.questions.forEach(q => {
                 let value = '';
-                if (q.type === 'text' || q.type === 'textarea' || q.type === 'date' || q.type === 'select') {
+
+                if (['text','textarea','date','select'].includes(q.type)) {
                     const el = document.getElementById('inp-' + q.id);
                     value = el ? el.value.trim() : '';
                 } else if (q.type === 'radio') {
@@ -356,23 +390,28 @@
                     value = checked ? checked.value : '';
                 } else if (q.type === 'checkbox') {
                     const fg = document.getElementById('fg-' + q.id);
-                    value = fg ? Array.from(fg.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value) : [];
+                    value = fg
+                        ? Array.from(fg.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value)
+                        : [];
                 }
+
                 answers.push({ type: q.type, label: q.title, value });
             });
         });
 
-        // Guardar en localStorage (igual que el sistema del admin)
-        const existing = JSON.parse(localStorage.getItem(RESP_KEY) || '[]');
         const newResp = {
-            _id: Date.now(),
-            _sentAt: new Date().toISOString(),
+            sentAt: new Date().toISOString(),
             answers
         };
-        existing.push(newResp);
-        localStorage.setItem(RESP_KEY, JSON.stringify(existing));
 
-        // Mostrar éxito
+        try {
+            await addDoc(collection(db, "respuestas"), newResp);
+        } catch(e) {
+            console.error("Error al enviar:", e);
+            alert("Hubo un error al enviar. Intenta de nuevo.");
+            return;
+        }
+
         document.getElementById('step-' + currentStep).classList.remove('active');
         document.getElementById('success-panel').classList.add('active');
         document.getElementById('steps-nav').style.display = 'none';
@@ -386,7 +425,6 @@
         el.classList.toggle('selected');
         const cb = el.querySelector('input[type="checkbox"]');
         cb.checked = el.classList.contains('selected');
-        // Limpiar error del contenedor
         const fg = el.closest('.field-group');
         if (fg) fg.classList.remove('field-error');
     }
@@ -395,26 +433,28 @@
         document.querySelectorAll(`#${groupId} .radio-item`).forEach(r => r.classList.remove('selected'));
         el.classList.add('selected');
         el.querySelector('input[type="radio"]').checked = true;
-        // Limpiar error
         const fg = el.closest('.field-group');
         if (fg) fg.classList.remove('field-error');
     }
 
-    // ─────────────────────────────────────────────────────────────
-    //  UTILS
-    // ─────────────────────────────────────────────────────────────
     function esc(s) {
         return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // Limpiar errores al escribir
     document.addEventListener('input', e => {
         const fg = e.target.closest('.field-group');
         if (fg) fg.classList.remove('field-error');
     });
 
+    // Exponer funciones que se llaman desde HTML inline
+    window.goToStep = goToStep;
+    window.submitForm = submitForm;
+    window.toggleDynCheck = toggleDynCheck;
+    window.selectDynRadio = selectDynRadio;
+
     // ── ARRANQUE ──
     init();
+
     </script>
 
     <script type="module" src="../js/contacto.js"></script>

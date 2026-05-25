@@ -9,7 +9,6 @@
 <body>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-badge">A</div>
@@ -17,88 +16,83 @@
       <p>Formulario Familias</p>
     </div>
     <nav>
-      <div class="nav-item active" onclick="showSection('builder')" id="nav-builder">
+      <div class="nav-item active" id="nav-builder">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M9.5 1.5a1.5 1.5 0 113 0l-3.5 3.5H13v8H3v-8h3.5L3 1.5a1.5 1.5 0 113 0L8 4.5l1.5-3zm-7 5.5v6h11V7h-11z"/></svg>
         Editor de encuesta
       </div>
-      <div class="nav-item" onclick="showSection('responses')" id="nav-responses">
+      <div class="nav-item" id="nav-responses">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V2zm2-1a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V2a1 1 0 00-1-1H4zm3 8a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-6 0a1 1 0 100-2 1 1 0 000 2z"/></svg>
         Respuestas
         <span class="badge-count" id="resp-count-badge">0</span>
       </div>
     </nav>
     <div class="sidebar-footer">
-      <a href="encuesta.html" target="_blank" style="color:var(--p);font-weight:600;font-size:12px;text-decoration:none">↗ Abrir encuesta pública</a>
+      <a href="encuesta.html" target="_blank">↗ Abrir encuesta pública</a>
     </div>
   </aside>
 
   <div class="main">
-    <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
         <h1 id="topbar-title">Editor de encuesta</h1>
         <p id="topbar-sub">Agrega, edita o elimina preguntas</p>
       </div>
       <div class="topbar-actions" id="topbar-actions-builder">
-        <button class="btn btn-ghost btn-sm" onclick="previewForm()">
+        <button class="btn btn-ghost btn-sm" id="btn-preview">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 011.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0114.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 011.172 8z"/><path d="M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/></svg>
           Vista previa
         </button>
-        <button class="btn btn-primary btn-sm" onclick="saveForm()">
+        <button class="btn btn-primary btn-sm" id="btn-save">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.146a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 9.793l6.646-6.647a.5.5 0 01.708 0z"/></svg>
           Guardar cambios
         </button>
       </div>
       <div class="topbar-actions" id="topbar-actions-responses" style="display:none">
-        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">↓ CSV</button>
-        <button class="btn btn-ghost btn-sm" onclick="exportExcel()">↓ Excel</button>
+        <button class="btn btn-ghost btn-sm" id="btn-export-csv">↓ CSV</button>
+        <button class="btn btn-ghost btn-sm" id="btn-export-excel">↓ Excel</button>
       </div>
     </div>
 
     <div class="content">
 
-      <!-- ── BUILDER ── -->
       <div id="sec-builder" class="section active">
         <div class="builder-wrap">
           <div class="builder-main" id="builder-main">
-            <!-- Form meta -->
             <div class="form-meta-card">
               <input type="text" id="form-title-input" placeholder="Título del formulario" value="Registro de Familias en Situación de Vulnerabilidad">
               <textarea id="form-desc-input" placeholder="Descripción (opcional)">Completa todos los campos requeridos. Los campos con * son obligatorios.</textarea>
             </div>
-            <!-- Questions rendered here -->
             <div id="questions-list"></div>
           </div>
 
-          <!-- Add question sidebar -->
           <div class="builder-sidebar">
             <h3>Agregar elemento</h3>
             <div class="add-btn-list">
-              <button class="add-type-btn" onclick="addQuestion('text')">
+              <button class="add-type-btn" data-type="text">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.5 12.5A.5.5 0 013 12h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zM2 10.5a.5.5 0 01.5-.5h11a.5.5 0 010 1H2.5a.5.5 0 01-.5-.5zM2 8a.5.5 0 01.5-.5h6a.5.5 0 010 1H2.5A.5.5 0 012 8z"/></svg>
                 Respuesta corta
               </button>
-              <button class="add-type-btn" onclick="addQuestion('textarea')">
+              <button class="add-type-btn" data-type="textarea">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 1h13a.5.5 0 01.5.5v2a.5.5 0 01-1 0V2H2v1.5a.5.5 0 01-1 0v-2a.5.5 0 01.5-.5zm1 3h11a.5.5 0 01.5.5v8a.5.5 0 01-.5.5h-11a.5.5 0 01-.5-.5v-8a.5.5 0 01.5-.5z"/></svg>
                 Párrafo (texto largo)
               </button>
-              <button class="add-type-btn" onclick="addQuestion('radio')">
+              <button class="add-type-btn" data-type="radio">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/><path d="M8 4a4 4 0 100 8 4 4 0 000-8z"/></svg>
                 Opción múltiple (radio)
               </button>
-              <button class="add-type-btn" onclick="addQuestion('checkbox')">
+              <button class="add-type-btn" data-type="checkbox">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V2zm10.5 3.5a.5.5 0 00-.708-.708L6 10.793 4.354 9.146a.5.5 0 10-.708.708l2 2a.5.5 0 00.708 0l6-6z"/></svg>
                 Casillas de verificación
               </button>
-              <button class="add-type-btn" onclick="addQuestion('select')">
+              <button class="add-type-btn" data-type="select">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/></svg>
                 Lista desplegable
               </button>
-              <button class="add-type-btn" onclick="addQuestion('date')">
+              <button class="add-type-btn" data-type="date">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3.5 0a.5.5 0 01.5.5V1h8V.5a.5.5 0 011 0V1h1a2 2 0 012 2v11a2 2 0 01-2 2H2a2 2 0 01-2-2V3a2 2 0 012-2h1V.5a.5.5 0 01.5-.5zM1 4v10a1 1 0 001 1h12a1 1 0 001-1V4H1z"/></svg>
                 Fecha
               </button>
-              <button class="add-type-btn" onclick="addQuestion('section')">
+              <button class="add-type-btn" data-type="section">
                 <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2 0a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2H2zm6.5 4.5v3h3a.5.5 0 010 1h-3v3a.5.5 0 01-1 0v-3h-3a.5.5 0 010-1h3v-3a.5.5 0 011 0z"/></svg>
                 Separador de sección
               </button>
@@ -107,13 +101,12 @@
         </div>
       </div>
 
-      <!-- ── RESPONSES ── -->
       <div id="sec-responses" class="section">
         <div class="stats-row" id="stats-row"></div>
         <div class="resp-controls">
-          <input class="search-inp" type="text" id="search-input" placeholder="Buscar por nombre, encuestador, distrito..." oninput="renderResponses()">
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">↓ CSV</button>
-          <button class="btn btn-ghost btn-sm" onclick="exportExcel()">↓ Excel</button>
+          <input class="search-inp" type="text" id="search-input" placeholder="Buscar por nombre, encuestador, distrito...">
+          <button class="btn btn-ghost btn-sm" id="btn-export-csv2">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" id="btn-export-excel2">↓ Excel</button>
         </div>
         <div class="table-wrap">
           <table>
@@ -124,126 +117,158 @@
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
 
 <!-- DETAIL MODAL -->
-<div class="overlay" id="detail-overlay" onclick="closeIfOut(event,'detail-overlay')">
+<div class="overlay" id="detail-overlay">
   <div class="modal">
     <div class="modal-header">
       <h3 id="detail-title">Detalle de respuesta</h3>
-      <button class="modal-close" onclick="closeOverlay('detail-overlay')">✕</button>
+      <button class="modal-close" id="btn-close-detail">✕</button>
     </div>
     <div class="modal-body" id="detail-body"></div>
   </div>
 </div>
 
 <!-- CONFIRM DELETE -->
-<div class="overlay" id="confirm-overlay" onclick="closeIfOut(event,'confirm-overlay')">
+<div class="overlay" id="confirm-overlay">
   <div class="confirm-box">
     <h3>¿Eliminar respuesta?</h3>
     <p>Esta acción no se puede deshacer.</p>
     <div class="confirm-btns">
-      <button class="btn btn-ghost" onclick="closeOverlay('confirm-overlay')">Cancelar</button>
-      <button class="btn btn-danger" onclick="doDelete()">Eliminar</button>
+      <button class="btn btn-ghost" id="btn-cancel-delete">Cancelar</button>
+      <button class="btn btn-danger" id="btn-confirm-delete">Eliminar</button>
     </div>
   </div>
 </div>
 
 <!-- PREVIEW MODAL -->
-<div class="overlay" id="preview-overlay" onclick="closeIfOut(event,'preview-overlay')">
+<div class="overlay" id="preview-overlay">
   <div class="modal" style="max-width:660px">
     <div class="modal-header">
       <h3>Vista previa del formulario</h3>
-      <button class="modal-close" onclick="closeOverlay('preview-overlay')">✕</button>
+      <button class="modal-close" id="btn-close-preview">✕</button>
     </div>
-    <div class="modal-body" id="preview-body" style="background:#f0ebf8;padding:20px;border-radius:0 0 16px 16px"></div>
+    <div class="modal-body" id="preview-body" style="background:#f0ebf8;padding:20px;border-radius:0 0 20px 20px"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+
+import { db, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "../../../firebase.js";
+
 // ── STATE ──────────────────────────────────────────────
 const FORM_KEY = 'fam_form_def';
-const RESP_KEY = 'fam_responses';
-
-let formDef = loadFormDef();
-let responses = JSON.parse(localStorage.getItem(RESP_KEY) || '[]');
+let formDef = null;
+let responses = [];
 let deleteId = null;
 let dragSrc = null;
+
+// ── UTILS ──────────────────────────────────────────────
+function uid(){ return 'q'+Date.now()+Math.random().toString(36).slice(2,7); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function closeOverlay(id){ document.getElementById(id).classList.remove('show'); }
+function showToast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ── CARGAR FORMULARIO ─────────────────────────────────
+async function loadFormDef() {
+  try {
+    const snap = await getDoc(doc(db, "formularios", "principal"));
+    if (snap.exists()) {
+      formDef = snap.data();
+      localStorage.setItem(FORM_KEY, JSON.stringify(formDef));
+      return;
+    }
+  } catch(e) {
+    console.warn("Firestore no disponible, usando localStorage:", e);
+  }
+  const s = localStorage.getItem(FORM_KEY);
+  if (s) { try { formDef = JSON.parse(s); return; } catch(e){} }
+  formDef = defaultForm();
+  localStorage.setItem(FORM_KEY, JSON.stringify(formDef));
+}
+
+async function loadResponses() {
+  try {
+    const qs = await getDocs(collection(db, "respuestas"));
+    responses = [];
+    qs.forEach(d => responses.push({ firebaseId: d.id, ...d.data() }));
+    renderResponses();
+  } catch(e) {
+    console.error("Error cargando respuestas:", e);
+  }
+}
 
 // ── DEFAULT FORM ───────────────────────────────────────
 function defaultForm() {
   return {
-    title: 'Registro de Familias en Situación de Vulnerabilidad',
-    desc: 'Completa todos los campos requeridos. Los campos con * son obligatorios.',
+    title: 'Formulario de Registro de Familias en Situación de Vulnerabilidad',
+    desc: 'Completa todos los campos requeridos. La información será tratada de manera confidencial.',
     questions: [
-      {id:uid(),type:'section',title:'I. Datos generales del registro',required:false,options:[]},
-      {id:uid(),type:'date',title:'Fecha de registro',required:true,options:[]},
-      {id:uid(),type:'text',title:'Lugar de registro',required:true,options:[]},
-      {id:uid(),type:'text',title:'Nacionalidad',required:false,options:[]},
-      {id:uid(),type:'text',title:'Nombre del encuestador/a',required:true,options:[]},
-      {id:uid(),type:'section',title:'II. Identificación del jefe/a de hogar',required:false,options:[]},
-      {id:uid(),type:'text',title:'Nombres',required:true,options:[]},
-      {id:uid(),type:'text',title:'Apellidos',required:true,options:[]},
-      {id:uid(),type:'radio',title:'Tipo de documento de identidad',required:false,options:['DNI','CE','Pasaporte','Otro']},
-      {id:uid(),type:'text',title:'Número de documento de identidad',required:false,options:[]},
-      {id:uid(),type:'date',title:'Fecha de nacimiento',required:false,options:[]},
-      {id:uid(),type:'text',title:'Edad',required:false,options:[]},
-      {id:uid(),type:'radio',title:'Sexo',required:false,options:['Masculino','Femenino','Otro']},
-      {id:uid(),type:'radio',title:'Estado civil',required:false,options:['Soltero/a','Casado/a','Conviviente','Otro']},
-      {id:uid(),type:'text',title:'Teléfono de contacto',required:false,options:[]},
-      {id:uid(),type:'text',title:'Correo electrónico (opcional)',required:false,options:[]},
-      {id:uid(),type:'section',title:'III. Ubicación y condiciones de vivienda',required:false,options:[]},
-      {id:uid(),type:'text',title:'Provincia de domicilio',required:false,options:[]},
-      {id:uid(),type:'text',title:'Distrito de domicilio',required:false,options:[]},
-      {id:uid(),type:'radio',title:'Tipo de vivienda',required:false,options:['Propia','Alquilada','Cedida','Asentamiento informal','Otro']},
-      {id:uid(),type:'radio',title:'Material predominante',required:false,options:['Noble','Madera','Estera','Mixto','Otro']},
-      {id:uid(),type:'checkbox',title:'Acceso a servicios básicos',required:false,options:['Agua potable','Electricidad','Desagüe','Internet']},
-      {id:uid(),type:'section',title:'VI. Condición de vulnerabilidad',required:false,options:[]},
-      {id:uid(),type:'checkbox',title:'Condiciones de vulnerabilidad (marcar las que correspondan)',required:false,options:['Migrante en situación irregular','Refugiado / solicitante de asilo','Pobreza extrema','Violencia familiar','Discapacidad','Enfermedad crónica','Madre/padre soltero','Adulto mayor en abandono','Niños/as en riesgo','Desempleo prolongado','Falta de acceso a servicios básicos']},
-      {id:uid(),type:'text',title:'Discapacidad — indicar tipo (si aplica)',required:false,options:[]},
-      {id:uid(),type:'section',title:'VII. Situación migratoria (si aplica)',required:false,options:[]},
-      {id:uid(),type:'text',title:'País de origen',required:false,options:[]},
-      {id:uid(),type:'text',title:'Tiempo de permanencia en Perú',required:false,options:[]},
-      {id:uid(),type:'radio',title:'Situación migratoria actual',required:false,options:['Regular','Irregular','En trámite','No aplica']},
-      {id:uid(),type:'checkbox',title:'Documentos disponibles',required:false,options:['Pasaporte','Permiso Temporal','Carné de extranjería','Ninguno']},
-      {id:uid(),type:'section',title:'VIII. Necesidades prioritarias identificadas',required:false,options:[]},
-      {id:uid(),type:'checkbox',title:'Necesidades prioritarias (marcar las que correspondan)',required:false,options:['Alimentación','Salud','Educación','Regularización migratoria','Empleo','Vivienda','Asistencia legal','Apoyo psicológico']},
-      {id:uid(),type:'text',title:'Otra necesidad (especificar)',required:false,options:[]},
-      {id:uid(),type:'radio',title:'¿Recibió ayuda económica de un agente humanitario?',required:true,options:['Sí','No']},
-      {id:uid(),type:'text',title:'¿Cuál? (tipo de ayuda)',required:false,options:[]},
-      {id:uid(),type:'text',title:'¿Cuándo? (fecha o período)',required:false,options:[]},
+      { id: uid(), type: 'section', title: 'I. DATOS GENERALES DEL REGISTRO' },
+      { id: uid(), type: 'date', title: 'Fecha de registro', required: true },
+      { id: uid(), type: 'text', title: 'Lugar de registro', required: true },
+      { id: uid(), type: 'text', title: 'Nacionalidad' },
+      { id: uid(), type: 'text', title: 'Nombre del encuestador/a', required: true },
+      { id: uid(), type: 'section', title: 'II. IDENTIFICACIÓN DEL JEFE/A DE HOGAR' },
+      { id: uid(), type: 'text', title: 'Nombres', required: true },
+      { id: uid(), type: 'text', title: 'Apellidos', required: true },
+      { id: uid(), type: 'radio', title: 'Tipo de documento de identidad', options: ['DNI','CE','Pasaporte','Otro'] },
+      { id: uid(), type: 'text', title: 'Número de documento de identidad' },
+      { id: uid(), type: 'date', title: 'Fecha de nacimiento' },
+      { id: uid(), type: 'text', title: 'Edad' },
+      { id: uid(), type: 'radio', title: 'Sexo', options: ['Masculino','Femenino','Otro'] },
+      { id: uid(), type: 'radio', title: 'Estado civil', options: ['Soltero/a','Casado/a','Conviviente','Otro'] },
+      { id: uid(), type: 'text', title: 'Teléfono de contacto' },
+      { id: uid(), type: 'text', title: 'Correo electrónico' },
+      { id: uid(), type: 'section', title: 'III. UBICACIÓN Y CONDICIONES DE VIVIENDA' },
+      { id: uid(), type: 'text', title: 'Provincia de domicilio' },
+      { id: uid(), type: 'text', title: 'Distrito de domicilio' },
+      { id: uid(), type: 'radio', title: 'Tipo de vivienda', options: ['Propia','Alquilada','Cedida','Asentamiento informal','Otro'] },
+      { id: uid(), type: 'checkbox', title: 'Material predominante de la vivienda', options: ['Noble','Madera','Estera','Mixto','Otro'] },
+      { id: uid(), type: 'checkbox', title: 'Acceso a servicios básicos', options: ['Agua potable','Electricidad','Desagüe','Internet'] },
+      { id: uid(), type: 'section', title: 'IV. COMPOSICIÓN DEL HOGAR' },
+      { id: uid(), type: 'textarea', title: 'Integrantes del hogar (Nombre, edad, parentesco, documento, ocupación, nivel educativo)' },
+      { id: uid(), type: 'section', title: 'VI. CONDICIÓN DE VULNERABILIDAD' },
+      { id: uid(), type: 'checkbox', title: 'Condiciones de vulnerabilidad', options: ['Migrante en situación irregular','Refugiado / solicitante de asilo','Pobreza extrema','Violencia familiar','Discapacidad','Enfermedad crónica','Madre/padre soltero','Adulto mayor en abandono','Niños/as en riesgo','Desempleo prolongado','Falta de acceso a servicios básicos','Otro'] },
+      { id: uid(), type: 'text', title: 'Discapacidad u otra condición (detalle)' },
+      { id: uid(), type: 'section', title: 'VII. SITUACIÓN MIGRATORIA' },
+      { id: uid(), type: 'text', title: 'País de origen' },
+      { id: uid(), type: 'text', title: 'Tiempo de permanencia en Perú' },
+      { id: uid(), type: 'radio', title: 'Situación migratoria actual', options: ['Regular','Irregular','En trámite'] },
+      { id: uid(), type: 'checkbox', title: 'Documentos disponibles', options: ['Pasaporte','Permiso Temporal','Carné de extranjería','Ninguno'] },
+      { id: uid(), type: 'section', title: 'VIII. NECESIDADES PRIORITARIAS IDENTIFICADAS' },
+      { id: uid(), type: 'checkbox', title: 'Necesidades prioritarias', options: ['Alimentación','Salud','Educación','Regularización migratoria','Empleo','Vivienda','Asistencia legal','Apoyo psicológico','Otro'] },
+      { id: uid(), type: 'section', title: 'IX. AYUDAS' },
+      { id: uid(), type: 'radio', title: '¿Recibió ayuda económica?', required: true, options: ['Sí','No'] },
+      { id: uid(), type: 'text', title: '¿Cuál ayuda recibió?' }
     ]
   };
 }
 
-function uid(){return 'q'+Date.now()+Math.random().toString(36).slice(2,7)}
-
-function loadFormDef(){
-  const s = localStorage.getItem(FORM_KEY);
-  if(s) try{return JSON.parse(s)}catch(e){}
-  const def = defaultForm();
-  localStorage.setItem(FORM_KEY, JSON.stringify(def));
-  return def;
-}
-
 // ── NAVIGATION ─────────────────────────────────────────
 function showSection(sec) {
-  ['builder','responses'].forEach(s=>{
+  ['builder','responses'].forEach(s => {
     document.getElementById('sec-'+s).classList.toggle('active', s===sec);
     document.getElementById('nav-'+s).classList.toggle('active', s===sec);
   });
-  document.getElementById('topbar-actions-builder').style.display = sec==='builder'?'flex':'none';
-  document.getElementById('topbar-actions-responses').style.display = sec==='responses'?'flex':'none';
+  document.getElementById('topbar-actions-builder').style.display = sec==='builder' ? 'flex' : 'none';
+  document.getElementById('topbar-actions-responses').style.display = sec==='responses' ? 'flex' : 'none';
   if(sec==='builder'){
-    document.getElementById('topbar-title').textContent='Editor de encuesta';
-    document.getElementById('topbar-sub').textContent='Agrega, edita o elimina preguntas';
+    document.getElementById('topbar-title').textContent = 'Editor de encuesta';
+    document.getElementById('topbar-sub').textContent = 'Agrega, edita o elimina preguntas';
   } else {
-    document.getElementById('topbar-title').textContent='Respuestas';
-    document.getElementById('topbar-sub').textContent='Visualiza y exporta las respuestas enviadas';
+    document.getElementById('topbar-title').textContent = 'Respuestas';
+    document.getElementById('topbar-sub').textContent = 'Visualiza y exporta las respuestas enviadas';
     renderResponses();
   }
 }
@@ -254,9 +279,7 @@ function renderBuilder() {
   document.getElementById('form-desc-input').value = formDef.desc;
   const list = document.getElementById('questions-list');
   list.innerHTML = '';
-  formDef.questions.forEach((q,i) => {
-    list.appendChild(buildQCard(q, i));
-  });
+  formDef.questions.forEach((q,i) => list.appendChild(buildQCard(q,i)));
 }
 
 function buildQCard(q, idx) {
@@ -268,9 +291,9 @@ function buildQCard(q, idx) {
     div.innerHTML = `
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
         <span class="drag-handle" title="Arrastrar">⠿</span>
-        <input value="${esc(q.title)}" placeholder="Título de sección" style="font-size:17px;font-weight:600;color:#7a5a94" oninput="updateQField('${q.id}','title',this.value)">
+        <input value="${esc(q.title)}" placeholder="Título de sección" style="font-size:17px;font-weight:700;color:#7a5a94" data-field="title" data-qid="${q.id}">
         <div style="margin-left:auto;display:flex;gap:4px">
-          <button class="btn-icon danger" title="Eliminar sección" onclick="deleteQ('${q.id}')"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 010-2h3a1 1 0 01.5-.5h4a1 1 0 01.5.5h3a1 1 0 011 1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118z"/></svg></button>
+          <button class="btn-icon danger" data-action="delete" data-qid="${q.id}"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 010-2h3a1 1 0 01.5-.5h4a1 1 0 01.5.5h3a1 1 0 011 1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118z"/></svg></button>
         </div>
       </div>
       <hr style="border:none;border-top:2px solid #ddd0ea">
@@ -292,14 +315,14 @@ function buildQCard(q, idx) {
       ${(q.options||[]).map((opt,oi)=>`
         <div class="option-row" data-oi="${oi}">
           <div class="option-icon ${iconClass}"></div>
-          <input class="option-label-input" value="${esc(opt)}" placeholder="Opción ${oi+1}" oninput="updateOption('${q.id}',${oi},this.value)">
-          <button class="btn-remove-opt" title="Eliminar opción" onclick="removeOption('${q.id}',${oi})">✕</button>
+          <input class="option-label-input" value="${esc(opt)}" placeholder="Opción ${oi+1}" data-optfield data-qid="${q.id}" data-oi="${oi}">
+          <button class="btn-remove-opt" data-action="remove-opt" data-qid="${q.id}" data-oi="${oi}">✕</button>
         </div>
       `).join('')}
     </div>
     <div class="add-option-row">
       <div class="option-icon ${iconClass}" style="opacity:.4"></div>
-      <button class="add-option-btn" onclick="addOption('${q.id}')">Agregar opción</button>
+      <button class="add-option-btn" data-action="add-opt" data-qid="${q.id}">Agregar opción</button>
     </div>`;
   } else if(q.type==='date'){
     optionsHtml = `<div class="q-preview-field">📅 Campo de fecha</div>`;
@@ -313,22 +336,22 @@ function buildQCard(q, idx) {
     <div class="q-card-header">
       <span class="drag-handle" title="Arrastrar para reordenar">⠿</span>
       <div class="q-card-header-main">
-        <input class="q-title-input" value="${esc(q.title)}" placeholder="Pregunta sin título" oninput="updateQField('${q.id}','title',this.value)">
-        <input class="q-desc-input" value="${esc(q.desc||'')}" placeholder="Descripción (opcional)" oninput="updateQField('${q.id}','desc',this.value)">
+        <input class="q-title-input" value="${esc(q.title)}" placeholder="Pregunta sin título" data-field="title" data-qid="${q.id}">
+        <input class="q-desc-input" value="${esc(q.desc||'')}" placeholder="Descripción (opcional)" data-field="desc" data-qid="${q.id}">
       </div>
       <div class="q-card-actions">
-        <select class="q-type-select" onchange="changeQType('${q.id}',this.value)">
+        <select class="q-type-select" data-action="change-type" data-qid="${q.id}">
           ${Object.entries(typeLabels).map(([v,l])=>`<option value="${v}" ${q.type===v?'selected':''}>${l}</option>`).join('')}
         </select>
-        <button class="btn-icon" title="Duplicar" onclick="duplicateQ('${q.id}')"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V2zm2-1a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V2a1 1 0 00-1-1H6z"/><path d="M2 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1v-1h-1v1H2V6h1V5H2z"/></svg></button>
-        <button class="btn-icon danger" title="Eliminar" onclick="deleteQ('${q.id}')"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 010-2h3a1 1 0 01.5-.5h4a1 1 0 01.5.5h3a1 1 0 011 1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118z"/></svg></button>
+        <button class="btn-icon" data-action="duplicate" data-qid="${q.id}"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V2zm2-1a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V2a1 1 0 00-1-1H6z"/><path d="M2 5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1v-1h-1v1H2V6h1V5H2z"/></svg></button>
+        <button class="btn-icon danger" data-action="delete" data-qid="${q.id}"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 010-2h3a1 1 0 01.5-.5h4a1 1 0 01.5.5h3a1 1 0 011 1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118z"/></svg></button>
       </div>
     </div>
     ${optionsHtml}
     <div class="q-card-footer">
-      <span style="font-size:11px;color:var(--muted);background:var(--bg);padding:2px 8px;border-radius:20px">${typeLabels[q.type]||q.type}</span>
+      <span style="font-size:11px;color:var(--muted);background:var(--bg);padding:3px 10px;border-radius:20px;font-weight:600">${typeLabels[q.type]||q.type}</span>
       <label class="required-toggle">
-        <input type="checkbox" ${q.required?'checked':''} onchange="updateQField('${q.id}','required',this.checked)"> Obligatoria
+        <input type="checkbox" ${q.required?'checked':''} data-action="toggle-required" data-qid="${q.id}"> Obligatoria
       </label>
     </div>
   `;
@@ -336,7 +359,84 @@ function buildQCard(q, idx) {
   return div;
 }
 
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+// ── DELEGACIÓN DE EVENTOS en questions-list ────────────
+function bindQuestionsListEvents() {
+  const list = document.getElementById('questions-list');
+
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if(!btn) return;
+    const action = btn.dataset.action;
+    const qid = btn.dataset.qid;
+
+    if(action === 'delete') {
+      formDef.questions = formDef.questions.filter(q=>q.id!==qid);
+      renderBuilder();
+    }
+    if(action === 'duplicate') {
+      const q = formDef.questions.find(q=>q.id===qid);
+      if(!q) return;
+      const copy = JSON.parse(JSON.stringify(q));
+      copy.id = uid();
+      const idx = formDef.questions.findIndex(q=>q.id===qid);
+      formDef.questions.splice(idx+1,0,copy);
+      renderBuilder();
+    }
+    if(action === 'add-opt') {
+      const q = formDef.questions.find(q=>q.id===qid);
+      if(!q) return;
+      q.options = q.options||[];
+      q.options.push('Opción '+(q.options.length+1));
+      const container = document.getElementById('opts-'+qid);
+      if(container) {
+        const oi = q.options.length-1;
+        const iconClass = q.type==='checkbox'?'checkbox-icon':'';
+        const row = document.createElement('div');
+        row.className='option-row';
+        row.dataset.oi=oi;
+        row.innerHTML=`<div class="option-icon ${iconClass}"></div><input class="option-label-input" value="${esc(q.options[oi])}" placeholder="Opción ${oi+1}" data-optfield data-qid="${qid}" data-oi="${oi}"><button class="btn-remove-opt" data-action="remove-opt" data-qid="${qid}" data-oi="${oi}">✕</button>`;
+        container.appendChild(row);
+        row.querySelector('input').focus();
+      }
+    }
+    if(action === 'remove-opt') {
+      const oi = parseInt(btn.dataset.oi);
+      const q = formDef.questions.find(q=>q.id===qid);
+      if(q) q.options.splice(oi,1);
+      renderBuilder();
+    }
+  });
+
+  list.addEventListener('change', e => {
+    const sel = e.target.closest('[data-action="change-type"]');
+    if(sel) {
+      const qid = sel.dataset.qid;
+      const q = formDef.questions.find(q=>q.id===qid);
+      if(!q) return;
+      q.type = sel.value;
+      if(['radio','checkbox','select'].includes(sel.value) && (!q.options||!q.options.length)) q.options=['Opción 1','Opción 2'];
+      renderBuilder();
+    }
+    const cb = e.target.closest('[data-action="toggle-required"]');
+    if(cb) {
+      const q = formDef.questions.find(q=>q.id===cb.dataset.qid);
+      if(q) q.required = cb.checked;
+    }
+  });
+
+  list.addEventListener('input', e => {
+    const inp = e.target.closest('[data-field]');
+    if(inp) {
+      const q = formDef.questions.find(q=>q.id===inp.dataset.qid);
+      if(q) q[inp.dataset.field] = inp.value;
+    }
+    const opt = e.target.closest('[data-optfield]');
+    if(opt) {
+      const q = formDef.questions.find(q=>q.id===opt.dataset.qid);
+      if(q && q.options) q.options[parseInt(opt.dataset.oi)] = opt.value;
+    }
+  });
+}
 
 // ── DRAG AND DROP ──────────────────────────────────────
 function addDragEvents(el) {
@@ -355,8 +455,7 @@ function addDragEvents(el) {
     if(dragSrc && dragSrc !== el) {
       const list = document.getElementById('questions-list');
       const rect = el.getBoundingClientRect();
-      const mid = rect.top + rect.height/2;
-      if(e.clientY < mid) list.insertBefore(dragSrc, el);
+      if(e.clientY < rect.top + rect.height/2) list.insertBefore(dragSrc, el);
       else if(el.nextSibling) list.insertBefore(dragSrc, el.nextSibling);
       else list.appendChild(dragSrc);
     }
@@ -373,65 +472,6 @@ function syncQuestionsFromDOM() {
   formDef.questions = newOrder;
 }
 
-// ── QUESTION MUTATIONS ─────────────────────────────────
-function updateQField(id, field, val) {
-  const q = formDef.questions.find(q=>q.id===id);
-  if(q) q[field] = val;
-}
-
-function changeQType(id, newType) {
-  const q = formDef.questions.find(q=>q.id===id);
-  if(!q) return;
-  q.type = newType;
-  if(['radio','checkbox','select'].includes(newType) && (!q.options||!q.options.length)) q.options=['Opción 1','Opción 2'];
-  renderBuilder();
-}
-
-function addOption(qid) {
-  const q = formDef.questions.find(q=>q.id===qid);
-  if(!q) return;
-  q.options = q.options||[];
-  q.options.push('Opción '+(q.options.length+1));
-  const container = document.getElementById('opts-'+qid);
-  if(container) {
-    const oi = q.options.length-1;
-    const row = document.createElement('div');
-    row.className='option-row';
-    row.dataset.oi=oi;
-    const iconClass = q.type==='checkbox'?'checkbox-icon':'';
-    row.innerHTML=`<div class="option-icon ${iconClass}"></div><input class="option-label-input" value="${esc(q.options[oi])}" placeholder="Opción ${oi+1}" oninput="updateOption('${qid}',${oi},this.value)"><button class="btn-remove-opt" onclick="removeOption('${qid}',${oi})">✕</button>`;
-    container.appendChild(row);
-    row.querySelector('input').focus();
-  }
-}
-
-function updateOption(qid, oi, val) {
-  const q = formDef.questions.find(q=>q.id===qid);
-  if(q&&q.options) q.options[oi]=val;
-}
-
-function removeOption(qid, oi) {
-  const q = formDef.questions.find(q=>q.id===qid);
-  if(!q) return;
-  q.options.splice(oi,1);
-  renderBuilder();
-}
-
-function deleteQ(id) {
-  formDef.questions = formDef.questions.filter(q=>q.id!==id);
-  renderBuilder();
-}
-
-function duplicateQ(id) {
-  const q = formDef.questions.find(q=>q.id===id);
-  if(!q) return;
-  const copy = JSON.parse(JSON.stringify(q));
-  copy.id = uid();
-  const idx = formDef.questions.findIndex(q=>q.id===id);
-  formDef.questions.splice(idx+1,0,copy);
-  renderBuilder();
-}
-
 function addQuestion(type) {
   const q = {id:uid(), type, title:'', desc:'', required:false, options:[]};
   if(['radio','checkbox','select'].includes(type)) q.options=['Opción 1','Opción 2'];
@@ -440,43 +480,55 @@ function addQuestion(type) {
   setTimeout(()=>{
     const cards = document.querySelectorAll('#questions-list [data-id]');
     const last = cards[cards.length-1];
-    if(last){last.scrollIntoView({behavior:'smooth',block:'center'});last.querySelector('input')?.focus();}
+    if(last){ last.scrollIntoView({behavior:'smooth',block:'center'}); last.querySelector('input')?.focus(); }
   },100);
 }
 
-function saveForm() {
+// ── GUARDAR ────────────────────────────────────────────
+async function saveForm() {
   syncQuestionsFromDOM();
   formDef.title = document.getElementById('form-title-input').value;
-  formDef.desc = document.getElementById('form-desc-input').value;
+  formDef.desc  = document.getElementById('form-desc-input').value;
   localStorage.setItem(FORM_KEY, JSON.stringify(formDef));
-  showToast('Formulario guardado correctamente','ok');
+  try {
+    await setDoc(doc(db, "formularios", "principal"), {
+      ...formDef,
+      savedAt: new Date().toISOString()
+    });
+    showToast('Formulario guardado correctamente', 'ok');
+  } catch(e) {
+    console.error(e);
+    showToast('Error al guardar en Firestore', 'error');
+  }
 }
 
 // ── PREVIEW ────────────────────────────────────────────
 function previewForm() {
   syncQuestionsFromDOM();
   formDef.title = document.getElementById('form-title-input').value;
-  formDef.desc = document.getElementById('form-desc-input').value;
+  formDef.desc  = document.getElementById('form-desc-input').value;
   const body = document.getElementById('preview-body');
   let html = `<div style="max-width:560px;margin:0 auto">
-    <div style="background:#fff;border-radius:10px;border-top:6px solid #916eac;padding:20px;margin-bottom:12px">
-      <h2 style="font-size:20px;font-weight:600;margin-bottom:6px">${esc(formDef.title)}</h2>
-      <p style="font-size:13px;color:#5f6368">${esc(formDef.desc)}</p>
+    <div style="background:#fff;border-radius:16px;border-top:6px solid #916eac;padding:24px;margin-bottom:12px;box-shadow:0 4px 20px rgba(0,0,0,0.07)">
+      <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;color:#081e54">${esc(formDef.title)}</h2>
+      <p style="font-size:13px;color:#6b7280">${esc(formDef.desc)}</p>
     </div>`;
   formDef.questions.forEach(q => {
     if(q.type==='section'){
-      html+=`<div style="background:#efe8f5;border-radius:10px;padding:16px;margin-bottom:10px"><h3 style="font-size:17px;font-weight:600;color:#7a5a94">${esc(q.title)}</h3><hr style="border:none;border-top:2px solid #ddd0ea;margin-top:8px"></div>`;
+      html+=`<div style="background:#efe8f5;border-radius:16px;padding:18px 20px;margin-bottom:10px"><h3 style="font-size:17px;font-weight:700;color:#7a5a94">${esc(q.title)}</h3><hr style="border:none;border-top:2px solid #ddd0ea;margin-top:8px"></div>`;
     } else {
       const req = q.required?'<span style="color:#d93025">*</span>':'';
-      html+=`<div style="background:#fff;border-radius:10px;padding:18px;margin-bottom:10px"><p style="font-size:14px;font-weight:500;margin-bottom:12px">${esc(q.title)} ${req}</p>`;
+      html+=`<div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.05)"><p style="font-size:14px;font-weight:600;margin-bottom:12px;color:#081e54">${esc(q.title)} ${req}</p>`;
       if(q.type==='text') html+=`<div style="border-bottom:1.5px solid #dadce0;padding:6px 0;font-size:13px;color:#bbb">Respuesta corta</div>`;
       else if(q.type==='textarea') html+=`<div style="border-bottom:1.5px solid #dadce0;padding:10px 0;font-size:13px;color:#bbb;min-height:50px">Respuesta larga...</div>`;
       else if(q.type==='date') html+=`<div style="border-bottom:1.5px solid #dadce0;padding:6px 0;font-size:13px;color:#bbb">📅 Fecha</div>`;
       else if(['radio','checkbox','select'].includes(q.type)){
         html+=`<div style="display:flex;flex-direction:column;gap:8px">`;
         (q.options||[]).forEach(opt=>{
-          const icon = q.type==='checkbox'?`<div style="width:15px;height:15px;border:2px solid #bbb;border-radius:3px;flex-shrink:0"></div>`:`<div style="width:15px;height:15px;border:2px solid #bbb;border-radius:50%;flex-shrink:0"></div>`;
-          html+=`<div style="display:flex;align-items:center;gap:10px;font-size:14px">${icon}<span>${esc(opt)}</span></div>`;
+          const icon = q.type==='checkbox'
+            ?`<div style="width:15px;height:15px;border:2px solid #ddd0ea;border-radius:4px;flex-shrink:0"></div>`
+            :`<div style="width:15px;height:15px;border:2px solid #ddd0ea;border-radius:50%;flex-shrink:0"></div>`;
+          html+=`<div style="display:flex;align-items:center;gap:10px;font-size:14px">${icon}<span style="color:#374151">${esc(opt)}</span></div>`;
         });
         html+=`</div>`;
       }
@@ -484,66 +536,49 @@ function previewForm() {
     }
   });
   html+=`</div>`;
-  body.innerHTML=html;
+  body.innerHTML = html;
   document.getElementById('preview-overlay').classList.add('show');
 }
 
 // ── RESPONSES ──────────────────────────────────────────
 function renderResponses() {
-  responses = JSON.parse(localStorage.getItem(RESP_KEY)||'[]');
   const q = document.getElementById('search-input')?.value.toLowerCase()||'';
   const filtered = responses.filter(r => JSON.stringify(r).toLowerCase().includes(q));
-  
   document.getElementById('resp-count-badge').textContent = responses.length;
-  document.getElementById('empty-msg').style.display = responses.length===0?'block':'none';
+  document.getElementById('empty-msg').style.display = responses.length===0 ? 'block' : 'none';
 
-  // Stats
-  const total = responses.length;
-  const statsHtml = `
-    <div class="stat-card"><div class="sn">${total}</div><div class="sl">Total respuestas</div></div>
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="sn">${responses.length}</div><div class="sl">Total respuestas</div></div>
     <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'Nombres')||getAns(r,'Apellidos')).length}</div><div class="sl">Con datos personales</div></div>
     <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'País de origen')).length}</div><div class="sl">Migrantes registrados</div></div>
-    <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'¿Recibió ayuda económica'))==='Sí'||responses.filter(r=>hasAns(r,'¿Recibió ayuda económica de un agente humanitario?','Sí')).length}</div><div class="sl">Con ayuda humanitaria</div></div>
+    <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'¿Recibió ayuda económica?')==='Sí').length}</div><div class="sl">Con ayuda humanitaria</div></div>
   `;
-  document.getElementById('stats-row').innerHTML = statsHtml;
 
-  // Table header — show fixed columns
-  const thead = document.getElementById('resp-thead');
-  thead.innerHTML = `<tr>
-    <th>#</th>
-    <th>Fecha envío</th>
-    <th>Jefe de hogar</th>
-    <th>Encuestador/a</th>
-    <th>Distrito</th>
-    <th>Fecha reg.</th>
-    <th>Acciones</th>
+  document.getElementById('resp-thead').innerHTML = `<tr>
+    <th>#</th><th>Fecha envío</th><th>Jefe de hogar</th>
+    <th>Encuestador/a</th><th>Distrito</th><th>Fecha reg.</th><th>Acciones</th>
   </tr>`;
 
   const tbody = document.getElementById('resp-tbody');
-  tbody.innerHTML='';
-  if(filtered.length===0&&responses.length>0){
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Sin resultados para esa búsqueda.</td>`;
-    tbody.appendChild(tr);return;
+  tbody.innerHTML = '';
+  if(filtered.length===0 && responses.length>0){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Sin resultados para esa búsqueda.</td></tr>`;
+    return;
   }
   filtered.forEach((r,i)=>{
-    const tr=document.createElement('tr');
     const nombre = [getAns(r,'Nombres'),getAns(r,'Apellidos')].filter(Boolean).join(' ')||'—';
-    const enc = getAns(r,'Nombre del encuestador/a')||'—';
-    const dist = getAns(r,'Distrito de domicilio')||'—';
-    const fReg = getAns(r,'Fecha de registro')||'—';
-    const fEnv = r._sentAt ? new Date(r._sentAt).toLocaleDateString('es-PE') : '—';
+    const tr = document.createElement('tr');
     tr.innerHTML=`
       <td style="color:var(--muted)">${i+1}</td>
-      <td>${fEnv}</td>
+      <td>${r.sentAt ? new Date(r.sentAt).toLocaleDateString('es-PE') : '—'}</td>
       <td><strong>${esc(nombre)}</strong></td>
-      <td>${esc(enc)}</td>
-      <td>${esc(dist)}</td>
-      <td>${esc(fReg)}</td>
+      <td>${esc(getAns(r,'Nombre del encuestador/a')||'—')}</td>
+      <td>${esc(getAns(r,'Distrito de domicilio')||'—')}</td>
+      <td>${esc(getAns(r,'Fecha de registro')||'—')}</td>
       <td>
-        <div style="display:flex;gap:4px">
-          <button class="btn btn-ghost btn-sm" onclick="viewDetail(${r._id})">Ver</button>
-          <button class="btn btn-danger btn-sm" onclick="askDelete(${r._id})">✕</button>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" data-action="view-detail" data-id="${r.firebaseId}">Ver</button>
+          <button class="btn btn-danger btn-sm" data-action="ask-delete" data-id="${r.firebaseId}">✕</button>
         </div>
       </td>
     `;
@@ -556,38 +591,42 @@ function getAns(r, label) {
   const a = r.answers.find(a=>a.label && a.label.toLowerCase().includes(label.toLowerCase()));
   return a ? (Array.isArray(a.value)?a.value.join(', '):a.value) : '';
 }
-function hasAns(r, label, val) {
-  const v = getAns(r,label);
-  return Array.isArray(v)?v.includes(val):v===val;
-}
 
 function viewDetail(id) {
-  const r = responses.find(r=>r._id===id); if(!r) return;
-  const nombre = [getAns(r,'Nombres'),getAns(r,'Apellidos')].filter(Boolean).join(' ')||'Respuesta #'+id;
+  const r = responses.find(r=>r.firebaseId===id);
+  if(!r) return;
+  const nombre = [getAns(r,'Nombres'),getAns(r,'Apellidos')].filter(Boolean).join(' ')||'Respuesta';
   document.getElementById('detail-title').textContent = nombre;
-  let html='';
-  let curSection='';
+  let html='', curSection='';
   (r.answers||[]).forEach(a=>{
     if(a.type==='section'){
       if(curSection) html+=`</div>`;
       html+=`<div class="resp-section"><h4>${esc(a.label)}</h4>`;
       curSection=a.label;
     } else {
-      const val = Array.isArray(a.value) ? a.value.map(v=>`<span class="tag">${esc(v)}</span>`).join('') : `<div class="rf-value">${esc(a.value||'—')}</div>`;
+      const val = Array.isArray(a.value)
+        ? a.value.map(v=>`<span class="tag">${esc(v)}</span>`).join('')
+        : `<div class="rf-value">${esc(a.value||'—')}</div>`;
       html+=`<div class="resp-field"><div class="rf-label">${esc(a.label)}</div>${val}</div>`;
     }
   });
   if(curSection) html+=`</div>`;
-  html+=`<div style="margin-top:12px;font-size:11px;color:var(--muted)">Enviado: ${r._sentAt?new Date(r._sentAt).toLocaleString('es-PE'):'desconocido'}</div>`;
-  document.getElementById('detail-body').innerHTML=html;
+  html+=`<div style="margin-top:12px;font-size:11px;color:var(--muted)">Enviado: ${r.sentAt?new Date(r.sentAt).toLocaleString('es-PE'):'desconocido'}</div>`;
+  document.getElementById('detail-body').innerHTML = html;
   document.getElementById('detail-overlay').classList.add('show');
 }
 
-function askDelete(id){deleteId=id;document.getElementById('confirm-overlay').classList.add('show')}
-function doDelete(){
-  responses=responses.filter(r=>r._id!==deleteId);
-  localStorage.setItem(RESP_KEY,JSON.stringify(responses));
-  closeOverlay('confirm-overlay');renderResponses();showToast('Respuesta eliminada');
+async function doDelete(){
+  try {
+    await deleteDoc(doc(db, "respuestas", deleteId));
+    responses = responses.filter(r=>r.firebaseId!==deleteId);
+    closeOverlay('confirm-overlay');
+    renderResponses();
+    showToast('Respuesta eliminada');
+  } catch(e) {
+    console.error(e);
+    showToast('Error al eliminar','error');
+  }
 }
 
 // ── EXPORT ─────────────────────────────────────────────
@@ -595,7 +634,7 @@ function getExportRows(){
   const labels = [];
   formDef.questions.forEach(q=>{ if(q.type!=='section') labels.push(q.title); });
   const rows = responses.map(r=>{
-    const row = {'Fecha envío':r._sentAt?new Date(r._sentAt).toLocaleString('es-PE'):''};
+    const row = {'Fecha envío': r.sentAt ? new Date(r.sentAt).toLocaleString('es-PE') : ''};
     labels.forEach(lbl=>{
       const a=(r.answers||[]).find(a=>a.label===lbl);
       row[lbl]=a?(Array.isArray(a.value)?a.value.join('; '):a.value):'';
@@ -609,7 +648,7 @@ function exportCSV(){
   const {labels,rows}=getExportRows();
   const toRow=cells=>cells.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',');
   const csv='\uFEFF'+[toRow(labels),...rows.map(r=>toRow(labels.map(l=>r[l])))].join('\n');
-  dl('data:text/csv;charset=utf-8,'+encodeURIComponent(csv),'respuestas_familias.csv');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='respuestas_familias.csv';a.click();
   showToast('CSV exportado','ok');
 }
 
@@ -618,23 +657,68 @@ function exportExcel(){
   const mkRow=cells=>'<Row>'+cells.map(c=>`<Cell><Data ss:Type="String">${String(c||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</Data></Cell>`).join('')+'</Row>';
   let xml='<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Respuestas"><Table>';
   xml+=mkRow(labels)+rows.map(r=>mkRow(labels.map(l=>r[l]))).join('')+'</Table></Worksheet></Workbook>';
-  dl('data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml),'respuestas_familias.xls');
+  const a=document.createElement('a');a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);a.download='respuestas_familias.xls';a.click();
   showToast('Excel exportado','ok');
 }
 
-function dl(href,name){const a=document.createElement('a');a.href=href;a.download=name;a.click();}
+// ── BIND TODOS LOS EVENTOS ESTÁTICOS ──────────────────
+function bindStaticEvents() {
+  // Nav
+  document.getElementById('nav-builder').addEventListener('click', ()=>showSection('builder'));
+  document.getElementById('nav-responses').addEventListener('click', ()=>showSection('responses'));
 
-// ── UTILITIES ──────────────────────────────────────────
-function closeOverlay(id){document.getElementById(id).classList.remove('show')}
-function closeIfOut(e,id){if(e.target.id===id)closeOverlay(id)}
-function showToast(msg,type='ok'){
-  const t=document.getElementById('toast');t.textContent=msg;
-  t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),3000);
+  // Topbar
+  document.getElementById('btn-save').addEventListener('click', saveForm);
+  document.getElementById('btn-preview').addEventListener('click', previewForm);
+  document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+  document.getElementById('btn-export-excel').addEventListener('click', exportExcel);
+  document.getElementById('btn-export-csv2').addEventListener('click', exportCSV);
+  document.getElementById('btn-export-excel2').addEventListener('click', exportExcel);
+
+  // Botones agregar tipo
+  document.querySelectorAll('.add-type-btn').forEach(btn => {
+    btn.addEventListener('click', ()=>addQuestion(btn.dataset.type));
+  });
+
+  // Modales - cerrar
+  document.getElementById('btn-close-detail').addEventListener('click', ()=>closeOverlay('detail-overlay'));
+  document.getElementById('btn-close-preview').addEventListener('click', ()=>closeOverlay('preview-overlay'));
+  document.getElementById('btn-cancel-delete').addEventListener('click', ()=>closeOverlay('confirm-overlay'));
+  document.getElementById('btn-confirm-delete').addEventListener('click', doDelete);
+
+  // Cerrar modal al click fuera
+  ['detail-overlay','confirm-overlay','preview-overlay'].forEach(id=>{
+    document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) closeOverlay(id); });
+  });
+
+  // Búsqueda
+  document.getElementById('search-input').addEventListener('input', renderResponses);
+
+  // Delegación en tbody para Ver y Eliminar
+  document.getElementById('resp-tbody').addEventListener('click', e=>{
+    const btn = e.target.closest('[data-action]');
+    if(!btn) return;
+    if(btn.dataset.action==='view-detail') viewDetail(btn.dataset.id);
+    if(btn.dataset.action==='ask-delete'){
+      deleteId = btn.dataset.id;
+      document.getElementById('confirm-overlay').classList.add('show');
+    }
+  });
+
+  // Delegación en questions-list
+  bindQuestionsListEvents();
 }
 
 // ── INIT ──────────────────────────────────────────────
-renderBuilder();
-document.getElementById('resp-count-badge').textContent = responses.length;
+async function init() {
+  await loadFormDef();
+  renderBuilder();
+  bindStaticEvents();
+  loadResponses();
+}
+
+init();
+
 </script>
 </body>
 </html>

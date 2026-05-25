@@ -234,11 +234,21 @@
             background: linear-gradient(90deg, var(--orange), var(--purple));
         }
 
-        /* ── STEPS NAV (nueva barra de progreso con nombres) ── */
+        /* ── STEPS NAV ── */
         .steps-nav {
             display: flex;
             align-items: center;
             margin-bottom: 44px;
+            overflow: hidden;         /* oculta los items fuera de ventana */
+            position: relative;
+        }
+
+        /* Wrapper interno que se desplaza */
+        .steps-nav-inner {
+            display: flex;
+            align-items: center;
+            transition: transform 0.45s cubic-bezier(.4,0,.2,1);
+            width: 100%;
         }
 
         .step-item {
@@ -246,7 +256,7 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            flex-shrink: 0;
+            flex: 0 0 calc(25% - 6px); /* 4 items visibles */
             cursor: default;
         }
 
@@ -279,15 +289,17 @@
             transition: all 0.3s;
         }
 
-        .step-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #bbb;
-            text-align: center;
-            white-space: nowrap;
-            letter-spacing: 0.3px;
-            transition: color 0.3s;
-        }
+.step-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #bbb;
+    text-align: center;
+    white-space: normal;
+    width: 90px;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+    transition: color 0.3s;
+}
 
         /* Active step */
         .step-item.active .step-circle {
@@ -318,6 +330,7 @@
             margin: 0 6px;
             margin-bottom: 28px;
             transition: background 0.5s;
+            min-width: 8px;
         }
 
         .step-connector.filled {
@@ -698,30 +711,30 @@
             .btn-back, .btn-next, .btn-submit { width: 100%; text-align: center; }
 
             .steps-nav { gap: 0; }
-            .step-label { font-size: 10px; }
+            .step-label { font-size: 10px; max-width: 50px; }
             .step-circle { width: 34px; height: 34px; }
             .step-num { font-size: 13px; }
             .step-connector { margin-bottom: 22px; }
         }
 
         /* Título de sección visible dentro de cada step */
-.section-title-banner {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--navy);
-    background: rgba(8, 30, 84, 0.04);
-    border-left: 4px solid var(--purple);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 14px 20px;
-    margin-bottom: 32px;
-    letter-spacing: 0.2px;
-}
+        .section-title-banner {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--navy);
+            background: rgba(8, 30, 84, 0.04);
+            border-left: 4px solid var(--purple);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            padding: 14px 20px;
+            margin-bottom: 32px;
+            letter-spacing: 0.2px;
+        }
 
-/* Descripción opcional debajo del label */
-.field-desc {
-    font-size: 13px;
-    color: var(--gray);
-    margin-bottom: 10px;
-    margin-top: -4px;
-    line-height: 1.5;
-}
+        /* Descripción opcional debajo del label */
+        .field-desc {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 10px;
+            margin-top: -4px;
+            line-height: 1.5;
+        }
