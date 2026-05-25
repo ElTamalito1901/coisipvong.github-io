@@ -738,3 +738,98 @@
             margin-top: -4px;
             line-height: 1.5;
         }
+
+        /* ── DATE INPUT MEJORADO ── */
+.date-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.date-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #ede8f4;
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.date-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--purple);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.date-arrow {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #f0f0f7;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.date-arrow svg {
+    width: 14px;
+    height: 14px;
+    stroke: #8890b0;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+input[type="date"] {
+    width: 100%;
+    padding: 16px 60px 16px 66px;
+    border: 2px solid #e2e6ef;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--navy);
+    background: var(--gray-light);
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 14px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
+}
+
+input[type="date"]:hover {
+    border-color: var(--purple);
+    background: #faf9fc;
+}
+
+input[type="date"]:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 4px rgba(145,110,172,0.12);
+    background: white;
+}

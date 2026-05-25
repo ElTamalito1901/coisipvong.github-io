@@ -26,9 +26,6 @@
         <span class="badge-count" id="resp-count-badge">0</span>
       </div>
     </nav>
-    <div class="sidebar-footer">
-      <a href="encuesta.html" target="_blank">↗ Abrir encuesta pública</a>
-    </div>
   </aside>
 
   <div class="main">
@@ -549,9 +546,6 @@ function renderResponses() {
 
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="sn">${responses.length}</div><div class="sl">Total respuestas</div></div>
-    <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'Nombres')||getAns(r,'Apellidos')).length}</div><div class="sl">Con datos personales</div></div>
-    <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'País de origen')).length}</div><div class="sl">Migrantes registrados</div></div>
-    <div class="stat-card"><div class="sn">${responses.filter(r=>getAns(r,'¿Recibió ayuda económica?')==='Sí').length}</div><div class="sl">Con ayuda humanitaria</div></div>
   `;
 
   document.getElementById('resp-thead').innerHTML = `<tr>

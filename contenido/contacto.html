@@ -210,13 +210,21 @@
                 </div>`;
 
             case 'date':
-                return `
-                <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
-                    <label class="field-label">${esc(q.title)} ${req}</label>
-                    ${desc}
-                    <input type="date" id="inp-${q.id}">
-                    <p class="error-msg">Este campo es obligatorio.</p>
-                </div>`;
+    return `
+    <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
+        <label class="field-label">${esc(q.title)} ${req}</label>
+        ${desc}
+        <div class="date-wrapper">
+            <div class="date-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </div>
+            <input type="date" id="inp-${q.id}">
+            <div class="date-arrow">
+                <svg viewBox="0 0 14 8"><path d="M1 1l6 6 6-6"/></svg>
+            </div>
+        </div>
+        <p class="error-msg">Este campo es obligatorio.</p>
+    </div>`;
 
             case 'radio':
                 const radioOpts = (q.options || []).map((opt) => `
