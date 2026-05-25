@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Familias en Situación de Vulnerabilidad</title>
+<link rel="stylesheet" href="../../../css/encuestas.css">
+</head>
+<body>
+<div class="app">
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Formulario de Registro</h1>
+      <p>Familias en Situación de Vulnerabilidad</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="clearForm()">Limpiar</button>
+      <button class="btn btn-primary btn-sm" id="btn-guardar" onclick="submitForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Guardar Registro
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PROGRESS -->
+    <div class="progress-bar-wrap">
+      <div class="progress-steps" id="progressSteps"></div>
+      <div class="progress-info">
+        <span id="progressLabel">Sección 1 de 8</span>
+        <span id="progressPct">0% completado</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN I: DATOS GENERALES -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section active" id="sec0">
+      <div class="section-header-card">
+        <div class="sec-num">Sección I</div>
+        <h2>Datos Generales del Registro</h2>
+        <p>Información básica sobre cuándo y dónde se realiza el registro.</p>
+      </div>
+      <div class="card">
+        <div class="field-row col-2">
+          <div class="field-group">
+            <label class="field-label">Fecha de registro <span class="req">*</span></label>
+            <input type="date" class="field-input" id="fechaRegistro">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Lugar de registro <span class="req">*</span></label>
+            <input type="text" class="field-input" id="lugarRegistro" placeholder="Ej: Mesa de Partes Lima Norte">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Nacionalidad</label>
+            <input type="text" class="field-input" id="nacionalidad" placeholder="Ej: Peruana, Venezolana...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Nombre del/la encuestador/a <span class="req">*</span></label>
+            <input type="text" class="field-input" id="encuestador" placeholder="Nombre completo">
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <span></span>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN II: JEFE/A DE HOGAR -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec1">
+      <div class="section-header-card">
+        <div class="sec-num">Sección II</div>
+        <h2>Identificación del Jefe/a de Hogar</h2>
+        <p>Datos personales del/la responsable principal del hogar.</p>
+      </div>
+      <div class="card">
+        <div class="field-row col-2" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">Nombres <span class="req">*</span></label>
+            <input type="text" class="field-input" id="nombres" placeholder="Nombres completos">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Apellidos <span class="req">*</span></label>
+            <input type="text" class="field-input" id="apellidos" placeholder="Apellido paterno y materno">
+          </div>
+        </div>
+        <div class="field-row col-3" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">Tipo de documento <span class="req">*</span></label>
+            <select class="field-select" id="tipoDoc" onchange="checkOtroDoc()">
+              <option value="">Seleccionar...</option>
+              <option>DNI</option>
+              <option>CE</option>
+              <option>Pasaporte</option>
+              <option>Otro</option>
+            </select>
+            <input type="text" class="other-input" id="tipoDocOtro" placeholder="Especificar tipo de documento...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Número de documento <span class="req">*</span></label>
+            <input type="text" class="field-input" id="numDoc" placeholder="N° de documento">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Fecha de nacimiento</label>
+            <input type="date" class="field-input" id="fechaNac" onchange="calcAge()">
+          </div>
+        </div>
+        <div class="field-row col-3" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">Edad</label>
+            <input type="number" class="field-input" id="edad" placeholder="Años" min="0" max="120">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Sexo</label>
+            <div class="radio-group inline" style="border:none;background:transparent;padding:0;gap:8px">
+              <label class="radio-opt" id="sexo-m"><input type="radio" name="sexo" value="M" onchange="markRadio('sexo')"> Masculino</label>
+              <label class="radio-opt" id="sexo-f"><input type="radio" name="sexo" value="F" onchange="markRadio('sexo')"> Femenino</label>
+              <label class="radio-opt" id="sexo-o"><input type="radio" name="sexo" value="Otro" onchange="markRadio('sexo')"> Otro</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Estado civil</label>
+            <select class="field-select" id="estadoCivil">
+              <option value="">Seleccionar...</option>
+              <option>Soltero/a</option>
+              <option>Casado/a</option>
+              <option>Conviviente</option>
+              <option>Otro</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row col-2">
+          <div class="field-group">
+            <label class="field-label">Teléfono de contacto</label>
+            <input type="tel" class="field-input" id="telefono" placeholder="Ej: 987 654 321">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Correo electrónico (opcional)</label>
+            <input type="email" class="field-input" id="correo" placeholder="correo@ejemplo.com">
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN III: VIVIENDA -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec2">
+      <div class="section-header-card">
+        <div class="sec-num">Sección III</div>
+        <h2>Ubicación y Condiciones de Vivienda</h2>
+        <p>Datos sobre el lugar de residencia y las condiciones habitacionales.</p>
+      </div>
+      <div class="card">
+        <div class="field-row col-2" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">Provincia de domicilio <span class="req">*</span></label>
+            <input type="text" class="field-input" id="provincia" placeholder="Ej: Lima, Callao...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Distrito de domicilio <span class="req">*</span></label>
+            <input type="text" class="field-input" id="distrito" placeholder="Ej: San Juan de Lurigancho...">
+          </div>
+        </div>
+        <div class="field-row col-2" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">Tipo de vivienda</label>
+            <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px">
+              <label class="check-opt" id="viv-propia"><input type="radio" name="tipoVivienda" value="Propia" onchange="markRadio('tipoVivienda')"> 🏠 Propia</label>
+              <label class="check-opt" id="viv-alq"><input type="radio" name="tipoVivienda" value="Alquilada" onchange="markRadio('tipoVivienda')"> 🔑 Alquilada</label>
+              <label class="check-opt" id="viv-ced"><input type="radio" name="tipoVivienda" value="Cedida" onchange="markRadio('tipoVivienda')"> 🤝 Cedida</label>
+              <label class="check-opt" id="viv-asi"><input type="radio" name="tipoVivienda" value="Asentamiento informal" onchange="markRadio('tipoVivienda')"> 🏚️ Asentamiento informal</label>
+              <label class="check-opt" id="viv-otro"><input type="radio" name="tipoVivienda" value="Otro" onchange="checkOtroVivienda()"> Otro</label>
+            </div>
+            <input type="text" class="other-input" id="tipoViviendaOtro" placeholder="Especificar tipo de vivienda...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Material predominante</label>
+            <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px">
+              <label class="check-opt" id="mat-noble"><input type="radio" name="material" value="Noble" onchange="markRadio('material')"> 🧱 Noble</label>
+              <label class="check-opt" id="mat-madera"><input type="radio" name="material" value="Madera" onchange="markRadio('material')"> 🪵 Madera</label>
+              <label class="check-opt" id="mat-estera"><input type="radio" name="material" value="Estera" onchange="markRadio('material')"> 🌾 Estera</label>
+              <label class="check-opt" id="mat-mixto"><input type="radio" name="material" value="Mixto" onchange="markRadio('material')"> 🏗️ Mixto</label>
+              <label class="check-opt" id="mat-otro"><input type="radio" name="material" value="Otro" onchange="checkOtroMaterial()"> Otro</label>
+            </div>
+            <input type="text" class="other-input" id="materialOtro" placeholder="Especificar material...">
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Acceso a servicios básicos</label>
+          <div class="servicios-grid">
+            <div class="servicio-item">
+              <span class="servicio-label">💧 Agua potable</span>
+              <div class="toggle-wrap">
+                <button class="toggle-btn" id="agua-si" onclick="toggleServicio('agua','si')">Sí</button>
+                <button class="toggle-btn" id="agua-no" onclick="toggleServicio('agua','no')">No</button>
+              </div>
+            </div>
+            <div class="servicio-item">
+              <span class="servicio-label">⚡ Electricidad</span>
+              <div class="toggle-wrap">
+                <button class="toggle-btn" id="elec-si" onclick="toggleServicio('elec','si')">Sí</button>
+                <button class="toggle-btn" id="elec-no" onclick="toggleServicio('elec','no')">No</button>
+              </div>
+            </div>
+            <div class="servicio-item">
+              <span class="servicio-label">🚿 Desagüe</span>
+              <div class="toggle-wrap">
+                <button class="toggle-btn" id="desague-si" onclick="toggleServicio('desague','si')">Sí</button>
+                <button class="toggle-btn" id="desague-no" onclick="toggleServicio('desague','no')">No</button>
+              </div>
+            </div>
+            <div class="servicio-item">
+              <span class="servicio-label">🌐 Internet</span>
+              <div class="toggle-wrap">
+                <button class="toggle-btn" id="internet-si" onclick="toggleServicio('internet','si')">Sí</button>
+                <button class="toggle-btn" id="internet-no" onclick="toggleServicio('internet','no')">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN IV: COMPOSICIÓN DEL HOGAR -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec3">
+      <div class="section-header-card">
+        <div class="sec-num">Sección IV</div>
+        <h2>Composición del Hogar</h2>
+        <p>Listado de todas las personas que viven en el hogar.</p>
+      </div>
+      <div class="card">
+        <div class="table-container">
+          <table class="hogar-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre completo</th>
+                <th>Edad</th>
+                <th>Parentesco</th>
+                <th>Documento</th>
+                <th>Ocupación</th>
+                <th>Nivel educativo</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="hogarTbody"></tbody>
+          </table>
+        </div>
+        <button class="btn-add-row" onclick="addHogarRow()">
+          ＋ Agregar miembro del hogar
+        </button>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN VI: VULNERABILIDAD -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec4">
+      <div class="section-header-card">
+        <div class="sec-num">Sección VI</div>
+        <h2>Condición de Vulnerabilidad</h2>
+        <p>Marcar todas las condiciones que correspondan al hogar.</p>
+      </div>
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label">Condiciones identificadas (puede seleccionar varias)</label>
+          <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px">
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Migrante en situación irregular" onchange="markCheck(this)"> 🌍 Migrante irregular</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Refugiado/solicitante de asilo" onchange="markCheck(this)"> 🏳️ Refugiado/Asilo</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Pobreza extrema" onchange="markCheck(this)"> 💸 Pobreza extrema</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Violencia familiar" onchange="markCheck(this)"> 🚨 Violencia familiar</label>
+            <label class="check-opt" id="vul-disc"><input type="checkbox" name="vulnerabilidad" value="Discapacidad" onchange="checkDiscapacidad(this)"> ♿ Discapacidad</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Enfermedad crónica" onchange="markCheck(this)"> 🏥 Enfermedad crónica</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Madre/padre soltero" onchange="markCheck(this)"> 👤 Madre/padre soltero</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Adulto mayor en abandono" onchange="markCheck(this)"> 👴 Adulto mayor en abandono</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Niños/as en riesgo" onchange="markCheck(this)"> 👶 Niños/as en riesgo</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Desempleo prolongado" onchange="markCheck(this)"> 📉 Desempleo prolongado</label>
+            <label class="check-opt"><input type="checkbox" name="vulnerabilidad" value="Falta de acceso a servicios básicos" onchange="markCheck(this)"> 🚫 Sin servicios básicos</label>
+            <label class="check-opt" id="vul-otro-label"><input type="checkbox" name="vulnerabilidad" value="Otro" onchange="checkVulOtro(this)"> ➕ Otro</label>
+          </div>
+          <input type="text" class="other-input" id="discapacidadTipo" placeholder="Indicar tipo de discapacidad...">
+          <input type="text" class="other-input" id="vulOtroTexto" placeholder="Especificar otra condición...">
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN VII: SITUACIÓN MIGRATORIA -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec5">
+      <div class="section-header-card">
+        <div class="sec-num">Sección VII</div>
+        <h2>Situación Migratoria</h2>
+        <p>Completar solo si aplica condición migratoria.</p>
+      </div>
+      <div class="card">
+        <div class="field-row col-2" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">País de origen</label>
+            <input type="text" class="field-input" id="paisOrigen" placeholder="Ej: Venezuela, Colombia...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Tiempo de permanencia en Perú</label>
+            <input type="text" class="field-input" id="tiempoPermanencia" placeholder="Ej: 2 años, 6 meses...">
+          </div>
+        </div>
+        <div class="field-row col-2" style="margin-bottom:20px">
+          <div class="field-group">
+            <label class="field-label">Situación migratoria actual</label>
+            <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px;border:none;background:transparent;padding:0">
+              <label class="check-opt" id="mig-reg"><input type="radio" name="sitMigratoria" value="Regular" onchange="markRadio('sitMigratoria')"> ✅ Regular</label>
+              <label class="check-opt" id="mig-irr"><input type="radio" name="sitMigratoria" value="Irregular" onchange="markRadio('sitMigratoria')"> ⚠️ Irregular</label>
+              <label class="check-opt" id="mig-tra"><input type="radio" name="sitMigratoria" value="En trámite" onchange="markRadio('sitMigratoria')"> 📋 En trámite</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Documentos disponibles</label>
+            <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px">
+              <label class="check-opt"><input type="checkbox" name="documentos" value="Pasaporte" onchange="markCheck(this)"> 📘 Pasaporte</label>
+              <label class="check-opt"><input type="checkbox" name="documentos" value="Permiso Temporal" onchange="markCheck(this)"> 📄 Permiso Temporal</label>
+              <label class="check-opt"><input type="checkbox" name="documentos" value="Carné de extranjería" onchange="markCheck(this)"> 🪪 Carné de extranjería</label>
+              <label class="check-opt"><input type="checkbox" name="documentos" value="Ninguno" onchange="markCheck(this)"> ❌ Ninguno</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN VIII: NECESIDADES -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec6">
+      <div class="section-header-card">
+        <div class="sec-num">Sección VIII</div>
+        <h2>Necesidades Prioritarias Identificadas</h2>
+        <p>Seleccionar todas las necesidades identificadas en el hogar.</p>
+      </div>
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label">Necesidades (puede seleccionar varias)</label>
+          <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px">
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Alimentación" onchange="markCheck(this)"> 🍽️ Alimentación</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Salud" onchange="markCheck(this)"> 🏥 Salud</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Educación" onchange="markCheck(this)"> 📚 Educación</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Regularización migratoria" onchange="markCheck(this)"> 📋 Regularización migratoria</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Empleo" onchange="markCheck(this)"> 💼 Empleo</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Vivienda" onchange="markCheck(this)"> 🏠 Vivienda</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Asistencia legal" onchange="markCheck(this)"> ⚖️ Asistencia legal</label>
+            <label class="check-opt"><input type="checkbox" name="necesidades" value="Apoyo psicológico" onchange="markCheck(this)"> 🧠 Apoyo psicológico</label>
+            <label class="check-opt" id="nec-otro-label"><input type="checkbox" name="necesidades" value="Otro" onchange="checkNecOtro(this)"> ➕ Otro</label>
+          </div>
+          <input type="text" class="other-input" id="necesidadOtroTexto" placeholder="Especificar otra necesidad...">
+        </div>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" onclick="nextSection()">
+          Siguiente
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SECCIÓN IX: AYUDAS + RESUMEN -->
+    <!-- ══════════════════════════════════════════ -->
+    <div class="form-section" id="sec7">
+      <div class="section-header-card">
+        <div class="sec-num">Sección IX</div>
+        <h2>Ayudas Recibidas</h2>
+        <p>Información sobre apoyos económicos o materiales recibidos previamente.</p>
+      </div>
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label">¿Recibió ayuda económica? <span class="req">*</span></label>
+          <div class="check-group" style="flex-direction:row;flex-wrap:wrap;gap:8px;border:none;background:transparent;padding:0">
+            <label class="check-opt" id="ayuda-si"><input type="radio" name="recibiAyuda" value="Sí" onchange="toggleAyudaDetalle(true)"> ✅ Sí</label>
+            <label class="check-opt" id="ayuda-no"><input type="radio" name="recibiAyuda" value="No" onchange="toggleAyudaDetalle(false)"> ❌ No</label>
+          </div>
+        </div>
+        <div class="field-group" id="ayudaDetalleWrap" style="display:none;margin-top:16px">
+          <label class="field-label">¿Cuál o cuáles?</label>
+          <textarea class="field-textarea" id="ayudaDetalle" placeholder="Describir el tipo de ayuda recibida, institución que la brindó, monto o tipo de apoyo..."></textarea>
+        </div>
+      </div>
+
+      <!-- RESUMEN -->
+      <div class="section-header-card" style="margin-top:20px;border-top-color:#065f46">
+        <div class="sec-num" style="color:#065f46">Resumen del Registro</div>
+        <h2>Verificar información antes de guardar</h2>
+        <p>Revisa los datos ingresados en cada sección.</p>
+      </div>
+      <div class="card" id="summaryCard">
+        <div id="summaryContent"><p style="color:var(--muted);font-size:13px">Los datos del resumen aparecerán aquí...</p></div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn btn-ghost" onclick="prevSection()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Anterior
+        </button>
+        <button class="btn btn-primary" id="btn-guardar-bottom" onclick="submitForm()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Guardar Registro
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  SCRIPT PRINCIPAL — módulo para poder importar Firebase    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<script type="module">
+
+// ── FIREBASE IMPORT ────────────────────────────────────────────
+import { db, collection, addDoc } from "../../../firebase.js";
+
+// ──────────────────────────
+// STATE
+// ──────────────────────────
+let currentSection = 0;
+const totalSections = 8;
+const servicios = {agua:null, elec:null, desague:null, internet:null};
+let hogarRows = [];
+let rowId = 0;
+
+// ──────────────────────────
+// INIT
+// ──────────────────────────
+window.onload = () => {
+  buildProgressSteps();
+  updateProgress();
+  setTodayDate();
+  addHogarRow();
+  addHogarRow();
+};
+
+function setTodayDate(){
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fechaRegistro').value = today;
+}
+
+// ──────────────────────────
+// PROGRESS
+// ──────────────────────────
+function buildProgressSteps(){
+  const wrap = document.getElementById('progressSteps');
+  wrap.innerHTML = '';
+  for(let i = 0; i < totalSections; i++){
+    const d = document.createElement('div');
+    d.className = 'progress-step';
+    d.id = 'ps' + i;
+    wrap.appendChild(d);
+  }
+}
+
+function updateProgress(){
+  for(let i = 0; i < totalSections; i++){
+    const el = document.getElementById('ps' + i);
+    el.className = 'progress-step' + (i < currentSection ? ' done' : i === currentSection ? ' active' : '');
+  }
+  document.getElementById('progressLabel').textContent = `Sección ${currentSection + 1} de ${totalSections}`;
+  document.getElementById('progressPct').textContent = Math.round((currentSection / totalSections) * 100) + '% completado';
+}
+
+// ──────────────────────────
+// NAVIGATION
+// ──────────────────────────
+function goToSection(idx){
+  document.getElementById('sec' + currentSection).classList.remove('active');
+  currentSection = idx;
+  document.getElementById('sec' + currentSection).classList.add('active');
+  updateProgress();
+  if(currentSection === 7) buildSummary();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function nextSection(){
+  if(currentSection < totalSections - 1) goToSection(currentSection + 1);
+}
+
+function prevSection(){
+  if(currentSection > 0) goToSection(currentSection - 1);
+}
+
+// ──────────────────────────
+// FORM HELPERS
+// ──────────────────────────
+function calcAge(){
+  const dob = document.getElementById('fechaNac').value;
+  if(!dob) return;
+  const today = new Date();
+  const birth = new Date(dob);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if(m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  document.getElementById('edad').value = age;
+}
+
+function markRadio(name){
+  document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+    const lbl = r.closest('label');
+    if(lbl) lbl.classList.toggle('checked', r.checked);
+  });
+}
+
+function markCheck(el){
+  const lbl = el.closest('label');
+  if(lbl) lbl.classList.toggle('checked', el.checked);
+}
+
+function checkOtroDoc(){
+  const v = document.getElementById('tipoDoc').value;
+  document.getElementById('tipoDocOtro').classList.toggle('show', v === 'Otro');
+}
+
+function checkOtroVivienda(){
+  markRadio('tipoVivienda');
+  const r = document.querySelector('[name="tipoVivienda"]:checked');
+  document.getElementById('tipoViviendaOtro').classList.toggle('show', r && r.value === 'Otro');
+}
+
+function checkOtroMaterial(){
+  markRadio('material');
+  const r = document.querySelector('[name="material"]:checked');
+  document.getElementById('materialOtro').classList.toggle('show', r && r.value === 'Otro');
+}
+
+function checkDiscapacidad(el){
+  markCheck(el);
+  document.getElementById('discapacidadTipo').classList.toggle('show', el.checked);
+}
+
+function checkVulOtro(el){
+  markCheck(el);
+  document.getElementById('vulOtroTexto').classList.toggle('show', el.checked);
+}
+
+function checkNecOtro(el){
+  markCheck(el);
+  document.getElementById('necesidadOtroTexto').classList.toggle('show', el.checked);
+}
+
+function toggleServicio(key, val){
+  servicios[key] = val;
+  ['si','no'].forEach(v => {
+    const btn = document.getElementById(`${key}-${v}`);
+    btn.className = 'toggle-btn' + (v === val ? (val === 'si' ? ' active-si' : ' active-no') : '');
+  });
+}
+
+function toggleAyudaDetalle(show){
+  markRadio('recibiAyuda');
+  document.getElementById('ayudaDetalleWrap').style.display = show ? 'block' : 'none';
+}
+
+// ──────────────────────────
+// TABLA HOGAR
+// ──────────────────────────
+function addHogarRow(){
+  const id = rowId++;
+  hogarRows.push(id);
+  const tbody = document.getElementById('hogarTbody');
+  const tr = document.createElement('tr');
+  tr.id = 'hrow' + id;
+  tr.innerHTML = `
+    <td style="color:var(--muted);font-weight:600;font-size:12px;text-align:center">${hogarRows.length}</td>
+    <td><input type="text" placeholder="Nombre completo"></td>
+    <td><input type="number" placeholder="Edad" min="0" max="120" style="max-width:70px"></td>
+    <td>
+      <select>
+        <option value="">—</option>
+        <option>Jefe/a de hogar</option>
+        <option>Cónyuge</option>
+        <option>Hijo/a</option>
+        <option>Padre/Madre</option>
+        <option>Hermano/a</option>
+        <option>Abuelo/a</option>
+        <option>Nieto/a</option>
+        <option>Otro familiar</option>
+        <option>No familiar</option>
+      </select>
+    </td>
+    <td><input type="text" placeholder="N° doc."></td>
+    <td><input type="text" placeholder="Ocupación"></td>
+    <td>
+      <select>
+        <option value="">—</option>
+        <option>Sin educación</option>
+        <option>Inicial</option>
+        <option>Primaria</option>
+        <option>Secundaria</option>
+        <option>Técnico</option>
+        <option>Superior</option>
+        <option>Postgrado</option>
+      </select>
+    </td>
+    <td><button class="btn-del-row" onclick="delHogarRow(${id}, this)" title="Eliminar fila">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function delHogarRow(id, btn){
+  const tr = btn.closest('tr');
+  tr.remove();
+  hogarRows = hogarRows.filter(r => r !== id);
+  document.querySelectorAll('#hogarTbody tr').forEach((r, i) => {
+    r.querySelector('td:first-child').textContent = i + 1;
+  });
+}
+
+// ──────────────────────────
+// SUMMARY
+// ──────────────────────────
+function buildSummary(){
+  const v = val => val || '<span style="color:var(--muted);font-style:italic">Sin completar</span>';
+  const tags = arr => arr.length ? arr.map(t => `<span class="tag">${t}</span>`).join('') : v('');
+
+  const vuls = [...document.querySelectorAll('[name="vulnerabilidad"]:checked')].map(c => c.value);
+  const necs = [...document.querySelectorAll('[name="necesidades"]:checked')].map(c => c.value);
+  const docs = [...document.querySelectorAll('[name="documentos"]:checked')].map(c => c.value);
+  const sitMig = document.querySelector('[name="sitMigratoria"]:checked')?.value;
+  const ayuda  = document.querySelector('[name="recibiAyuda"]:checked')?.value;
+  const sexo   = document.querySelector('[name="sexo"]:checked')?.value;
+  const tipoViv = document.querySelector('[name="tipoVivienda"]:checked')?.value;
+  const mat    = document.querySelector('[name="material"]:checked')?.value;
+
+  const servStr = Object.entries(servicios).map(([k, v]) => {
+    const label = {agua:'💧 Agua', elec:'⚡ Luz', desague:'🚿 Desagüe', internet:'🌐 Internet'}[k];
+    const badge = v === 'si'
+      ? '<span style="color:#065f46;font-weight:700">Sí</span>'
+      : v === 'no'
+      ? '<span style="color:var(--danger);font-weight:700">No</span>'
+      : '<span style="color:var(--muted)">—</span>';
+    return `${label}: ${badge}`;
+  }).join(' &nbsp;|&nbsp; ');
+
+  const hogarCount = document.querySelectorAll('#hogarTbody tr').length;
+
+  document.getElementById('summaryContent').innerHTML = `
+    <div class="summary-section">
+      <h4>I. Datos Generales</h4>
+      <div class="summary-field"><span class="sf-label">Fecha de registro</span><span class="sf-value">${v(document.getElementById('fechaRegistro').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Lugar</span><span class="sf-value">${v(document.getElementById('lugarRegistro').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Nacionalidad</span><span class="sf-value">${v(document.getElementById('nacionalidad').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Encuestador/a</span><span class="sf-value">${v(document.getElementById('encuestador').value)}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>II. Jefe/a de Hogar</h4>
+      <div class="summary-field"><span class="sf-label">Nombre</span><span class="sf-value">${v((document.getElementById('nombres').value + ' ' + document.getElementById('apellidos').value).trim())}</span></div>
+      <div class="summary-field"><span class="sf-label">Documento</span><span class="sf-value">${v(document.getElementById('tipoDoc').value)} — ${v(document.getElementById('numDoc').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Edad / Sexo</span><span class="sf-value">${v(document.getElementById('edad').value)} años &nbsp;|&nbsp; ${v(sexo)}</span></div>
+      <div class="summary-field"><span class="sf-label">Estado civil</span><span class="sf-value">${v(document.getElementById('estadoCivil').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Contacto</span><span class="sf-value">${v(document.getElementById('telefono').value)} ${document.getElementById('correo').value ? '· ' + document.getElementById('correo').value : ''}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>III. Vivienda</h4>
+      <div class="summary-field"><span class="sf-label">Ubicación</span><span class="sf-value">${v(document.getElementById('provincia').value)} — ${v(document.getElementById('distrito').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Tipo de vivienda</span><span class="sf-value">${v(tipoViv)}</span></div>
+      <div class="summary-field"><span class="sf-label">Material</span><span class="sf-value">${v(mat)}</span></div>
+      <div class="summary-field"><span class="sf-label">Servicios básicos</span><span class="sf-value">${servStr}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>IV. Composición del Hogar</h4>
+      <div class="summary-field"><span class="sf-label">Miembros registrados</span><span class="sf-value">${hogarCount} persona${hogarCount !== 1 ? 's' : ''}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>VI. Vulnerabilidad</h4>
+      <div class="summary-field"><span class="sf-label">Condiciones</span><span class="sf-value">${tags(vuls)}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>VII. Situación Migratoria</h4>
+      <div class="summary-field"><span class="sf-label">País de origen</span><span class="sf-value">${v(document.getElementById('paisOrigen').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Permanencia</span><span class="sf-value">${v(document.getElementById('tiempoPermanencia').value)}</span></div>
+      <div class="summary-field"><span class="sf-label">Situación</span><span class="sf-value">${v(sitMig)}</span></div>
+      <div class="summary-field"><span class="sf-label">Documentos</span><span class="sf-value">${tags(docs)}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>VIII. Necesidades</h4>
+      <div class="summary-field"><span class="sf-label">Necesidades identificadas</span><span class="sf-value">${tags(necs)}</span></div>
+    </div>
+    <div class="summary-section">
+      <h4>IX. Ayudas</h4>
+      <div class="summary-field"><span class="sf-label">Recibió ayuda económica</span><span class="sf-value">${v(ayuda)}</span></div>
+      ${ayuda === 'Sí' ? `<div class="summary-field"><span class="sf-label">Detalle</span><span class="sf-value">${v(document.getElementById('ayudaDetalle').value)}</span></div>` : ''}
+    </div>
+  `;
+}
+
+// ──────────────────────────────────────────────────────────────
+// SUBMIT — guarda en Firestore colección "respuestas"
+// ──────────────────────────────────────────────────────────────
+async function submitForm(){
+  const nombre = (document.getElementById('nombres').value + ' ' + document.getElementById('apellidos').value).trim();
+  const fecha  = document.getElementById('fechaRegistro').value;
+
+  if(!nombre || !fecha){
+    showToast('Por favor complete los campos obligatorios (nombre y fecha).', 'err');
+    return;
+  }
+
+  // Helper: valores de checkboxes
+  const getChecked = name =>
+    [...document.querySelectorAll(`[name="${name}"]:checked`)].map(c => c.value);
+
+  // Helper: leer miembros del hogar
+  const miembrosHogar = [];
+  document.querySelectorAll('#hogarTbody tr').forEach(tr => {
+    const inputs  = tr.querySelectorAll('input');
+    const selects = tr.querySelectorAll('select');
+    miembrosHogar.push({
+      nombre:    inputs[0]?.value  || '',
+      edad:      inputs[1]?.value  || '',
+      parentesco: selects[0]?.value || '',
+      documento: inputs[2]?.value  || '',
+      ocupacion: inputs[3]?.value  || '',
+      nivelEducativo: selects[1]?.value || ''
+    });
+  });
+
+  // Servicios básicos en texto legible
+  const serviciosStr = Object.entries(servicios)
+    .map(([k, v]) => ({agua:'Agua', elec:'Electricidad', desague:'Desagüe', internet:'Internet'}[k] + ': ' + (v || '—'))
+    ).join(', ');
+
+  // Construir objeto answers compatible con respuestas.html
+  const answers = [
+    // ── Sección I ──
+    { type:'section', label:'Datos Generales del Registro' },
+    { type:'date',    label:'Fecha de registro',         value: document.getElementById('fechaRegistro').value },
+    { type:'text',    label:'Lugar de registro',         value: document.getElementById('lugarRegistro').value },
+    { type:'text',    label:'Nacionalidad',              value: document.getElementById('nacionalidad').value },
+    { type:'text',    label:'Nombre del encuestador/a',  value: document.getElementById('encuestador').value },
+
+    // ── Sección II ──
+    { type:'section', label:'Identificación del Jefe/a de Hogar' },
+    { type:'text',    label:'Nombres',                   value: document.getElementById('nombres').value },
+    { type:'text',    label:'Apellidos',                 value: document.getElementById('apellidos').value },
+    { type:'select',  label:'Tipo de documento',         value: document.getElementById('tipoDoc').value + (document.getElementById('tipoDocOtro').value ? ' — ' + document.getElementById('tipoDocOtro').value : '') },
+    { type:'text',    label:'Número de documento',       value: document.getElementById('numDoc').value },
+    { type:'date',    label:'Fecha de nacimiento',       value: document.getElementById('fechaNac').value },
+    { type:'text',    label:'Edad',                      value: document.getElementById('edad').value },
+    { type:'radio',   label:'Sexo',                      value: document.querySelector('[name="sexo"]:checked')?.value || '' },
+    { type:'select',  label:'Estado civil',              value: document.getElementById('estadoCivil').value },
+    { type:'text',    label:'Teléfono de contacto',      value: document.getElementById('telefono').value },
+    { type:'text',    label:'Correo electrónico',        value: document.getElementById('correo').value },
+
+    // ── Sección III ──
+    { type:'section', label:'Ubicación y Condiciones de Vivienda' },
+    { type:'text',    label:'Provincia de domicilio',    value: document.getElementById('provincia').value },
+    { type:'text',    label:'Distrito de domicilio',     value: document.getElementById('distrito').value },
+    { type:'radio',   label:'Tipo de vivienda',          value: (document.querySelector('[name="tipoVivienda"]:checked')?.value || '') + (document.getElementById('tipoViviendaOtro').value ? ' — ' + document.getElementById('tipoViviendaOtro').value : '') },
+    { type:'radio',   label:'Material predominante',     value: (document.querySelector('[name="material"]:checked')?.value || '') + (document.getElementById('materialOtro').value ? ' — ' + document.getElementById('materialOtro').value : '') },
+    { type:'text',    label:'Servicios básicos',         value: serviciosStr },
+
+    // ── Sección IV ──
+    { type:'section', label:'Composición del Hogar' },
+    { type:'text',    label:'Total miembros del hogar',  value: String(miembrosHogar.length) },
+    { type:'text',    label:'Detalle miembros del hogar',value: miembrosHogar.map((m, i) =>
+        `[${i+1}] ${m.nombre || '—'} | Edad: ${m.edad || '—'} | ${m.parentesco || '—'} | Doc: ${m.documento || '—'} | ${m.ocupacion || '—'} | Educ: ${m.nivelEducativo || '—'}`
+      ).join(' ;; ')
+    },
+
+    // ── Sección VI ──
+    { type:'section',   label:'Condición de Vulnerabilidad' },
+    { type:'checkbox',  label:'Condiciones de vulnerabilidad', value: getChecked('vulnerabilidad') },
+    { type:'text',      label:'Tipo de discapacidad',   value: document.getElementById('discapacidadTipo').value },
+    { type:'text',      label:'Otra condición de vulnerabilidad', value: document.getElementById('vulOtroTexto').value },
+
+    // ── Sección VII ──
+    { type:'section', label:'Situación Migratoria' },
+    { type:'text',    label:'País de origen',            value: document.getElementById('paisOrigen').value },
+    { type:'text',    label:'Tiempo de permanencia',     value: document.getElementById('tiempoPermanencia').value },
+    { type:'radio',   label:'Situación migratoria actual', value: document.querySelector('[name="sitMigratoria"]:checked')?.value || '' },
+    { type:'checkbox',label:'Documentos disponibles',   value: getChecked('documentos') },
+
+    // ── Sección VIII ──
+    { type:'section',  label:'Necesidades Prioritarias Identificadas' },
+    { type:'checkbox', label:'Necesidades identificadas', value: getChecked('necesidades') },
+    { type:'text',     label:'Otra necesidad',           value: document.getElementById('necesidadOtroTexto').value },
+
+    // ── Sección IX ──
+    { type:'section', label:'Ayudas Recibidas' },
+    { type:'radio',   label:'Recibió ayuda económica',  value: document.querySelector('[name="recibiAyuda"]:checked')?.value || '' },
+    { type:'text',    label:'Detalle de ayuda recibida', value: document.getElementById('ayudaDetalle').value },
+  ];
+
+  // Documento a guardar en Firestore
+  const registro = {
+    sentAt: new Date().toISOString(),
+    answers
+  };
+
+  // Deshabilitar botones mientras guarda
+  const btns = document.querySelectorAll('#btn-guardar, #btn-guardar-bottom');
+  btns.forEach(b => {
+    b.disabled = true;
+    b.innerHTML = '<span class="spinner-inline"></span> Guardando...';
+  });
+
+  try {
+    await addDoc(collection(db, 'respuestas'), registro);
+    showToast('✓ Registro guardado correctamente', 'ok');
+
+    // Pequeña pausa para que el usuario vea el toast, luego limpiar
+    setTimeout(() => {
+      clearForm();
+    }, 2000);
+
+  } catch(e) {
+    console.error('Error al guardar en Firestore:', e);
+    showToast('Error al guardar. Verifica tu conexión e intenta de nuevo.', 'err');
+  } finally {
+    btns.forEach(b => {
+      b.disabled = false;
+      b.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Guardar Registro`;
+    });
+  }
+}
+
+// ──────────────────────────
+// CLEAR FORM
+// ──────────────────────────
+function clearForm(){
+  if(currentSection !== 0 && !confirm('¿Está seguro de que desea limpiar todos los datos del formulario?')) return;
+  document.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]), textarea, select').forEach(el => el.value = '');
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+  document.querySelectorAll('.check-opt, .radio-opt').forEach(el => el.classList.remove('checked'));
+  document.querySelectorAll('.other-input').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll('.toggle-btn').forEach(el => el.className = 'toggle-btn');
+  Object.keys(servicios).forEach(k => servicios[k] = null);
+  document.getElementById('ayudaDetalleWrap').style.display = 'none';
+  // reset tabla hogar
+  document.getElementById('hogarTbody').innerHTML = '';
+  hogarRows = [];
+  rowId = 0;
+  addHogarRow();
+  addHogarRow();
+  setTodayDate();
+  goToSection(0);
+  showToast('Formulario limpiado', 'ok');
+}
+
+// ──────────────────────────
+// TOAST
+// ──────────────────────────
+function showToast(msg, type = ''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ──────────────────────────────────────────────────────
+// EXPONER FUNCIONES AL SCOPE GLOBAL
+// (necesario porque el script es type="module")
+// ──────────────────────────────────────────────────────
+window.nextSection       = nextSection;
+window.prevSection       = prevSection;
+window.clearForm         = clearForm;
+window.submitForm        = submitForm;
+window.calcAge           = calcAge;
+window.markRadio         = markRadio;
+window.markCheck         = markCheck;
+window.checkOtroDoc      = checkOtroDoc;
+window.checkOtroVivienda = checkOtroVivienda;
+window.checkOtroMaterial = checkOtroMaterial;
+window.checkDiscapacidad = checkDiscapacidad;
+window.checkVulOtro      = checkVulOtro;
+window.checkNecOtro      = checkNecOtro;
+window.toggleServicio    = toggleServicio;
+window.toggleAyudaDetalle = toggleAyudaDetalle;
+window.addHogarRow       = addHogarRow;
+window.delHogarRow       = delHogarRow;
+
+</script>
+</body>
+</html>

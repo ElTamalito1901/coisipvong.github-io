@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Respuestas – Familias</title>
+<link rel="stylesheet" href="../../../css/resultados.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">A</div>
+  <div>
+    <h1>Respuestas</h1>
+    <p>Formulario Familias en Situación de Vulnerabilidad</p>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost btn-sm" id="btn-export-csv">↓ CSV</button>
+    <button class="btn btn-ghost btn-sm" id="btn-export-excel">↓ Excel</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card"><div class="spinner"></div></div>
+  </div>
+
+  <div class="resp-controls">
+    <input class="search-inp" type="text" id="search-input"
+           placeholder="Buscar por nombre, encuestador, distrito…">
+    <button class="btn btn-ghost btn-sm" id="btn-export-csv2">↓ CSV</button>
+    <button class="btn btn-ghost btn-sm" id="btn-export-excel2">↓ Excel</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead id="resp-thead"><tr></tr></thead>
+      <tbody id="resp-tbody">
+        <tr><td colspan="7"><div class="loading"><div class="spinner"></div><span>Cargando respuestas…</span></div></td></tr>
+      </tbody>
+    </table>
+    <div class="empty-msg" id="empty-msg" style="display:none">No hay respuestas todavía.</div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay" id="detail-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="detail-title">Detalle de respuesta</h3>
+      <button class="modal-close" id="btn-close-detail">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3>¿Eliminar respuesta?</h3>
+    <p>Esta acción no se puede deshacer.</p>
+    <div class="confirm-btns">
+      <button class="btn btn-ghost" id="btn-cancel-delete">Cancelar</button>
+      <button class="btn btn-danger" id="btn-confirm-delete">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+
+import { db, doc, collection, getDocs, deleteDoc } from "../../../firebase.js";
+
+// ── STATE ──────────────────────────────────────────────
+let responses = [];
+let formDef   = null;
+let deleteId  = null;
+
+// ── UTILS ──────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function closeOverlay(id){ document.getElementById(id).classList.remove('show'); }
+function showToast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+function getAns(r, label){
+  if(!r.answers) return '';
+  const a = r.answers.find(a=>a.label&&a.label.toLowerCase().includes(label.toLowerCase()));
+  return a ? (Array.isArray(a.value)?a.value.join(', '):a.value) : '';
+}
+
+// ── CARGAR DATOS ───────────────────────────────────────
+async function loadAll(){
+  // Cargar definición del formulario (para exportar con todas las columnas)
+  try {
+    const { getDoc } = await import("../../../firebase.js");
+    const snap = await getDoc(doc(db,"formularios","principal"));
+    if(snap.exists()) formDef = snap.data();
+  } catch(e){ console.warn("formDef no disponible", e); }
+
+  // Cargar respuestas
+  try {
+    const qs = await getDocs(collection(db,"respuestas"));
+    responses = [];
+    qs.forEach(d => responses.push({ firebaseId:d.id, ...d.data() }));
+  } catch(e){
+    console.error("Error al cargar respuestas:", e);
+    showToast("Error al cargar respuestas","error");
+  }
+  renderResponses();
+}
+
+// ── RENDER ─────────────────────────────────────────────
+function renderResponses(){
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const filtered = responses.filter(r => JSON.stringify(r).toLowerCase().includes(q));
+
+  // Stats
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="sn">${responses.length}</div><div class="sl">Total respuestas</div></div>
+    <div class="stat-card"><div class="sn">${filtered.length}</div><div class="sl">Filtradas</div></div>
+  `;
+
+  // Empty
+  document.getElementById('empty-msg').style.display = responses.length===0 ? 'block' : 'none';
+
+  // Header
+  document.getElementById('resp-thead').innerHTML = `<tr>
+    <th>#</th><th>Fecha envío</th><th>Jefe de hogar</th>
+    <th>Encuestador/a</th><th>Distrito</th><th>Fecha reg.</th><th>Acciones</th>
+  </tr>`;
+
+  const tbody = document.getElementById('resp-tbody');
+  tbody.innerHTML = '';
+
+  if(filtered.length===0 && responses.length>0){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Sin resultados para esa búsqueda.</td></tr>`;
+    return;
+  }
+
+  filtered.forEach((r,i)=>{
+    const nombre = [getAns(r,'Nombres'),getAns(r,'Apellidos')].filter(Boolean).join(' ')||'—';
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td style="color:var(--muted)">${i+1}</td>
+      <td>${r.sentAt ? new Date(r.sentAt).toLocaleDateString('es-PE') : '—'}</td>
+      <td><strong>${esc(nombre)}</strong></td>
+      <td>${esc(getAns(r,'Nombre del encuestador/a')||'—')}</td>
+      <td>${esc(getAns(r,'Distrito de domicilio')||'—')}</td>
+      <td>${esc(getAns(r,'Fecha de registro')||'—')}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" data-action="view-detail" data-id="${r.firebaseId}">Ver</button>
+          <button class="btn btn-danger btn-sm" data-action="ask-delete" data-id="${r.firebaseId}">✕</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── DETAIL ─────────────────────────────────────────────
+function viewDetail(id){
+  const r = responses.find(r=>r.firebaseId===id);
+  if(!r) return;
+  const nombre = [getAns(r,'Nombres'),getAns(r,'Apellidos')].filter(Boolean).join(' ')||'Respuesta';
+  document.getElementById('detail-title').textContent = nombre;
+  let html='', curSection='';
+  (r.answers||[]).forEach(a=>{
+    if(a.type==='section'){
+      if(curSection) html+=`</div>`;
+      html+=`<div class="resp-section"><h4>${esc(a.label)}</h4>`;
+      curSection=a.label;
+    } else {
+      const val = Array.isArray(a.value)
+        ? a.value.map(v=>`<span class="tag">${esc(v)}</span>`).join('')
+        : `<div class="rf-value">${esc(a.value||'—')}</div>`;
+      html+=`<div class="resp-field"><div class="rf-label">${esc(a.label)}</div>${val}</div>`;
+    }
+  });
+  if(curSection) html+=`</div>`;
+  html+=`<div style="margin-top:16px;font-size:11px;color:var(--muted)">Enviado: ${r.sentAt?new Date(r.sentAt).toLocaleString('es-PE'):'desconocido'}</div>`;
+  document.getElementById('detail-body').innerHTML = html;
+  document.getElementById('detail-overlay').classList.add('show');
+}
+
+// ── DELETE ─────────────────────────────────────────────
+async function doDelete(){
+  try {
+    await deleteDoc(doc(db,"respuestas",deleteId));
+    responses = responses.filter(r=>r.firebaseId!==deleteId);
+    closeOverlay('confirm-overlay');
+    renderResponses();
+    showToast('Respuesta eliminada');
+  } catch(e){
+    console.error(e);
+    showToast('Error al eliminar','error');
+  }
+}
+
+// ── EXPORT ─────────────────────────────────────────────
+function getExportRows(){
+  const labels = [];
+  if(formDef){
+    formDef.questions.forEach(q=>{ if(q.type!=='section') labels.push(q.title); });
+  } else {
+    // Fallback: recopilar todas las etiquetas únicas de las respuestas
+    const set = new Set();
+    responses.forEach(r=>(r.answers||[]).forEach(a=>{ if(a.type!=='section') set.add(a.label); }));
+    set.forEach(l=>labels.push(l));
+  }
+  const rows = responses.map(r=>{
+    const row={'Fecha envío':r.sentAt?new Date(r.sentAt).toLocaleString('es-PE'):''};
+    labels.forEach(lbl=>{
+      const a=(r.answers||[]).find(a=>a.label===lbl);
+      row[lbl]=a?(Array.isArray(a.value)?a.value.join('; '):a.value):'';
+    });
+    return row;
+  });
+  return {labels:['Fecha envío',...labels], rows};
+}
+
+function exportCSV(){
+  const {labels,rows}=getExportRows();
+  const toRow=cells=>cells.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',');
+  const csv='\uFEFF'+[toRow(labels),...rows.map(r=>toRow(labels.map(l=>r[l])))].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='respuestas_familias.csv'; a.click();
+  showToast('CSV exportado');
+}
+
+function exportExcel(){
+  const {labels,rows}=getExportRows();
+  const mkRow=cells=>'<Row>'+cells.map(c=>`<Cell><Data ss:Type="String">${String(c||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</Data></Cell>`).join('')+'</Row>';
+  let xml='<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Respuestas"><Table>';
+  xml+=mkRow(labels)+rows.map(r=>mkRow(labels.map(l=>r[l]))).join('')+'</Table></Worksheet></Workbook>';
+  const a=document.createElement('a');
+  a.href='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(xml);
+  a.download='respuestas_familias.xls'; a.click();
+  showToast('Excel exportado');
+}
+
+// ── EVENTOS ────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', renderResponses);
+
+document.getElementById('resp-tbody').addEventListener('click', e=>{
+  const btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  if(btn.dataset.action==='view-detail') viewDetail(btn.dataset.id);
+  if(btn.dataset.action==='ask-delete'){
+    deleteId = btn.dataset.id;
+    document.getElementById('confirm-overlay').classList.add('show');
+  }
+});
+
+document.getElementById('btn-close-detail').addEventListener('click', ()=>closeOverlay('detail-overlay'));
+document.getElementById('btn-cancel-delete').addEventListener('click', ()=>closeOverlay('confirm-overlay'));
+document.getElementById('btn-confirm-delete').addEventListener('click', doDelete);
+
+['detail-overlay','confirm-overlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id) closeOverlay(id); });
+});
+
+[document.getElementById('btn-export-csv'),
+ document.getElementById('btn-export-csv2')].forEach(b=>b.addEventListener('click', exportCSV));
+
+[document.getElementById('btn-export-excel'),
+ document.getElementById('btn-export-excel2')].forEach(b=>b.addEventListener('click', exportExcel));
+
+// ── INIT ───────────────────────────────────────────────
+loadAll();
+
+</script>
+</body>
+</html>
