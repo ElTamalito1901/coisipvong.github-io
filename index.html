@@ -5,11 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COISIPV - Transformando vidas juntos</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 
 <body>
-    <div class="sidebar">
+
+    <!-- Overlay para cerrar sidebar en móvil -->
+    <div class="overlay" id="overlay" onclick="cerrarSidebar()"></div>
+
+    <div class="sidebar" id="sidebar">
         <div class="logo-section">
             <div class="logo">
                 <img src="imagen/logo.jpg" alt="Logo COISIPV">
@@ -17,53 +21,57 @@
             <h1>COISIPV</h1>
             <p class="tagline">Cooperación Orientada a la Integración Social del Inmigrante y Peruano Vulnerable</p>
             <button class="login-btn-small" onclick="window.open('contenido/login.html', '_blank')">
-            <span class="icon">🔐</span>
-            <span>Iniciar Sesión</span>
-</button>
+                <span class="icon">🔐</span>
+                <span>Iniciar Sesión</span>
+            </button>
         </div>
 
         <div class="menu">
-            <button class="menu-item active" onclick="loadPage('inicio.html')" id="btn-inicio">
+            <button class="menu-item active" onclick="loadPage('inicio.html'); cerrarSidebar();" id="btn-inicio">
                 <span class="icon">🏠</span>
                 <span>Inicio</span>
             </button>
-            <button class="menu-item" onclick="loadPage('nosotros.html')" id="btn-nosotros">
+            <button class="menu-item" onclick="loadPage('nosotros.html'); cerrarSidebar();" id="btn-nosotros">
                 <span class="icon">👥</span>
                 <span>Nosotros</span>
             </button>
-            <button class="menu-item" onclick="loadPage('Proyectos.html')" id="btn-Proyectos">
+            <button class="menu-item" onclick="loadPage('Proyectos.html'); cerrarSidebar();" id="btn-Proyectos">
                 <span class="icon">📋</span>
                 <span>Iniciativas</span>
             </button>
-            <button class="menu-item" onclick="loadPage('Voluntarios.html')" id="btn-Voluntarios">
+            <button class="menu-item" onclick="loadPage('Voluntarios.html'); cerrarSidebar();" id="btn-Voluntarios">
                 <span class="icon">🤝</span>
                 <span>Voluntarios</span>
             </button>
-
-            <button class="menu-item" onclick="loadPage('Noticias.html')" id="btn-Noticias">
+            <button class="menu-item" onclick="loadPage('Noticias.html'); cerrarSidebar();" id="btn-Noticias">
                 <span class="icon">📰</span>
                 <span>Noticias</span>
             </button>
-
-
-            <button class="menu-item" onclick="loadPage('Contacto.html')" id="btn-Contacto">
+            <button class="menu-item" onclick="loadPage('Contacto.html'); cerrarSidebar();" id="btn-Contacto">
                 <span class="icon">📧</span>
                 <span>Contacto</span>
             </button>
         </div>
-
     </div>
 
-    <div class="content-frame" id="content-area">
-        <iframe src="contenido/inicio.html" style="
-                width: 100%;
-                height: 100%;
-                border: none;
-                border-radius: 0;
-                background: transparent;
-                display: block;
-            ">
-        </iframe>
+    <!-- Topbar visible solo en móvil -->
+    <div class="main-content">
+        <div class="topbar-mobile">
+            <button class="hamburger" onclick="abrirSidebar()">☰</button>
+            <span class="topbar-mobile-title">COISIPV</span>
+        </div>
+
+        <div class="content-frame" id="content-area">
+            <iframe src="contenido/inicio.html" style="
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    border-radius: 0;
+                    background: transparent;
+                    display: block;
+                ">
+            </iframe>
+        </div>
     </div>
 
     <div class="login-modal" id="loginModal">
@@ -92,6 +100,17 @@
         </div>
     </div>
 
+    <script>
+        function abrirSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('overlay').classList.add('show');
+        }
+
+        function cerrarSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+    </script>
     <script src="js/index.js"></script>
     <script type="module" src="/firebase.js"></script>
 </body>

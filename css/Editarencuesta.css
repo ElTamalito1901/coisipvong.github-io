@@ -691,4 +691,5 @@ tbody td{
   .stats-row{grid-template-columns:1fr 1fr}
   .content{padding:16px}
   .topbar{padding:14px 16px}
+  .builder-sidebar{order:-1}
 }
