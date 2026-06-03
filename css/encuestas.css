@@ -185,7 +185,7 @@ body{
 .toggle-btn.active-no{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
 
 /* ── TABLA COMPOSICIÓN HOGAR ── */
-.table-container{overflow-x:auto;border-radius:14px;border:1.5px solid var(--border)}
+.table-container{overflow-x:auto;border-radius:14px;max-height: 60vh;border:1.5px solid var(--border)}
 .hogar-table{width:100%;border-collapse:collapse;font-size:13px}
 .hogar-table thead th{
   background:var(--pl);padding:10px 14px;text-align:left;
@@ -217,9 +217,13 @@ body{
 .btn-del-row:hover{color:var(--danger);background:#fee2e2}
 
 /* ── NAV BUTTONS ── */
-.form-nav{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-top:24px;padding-top:20px;border-top:2px solid var(--plm);
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid var(--plm);
 }
 
 /* ── TOAST ── */
@@ -254,6 +258,8 @@ body{
   font-size:12px;font-weight:600;display:inline-block;margin:2px;
 }
 
+
+
 /* ── SPINNER ── */
 .spinner-inline{
   display:inline-block;width:14px;height:14px;
@@ -267,6 +273,7 @@ body{
 @media(max-width:640px){
   .col-2,.col-3{grid-template-columns:1fr}
   .servicios-grid{grid-template-columns:1fr}
+  .content {padding: 16px 16px 0;}
   .content{padding:16px}
   .topbar{padding:14px 16px}
   .form-nav {
@@ -280,6 +287,8 @@ body{
     z-index: 10;
     box-shadow: 0 -4px 16px rgba(8,30,84,0.08);
   }
+  
 }
+
 
 

@@ -334,14 +334,15 @@
 
             /* El sidebar se convierte en drawer deslizable */
             .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: 280px;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 100;
+            overflow-y: auto; /* 👈 agrega solo esta línea */
             }
 
             .sidebar.open {
