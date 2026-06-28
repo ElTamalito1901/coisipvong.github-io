@@ -48,8 +48,8 @@
                         placeholder="Describe la noticia con todos los detalles importantes..."></textarea>
                 </div>
 
-                <!-- Fila 3: Categoría + Fecha + Avatar -->
-                <div class="form-row-3">
+                <!-- Fila 3: Categoría + Avatar -->
+                <div class="form-row-2">
                     <div class="form-group">
                         <label>Categoría *</label>
                         <select id="categoria" required>
@@ -59,10 +59,6 @@
                             <option value="testimonios">Testimonios</option>
                             <option value="proyectos">Proyectos</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Publicación *</label>
-                        <input type="date" id="fecha" required>
                     </div>
                     <div class="form-group">
                         <label>Avatar del Autor (emoji)</label>
@@ -149,6 +145,16 @@
     const fileInput = document.getElementById('imagen-file');
     const preview = document.getElementById('image-preview');
     const removeImageBtn = document.getElementById("remove-image-btn");
+
+    // Función para obtener la fecha de hoy en formato YYYY-MM-DD (hora local)
+    // Se usa al momento de guardar, para asignar siempre la fecha actual sin pedirla en el formulario
+    function obtenerFechaHoy() {
+        const hoy = new Date();
+        const año = hoy.getFullYear();
+        const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dia = String(hoy.getDate()).padStart(2, '0');
+        return `${año}-${mes}-${dia}`;
+    }
 
     uploadArea.addEventListener('click', () => fileInput.click());
     uploadArea.addEventListener('dragover', (e) => {
@@ -271,7 +277,7 @@
         const date = new Date(fecha);
         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        return `${date.getDate()} de ${meses[date.getMonth()]}, ${date.getFullYear()}`;
+        return `${date.getUTCDate()} de ${meses[date.getUTCMonth()]}, ${date.getUTCFullYear()}`;
     }
 
     document.getElementById("noticia-form").addEventListener("submit", async (e) => {
@@ -299,7 +305,7 @@
                 titulo: document.getElementById("titulo").value,
                 descripcion: document.getElementById("descripcion").value,
                 categoria: document.getElementById("categoria").value,
-                fecha: new Date(document.getElementById("fecha").value).toISOString(),
+                fecha: new Date(obtenerFechaHoy()).toISOString(),
                 imagen: imagenURL,
                 autor: document.getElementById("autor").value,
                 autorAvatar: document.getElementById("autorAvatar").value || "👤",
@@ -327,7 +333,6 @@
         document.getElementById("titulo").value = noticia.titulo;
         document.getElementById("descripcion").value = noticia.descripcion;
         document.getElementById("categoria").value = noticia.categoria;
-        document.getElementById("fecha").value = noticia.fecha.split("T")[0];
         document.getElementById("autor").value = noticia.autor;
         document.getElementById("autorAvatar").value = noticia.autorAvatar;
         document.getElementById("destacada").checked = noticia.destacada;

@@ -139,7 +139,7 @@
             const date = new Date(fecha);
             const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            return `${date.getDate()} de ${meses[date.getMonth()]}, ${date.getFullYear()}`;
+            return `${date.getUTCDate()} de ${meses[date.getUTCMonth()]}, ${date.getUTCFullYear()}`;
         }
 
         function renderizarNoticias(filtro = 'todas') {
