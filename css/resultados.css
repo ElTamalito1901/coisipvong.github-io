@@ -1,4 +1,4 @@
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --primary: #916eac;
@@ -176,6 +176,30 @@
   .confirm-box h3 { font-size: 16px; margin-bottom: 8px; }
   .confirm-box p  { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
   .confirm-btns   { display: flex; gap: 10px; justify-content: center; }
+
+  /* EXPORT MODAL */
+  .export-modal { max-width: 420px; }
+  .export-banner {
+    background: var(--primary-light); color: var(--accent);
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 13px; margin-bottom: 18px;
+  }
+  .export-label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--text); margin-bottom: 6px;
+  }
+  .export-date-inp {
+    width: 100%; padding: 9px 12px; margin-bottom: 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-size: 13px; outline: none; transition: border .15s;
+  }
+  .export-date-inp:focus { border-color: var(--primary); }
+  .export-hint {
+    font-size: 12px; color: var(--muted);
+    background: var(--bg); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 18px;
+  }
+  .export-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
   /* TOAST */
   .toast {
