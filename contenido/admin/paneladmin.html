@@ -181,8 +181,13 @@
     </div>
 
     <nav class="sidebar-nav">
-        <div class="nav-section-label">Contenido</div>
-        <button class="nav-item active" onclick="navegarA('contenido-admin/noticias-admin.html', 'Noticias', this)">
+        
+        <div class="nav-section-label">Dashboard</div>
+        <button class="nav-item active" onclick="navegarA('contenido-admin/dashboard.html', 'dashboard', this)">
+            <span class="nav-icon">📰</span> dashboard
+        </button>
+        <div class="nav-section-label">Noticias</div>
+        <button class="nav-item" onclick="navegarA('contenido-admin/noticias-admin.html', 'Noticias', this)">
             <span class="nav-icon">📰</span> Noticias
         </button>
 
@@ -195,7 +200,7 @@
         <button class="nav-item" onclick="navegarA('contenido-admin/encuestas.html', 'Encuesta', this)">
             <span class="nav-icon">📝</span> encuesta
         </button>
-        <button class="nav-item active" onclick="navegarA('contenido-admin/resultados.html', 'Resultados', this)">
+        <button class="nav-item" onclick="navegarA('contenido-admin/resultados.html', 'Resultados', this)">
             <span class="nav-icon">📰</span> Resultados
         </button>
     </nav>
@@ -211,7 +216,7 @@
             <div class="avatar">A</div>
         </div>
     </header>
-    <iframe class="content-frame" id="content-frame" src="contenido-admin/noticias-admin.html"></iframe>
+    <iframe class="content-frame" id="content-frame" src="contenido-admin/dashboard.html"></iframe>
 </div>
 
 <script>

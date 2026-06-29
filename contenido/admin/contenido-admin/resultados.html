@@ -38,7 +38,7 @@
     <table>
       <thead id="resp-thead"><tr></tr></thead>
       <tbody id="resp-tbody">
-        <tr><td colspan="7"><div class="loading"><div class="spinner"></div><span>Cargando respuestas…</span></div></td></tr>
+        <tr><td colspan="8"><div class="loading"><div class="spinner"></div><span>Cargando respuestas…</span></div></td></tr>
       </tbody>
     </table>
     <div class="empty-msg" id="empty-msg" style="display:none">No hay respuestas todavía.</div>
@@ -68,16 +68,48 @@
   </div>
 </div>
 
+<!-- EXPORT MODAL -->
+<div class="overlay" id="export-overlay">
+  <div class="modal export-modal">
+    <div class="modal-header">
+      <h3 id="export-title">Exportar a Excel</h3>
+      <button class="modal-close" id="btn-close-export">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="export-banner">
+        Selecciona un rango de fechas para exportar el formulario.
+        <strong>Si no seleccionas fechas, se exportarán todos los registros.</strong>
+      </div>
+
+      <label class="export-label">Fecha inicio (opcional)</label>
+      <input type="date" id="export-fecha-inicio" class="export-date-inp">
+
+      <label class="export-label">Fecha fin (opcional)</label>
+      <input type="date" id="export-fecha-fin" class="export-date-inp">
+
+      <div class="export-hint">Deja las fechas en blanco para exportar todos los registros.</div>
+
+      <div class="export-actions">
+        <button class="btn btn-ghost" id="btn-cancel-export">Cancelar</button>
+        <button class="btn btn-primary" id="btn-confirm-export">Exportar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
 
-import { db, doc, collection, getDocs, deleteDoc } from "../../../firebase.js";
+import { db, doc, collection, getDocs, deleteDoc, updateDoc } from "../../../firebase.js";
 
 // ── STATE ──────────────────────────────────────────────
 let responses = [];
 let formDef   = null;
 let deleteId  = null;
+let exportType = null; // 'csv' | 'excel'
+
+const STATUS_OPTIONS = ['Pendiente','En proceso','Atendido','Cerrado'];
 
 // ── UTILS ──────────────────────────────────────────────
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -92,6 +124,7 @@ function getAns(r, label){
   const a = r.answers.find(a=>a.label&&a.label.toLowerCase().includes(label.toLowerCase()));
   return a ? (Array.isArray(a.value)?a.value.join(', '):a.value) : '';
 }
+function getEstado(r){ return r.estado || 'Pendiente'; }
 
 // ── CARGAR DATOS ───────────────────────────────────────
 async function loadAll(){
@@ -131,14 +164,14 @@ function renderResponses(){
   // Header
   document.getElementById('resp-thead').innerHTML = `<tr>
     <th>#</th><th>Fecha envío</th><th>Jefe de hogar</th>
-    <th>Encuestador/a</th><th>Distrito</th><th>Fecha reg.</th><th>Acciones</th>
+    <th>Encuestador/a</th><th>Distrito</th><th>Fecha reg.</th><th>Estado</th><th>Acciones</th>
   </tr>`;
 
   const tbody = document.getElementById('resp-tbody');
   tbody.innerHTML = '';
 
   if(filtered.length===0 && responses.length>0){
-    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Sin resultados para esa búsqueda.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">Sin resultados para esa búsqueda.</td></tr>`;
     return;
   }
 
@@ -152,9 +185,11 @@ function renderResponses(){
       <td>${esc(getAns(r,'Nombre del encuestador/a')||'—')}</td>
       <td>${esc(getAns(r,'Distrito de domicilio')||'—')}</td>
       <td>${esc(getAns(r,'Fecha de registro')||'—')}</td>
+      <td><span class="tag">${esc(getEstado(r))}</span></td>
       <td>
         <div style="display:flex;gap:6px">
           <button class="btn btn-ghost btn-sm" data-action="view-detail" data-id="${r.firebaseId}">Ver</button>
+          <button class="btn btn-ghost btn-sm" data-action="edit-estado" data-id="${r.firebaseId}">Estado</button>
           <button class="btn btn-danger btn-sm" data-action="ask-delete" data-id="${r.firebaseId}">✕</button>
         </div>
       </td>
@@ -188,6 +223,50 @@ function viewDetail(id){
   document.getElementById('detail-overlay').classList.add('show');
 }
 
+// ── EDITAR ESTADO ──────────────────────────────────────
+function editEstado(id){
+  const r = responses.find(r=>r.firebaseId===id);
+  if(!r) return;
+  document.getElementById('detail-title').textContent = 'Estado de la respuesta';
+
+  let html = `
+    <div class="resp-section">
+      <div class="resp-field">
+        <div class="rf-label">Estado</div>
+        <select id="detail-estado-select" class="export-date-inp">
+          ${STATUS_OPTIONS.map(s=>`<option value="${esc(s)}" ${getEstado(r)===s?'selected':''}>${esc(s)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="resp-field">
+        <div class="rf-label">Comentario</div>
+        <textarea id="detail-comentario-input" class="export-date-inp" rows="3" style="resize:vertical">${esc(r.comentario||'')}</textarea>
+      </div>
+      <button class="btn btn-primary btn-sm" id="btn-save-estado">Guardar estado</button>
+    </div>
+  `;
+  document.getElementById('detail-body').innerHTML = html;
+  document.getElementById('detail-overlay').classList.add('show');
+
+  document.getElementById('btn-save-estado').addEventListener('click', ()=>saveEstado(r.firebaseId));
+}
+
+// ── GUARDAR ESTADO ─────────────────────────────────────
+async function saveEstado(id){
+  const estado = document.getElementById('detail-estado-select').value;
+  const comentario = document.getElementById('detail-comentario-input').value;
+  try {
+    await updateDoc(doc(db,"respuestas",id), { estado, comentario });
+    const r = responses.find(r=>r.firebaseId===id);
+    if(r){ r.estado = estado; r.comentario = comentario; }
+    closeOverlay('detail-overlay');
+    renderResponses();
+    showToast('Estado guardado');
+  } catch(e){
+    console.error(e);
+    showToast('Error al guardar estado','error');
+  }
+}
+
 // ── DELETE ─────────────────────────────────────────────
 async function doDelete(){
   try {
@@ -203,17 +282,17 @@ async function doDelete(){
 }
 
 // ── EXPORT ─────────────────────────────────────────────
-function getExportRows(){
+function getExportRows(list){
   const labels = [];
   if(formDef){
     formDef.questions.forEach(q=>{ if(q.type!=='section') labels.push(q.title); });
   } else {
     // Fallback: recopilar todas las etiquetas únicas de las respuestas
     const set = new Set();
-    responses.forEach(r=>(r.answers||[]).forEach(a=>{ if(a.type!=='section') set.add(a.label); }));
+    list.forEach(r=>(r.answers||[]).forEach(a=>{ if(a.type!=='section') set.add(a.label); }));
     set.forEach(l=>labels.push(l));
   }
-  const rows = responses.map(r=>{
+  const rows = list.map(r=>{
     const row={'Fecha envío':r.sentAt?new Date(r.sentAt).toLocaleString('es-PE'):''};
     labels.forEach(lbl=>{
       const a=(r.answers||[]).find(a=>a.label===lbl);
@@ -224,8 +303,8 @@ function getExportRows(){
   return {labels:['Fecha envío',...labels], rows};
 }
 
-function exportCSV(){
-  const {labels,rows}=getExportRows();
+function exportCSV(list){
+  const {labels,rows}=getExportRows(list);
   const toRow=cells=>cells.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',');
   const csv='\uFEFF'+[toRow(labels),...rows.map(r=>toRow(labels.map(l=>r[l])))].join('\n');
   const a=document.createElement('a');
@@ -234,8 +313,8 @@ function exportCSV(){
   showToast('CSV exportado');
 }
 
-function exportExcel(){
-  const {labels,rows}=getExportRows();
+function exportExcel(list){
+  const {labels,rows}=getExportRows(list);
   const mkRow=cells=>'<Row>'+cells.map(c=>`<Cell><Data ss:Type="String">${String(c||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</Data></Cell>`).join('')+'</Row>';
   let xml='<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Respuestas"><Table>';
   xml+=mkRow(labels)+rows.map(r=>mkRow(labels.map(l=>r[l]))).join('')+'</Table></Worksheet></Workbook>';
@@ -245,6 +324,35 @@ function exportExcel(){
   showToast('Excel exportado');
 }
 
+function filterByDateRange(list, startStr, endStr){
+  if(!startStr && !endStr) return list;
+  const start = startStr ? new Date(startStr+'T00:00:00') : null;
+  const end   = endStr   ? new Date(endStr+'T23:59:59')   : null;
+  return list.filter(r=>{
+    if(!r.sentAt) return false;
+    const d = new Date(r.sentAt);
+    if(start && d < start) return false;
+    if(end && d > end) return false;
+    return true;
+  });
+}
+
+function openExportModal(type){
+  exportType = type;
+  document.getElementById('export-title').textContent = type==='excel' ? 'Exportar a Excel' : 'Exportar a CSV';
+  document.getElementById('export-fecha-inicio').value = '';
+  document.getElementById('export-fecha-fin').value = '';
+  document.getElementById('export-overlay').classList.add('show');
+}
+
+function confirmExport(){
+  const start = document.getElementById('export-fecha-inicio').value;
+  const end   = document.getElementById('export-fecha-fin').value;
+  const list  = filterByDateRange(responses, start, end);
+  if(exportType==='excel') exportExcel(list); else exportCSV(list);
+  closeOverlay('export-overlay');
+}
+
 // ── EVENTOS ────────────────────────────────────────────
 document.getElementById('search-input').addEventListener('input', renderResponses);
 
@@ -252,6 +360,7 @@ document.getElementById('resp-tbody').addEventListener('click', e=>{
   const btn = e.target.closest('[data-action]');
   if(!btn) return;
   if(btn.dataset.action==='view-detail') viewDetail(btn.dataset.id);
+  if(btn.dataset.action==='edit-estado') editEstado(btn.dataset.id);
   if(btn.dataset.action==='ask-delete'){
     deleteId = btn.dataset.id;
     document.getElementById('confirm-overlay').classList.add('show');
@@ -267,10 +376,16 @@ document.getElementById('btn-confirm-delete').addEventListener('click', doDelete
 });
 
 [document.getElementById('btn-export-csv'),
- document.getElementById('btn-export-csv2')].forEach(b=>b.addEventListener('click', exportCSV));
+ document.getElementById('btn-export-csv2')].forEach(b=>b.addEventListener('click', ()=>openExportModal('csv')));
 
 [document.getElementById('btn-export-excel'),
- document.getElementById('btn-export-excel2')].forEach(b=>b.addEventListener('click', exportExcel));
+ document.getElementById('btn-export-excel2')].forEach(b=>b.addEventListener('click', ()=>openExportModal('excel')));
+
+document.getElementById('btn-close-export').addEventListener('click', ()=>closeOverlay('export-overlay'));
+document.getElementById('btn-cancel-export').addEventListener('click', ()=>closeOverlay('export-overlay'));
+document.getElementById('btn-confirm-export').addEventListener('click', confirmExport);
+
+document.getElementById('export-overlay').addEventListener('click', e=>{ if(e.target.id==='export-overlay') closeOverlay('export-overlay'); });
 
 // ── INIT ───────────────────────────────────────────────
 loadAll();
