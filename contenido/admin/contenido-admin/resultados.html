@@ -281,16 +281,35 @@ async function doDelete(){
 }
 
 // ── EXPORT ─────────────────────────────────────────────
+// Construye las columnas combinando las preguntas del formulario actual
+// (formDef) con cualquier otra etiqueta que aparezca en las respuestas
+// guardadas. Esto evita que se pierdan datos cuando una respuesta viene
+// de un formulario con etiquetas distintas (por ejemplo el formulario
+// "local" encuestas.html, cuyos labels no son 100% idénticos a los de
+// formularios/principal).
 function getExportRows(list){
   const labels = [];
-  if(formDef){
-    formDef.questions.forEach(q=>{ if(q.type!=='section') labels.push(q.title); });
-  } else {
-    // Fallback: recopilar todas las etiquetas únicas de las respuestas
-    const set = new Set();
-    list.forEach(r=>(r.answers||[]).forEach(a=>{ if(a.type!=='section') set.add(a.label); }));
-    set.forEach(l=>labels.push(l));
+  const seen = new Set();
+
+  // 1) Columnas del formulario activo en Firestore (si existe)
+  if(formDef && formDef.questions){
+    formDef.questions.forEach(q=>{
+      if(q.type!=='section' && q.title && !seen.has(q.title)){
+        labels.push(q.title);
+        seen.add(q.title);
+      }
+    });
   }
+
+  // 2) Cualquier otra etiqueta presente en las respuestas reales que no
+  //    haya quedado cubierta arriba (cubre encuestas/labels distintas)
+  list.forEach(r=>(r.answers||[]).forEach(a=>{
+    if(a.type!=='section' && a.label && !seen.has(a.label)){
+      labels.push(a.label);
+      seen.add(a.label);
+    }
+  }));
+
   const rows = list.map(r=>{
     const row={'Fecha envío':r.sentAt?new Date(r.sentAt).toLocaleString('es-PE'):''};
     labels.forEach(lbl=>{
