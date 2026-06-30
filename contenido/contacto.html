@@ -186,26 +186,45 @@
         });
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  NUEVO: genera atributos HTML de validación (tipo de
+    //  contenido + longitud máxima) para campos text/textarea
+    // ─────────────────────────────────────────────────────────────
+    function validationAttrs(q) {
+        let extra = '';
+        if (q.maxLength) extra += ` maxlength="${q.maxLength}"`;
+        if (q.validation === 'numbers') {
+            extra += ` inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')"`;
+        } else if (q.validation === 'letters') {
+            extra += ` oninput="this.value=this.value.replace(/[^a-zA-ZÀ-ÿ\\s]/g,'')"`;
+        } else if (q.validation === 'alphanumeric') {
+            extra += ` oninput="this.value=this.value.replace(/[^a-zA-Z0-9À-ÿ\\s]/g,'')"`;
+        }
+        return extra;
+    }
+
     function renderQuestion(q) {
         const req = q.required ? '<span class="req">*</span>' : '';
         const desc = q.desc ? `<p class="field-desc">${esc(q.desc)}</p>` : '';
 
         switch (q.type) {
-            case 'text':
+            case 'text': {
+                const isEmail = q.validation === 'email';
                 return `
                 <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
                     <label class="field-label">${esc(q.title)} ${req}</label>
                     ${desc}
-                    <input type="text" id="inp-${q.id}" placeholder="">
+                    <input type="${isEmail ? 'email' : 'text'}" id="inp-${q.id}" placeholder=""${validationAttrs(q)}>
                     <p class="error-msg">Este campo es obligatorio.</p>
                 </div>`;
+            }
 
             case 'textarea':
                 return `
                 <div class="field-group" id="fg-${q.id}" data-qid="${q.id}" data-required="${q.required}">
                     <label class="field-label">${esc(q.title)} ${req}</label>
                     ${desc}
-                    <textarea id="inp-${q.id}" placeholder="Escribe aquí..."></textarea>
+                    <textarea id="inp-${q.id}" placeholder="Escribe aquí..."${validationAttrs(q)}></textarea>
                     <p class="error-msg">Este campo es obligatorio.</p>
                 </div>`;
 

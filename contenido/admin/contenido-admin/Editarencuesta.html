@@ -234,6 +234,28 @@ function buildQCard(q, idx) {
     optionsHtml = `<div class="q-preview-field" style="font-size:12px">Línea de respuesta corta</div>`;
   }
 
+  // ── NUEVO: bloque de validación solo para texto corto / párrafo ──
+  let validationHtml = '';
+  if(q.type==='text' || q.type==='textarea') {
+    validationHtml = `
+    <div class="validation-row" style="display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap">
+      <label style="font-size:12px;color:var(--muted)">
+        Tipo de contenido<br>
+        <select class="q-type-select" data-action="change-validation" data-qid="${q.id}">
+          <option value="none" ${(!q.validation||q.validation==='none')?'selected':''}>Cualquier texto</option>
+          <option value="numbers" ${q.validation==='numbers'?'selected':''}>Solo números</option>
+          <option value="letters" ${q.validation==='letters'?'selected':''}>Solo letras</option>
+          <option value="alphanumeric" ${q.validation==='alphanumeric'?'selected':''}>Letras y números</option>
+          <option value="email" ${q.validation==='email'?'selected':''}>Correo electrónico</option>
+        </select>
+      </label>
+      <label style="font-size:12px;color:var(--muted)">
+        Máx. caracteres<br>
+        <input type="number" min="0" style="width:90px" value="${q.maxLength||''}" placeholder="Sin límite" data-field="maxLength" data-qid="${q.id}">
+      </label>
+    </div>`;
+  }
+
   div.innerHTML = `
     <div class="q-card-header">
       <span class="drag-handle" title="Arrastrar para reordenar">⠿</span>
@@ -250,6 +272,7 @@ function buildQCard(q, idx) {
       </div>
     </div>
     ${optionsHtml}
+    ${validationHtml}
     <div class="q-card-footer">
       <span style="font-size:11px;color:var(--muted);background:var(--bg);padding:3px 10px;border-radius:20px;font-weight:600">${typeLabels[q.type]||q.type}</span>
       <label class="required-toggle">
@@ -323,6 +346,12 @@ function bindQuestionsListEvents() {
     if(cb) {
       const q = formDef.questions.find(q=>q.id===cb.dataset.qid);
       if(q) q.required = cb.checked;
+    }
+    // ── NUEVO: guardar el tipo de validación seleccionado ──
+    const valSel = e.target.closest('[data-action="change-validation"]');
+    if(valSel) {
+      const q = formDef.questions.find(q=>q.id===valSel.dataset.qid);
+      if(q) q.validation = valSel.value;
     }
   });
 

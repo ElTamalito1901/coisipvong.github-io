@@ -164,7 +164,7 @@ function renderResponses(){
   // Header
   document.getElementById('resp-thead').innerHTML = `<tr>
     <th>#</th><th>Fecha envío</th><th>Jefe de hogar</th>
-    <th>Encuestador/a</th><th>Distrito</th><th>Fecha reg.</th><th>Estado</th><th>Acciones</th>
+    <th>Encuestador/a</th><th>Distrito</th><th>Estado</th><th>Acciones</th>
   </tr>`;
 
   const tbody = document.getElementById('resp-tbody');
@@ -184,7 +184,6 @@ function renderResponses(){
       <td><strong>${esc(nombre)}</strong></td>
       <td>${esc(getAns(r,'Nombre del encuestador/a')||'—')}</td>
       <td>${esc(getAns(r,'Distrito de domicilio')||'—')}</td>
-      <td>${esc(getAns(r,'Fecha de registro')||'—')}</td>
       <td><span class="tag">${esc(getEstado(r))}</span></td>
       <td>
         <div style="display:flex;gap:6px">
