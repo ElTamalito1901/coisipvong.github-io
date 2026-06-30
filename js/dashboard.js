@@ -136,7 +136,7 @@ function renderEstadoChart(responses){
 function renderDistritoChart(responses){
   const map = {};
   responses.forEach(r=>{
-    const d = getAns(r,'Distrito de domicilio') || 'Sin distrito';
+    const d = getAns(r,'distrito') || 'Sin distrito';
     map[d] = (map[d]||0)+1;
   });
   const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
@@ -186,7 +186,7 @@ function renderRecentTable(responses){
       <tr>
         <td><strong>${esc(nombre)}</strong></td>
         <td>${esc(getAns(r,'Nombre del encuestador/a')||'—')}</td>
-        <td>${esc(getAns(r,'Distrito de domicilio')||'—')}</td>
+        <td>${esc(getAns(r,'distrito')||'—')}</td>
         <td><span class="tag-estado st-${estadoKey(estado)}">${esc(estado)}</span></td>
         <td>${r.sentAt ? new Date(r.sentAt).toLocaleDateString('es-PE') : '—'}</td>
       </tr>

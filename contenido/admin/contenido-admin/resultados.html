@@ -183,7 +183,7 @@ function renderResponses(){
       <td>${r.sentAt ? new Date(r.sentAt).toLocaleDateString('es-PE') : '—'}</td>
       <td><strong>${esc(nombre)}</strong></td>
       <td>${esc(getAns(r,'Nombre del encuestador/a')||'—')}</td>
-      <td>${esc(getAns(r,'Distrito de domicilio')||'—')}</td>
+      <td>${esc(getAns(r,'distrito')||'—')}</td>
       <td><span class="tag">${esc(getEstado(r))}</span></td>
       <td>
         <div style="display:flex;gap:6px">

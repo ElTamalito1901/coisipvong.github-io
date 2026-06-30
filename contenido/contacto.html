@@ -75,6 +75,7 @@
         groups = buildGroups(formDef.questions);
         renderStepsNav();
         renderAllSteps();
+        linkBirthdateToAge();
         showStep(1);
     }
 
@@ -292,6 +293,50 @@
             default:
                 return '';
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  AUTO-CALCULAR EDAD DESDE FECHA DE NACIMIENTO
+    // ─────────────────────────────────────────────────────────────
+    function linkBirthdateToAge() {
+        // Busca la pregunta de fecha de nacimiento y la de edad por su título
+        const birthQ = formDef.questions.find(q =>
+            q.type === 'date' && /nacimiento/i.test(q.title)
+        );
+        const ageQ = formDef.questions.find(q =>
+            (q.type === 'text') && /^edad$/i.test(q.title.trim())
+        );
+
+        if (!birthQ || !ageQ) return;
+
+        const birthInput = document.getElementById('inp-' + birthQ.id);
+        const ageInput = document.getElementById('inp-' + ageQ.id);
+
+        if (!birthInput || !ageInput) return;
+
+        // Opcional: que el campo de edad no se edite a mano
+        ageInput.readOnly = true;
+        ageInput.placeholder = 'Se calcula automáticamente';
+
+        birthInput.addEventListener('change', () => {
+            const val = birthInput.value; // formato yyyy-mm-dd
+            if (!val) { ageInput.value = ''; return; }
+
+            const birth = new Date(val);
+            const today = new Date();
+
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+
+            ageInput.value = age >= 0 ? age : '';
+
+            // Quita el estado de error si lo tenía
+            const fg = ageInput.closest('.field-group');
+            if (fg) fg.classList.remove('field-error');
+        });
     }
 
     // ─────────────────────────────────────────────────────────────
